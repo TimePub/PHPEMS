@@ -11,28 +11,35 @@
 	<div class="modal-body" id="modal-body" style="max-height:560px;">
 		{x2;eval: v:oid = 0}
 		{x2;eval: v:qmid = 0}
-    	{x2;tree:$questype,quest,qid}
-    	{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
-        {x2;eval: v:oid++}
+    	{x2;tree:$sessionvars['examsessionsetting']['examsetting']['questypelite'],lite,qid}
+		{x2;if:v:lite}
+		{x2;eval: v:quest = v:key}
+    	{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest] || $sessionvars['examsessionquestion']['questionrows'][v:quest]}
+		{x2;if:$data['currentbasic']['basicexam']['changesequence']}
+		{x2;eval: shuffle($sessionvars['examsessionquestion']['questions'][v:quest]);}
+		{x2;eval: shuffle($sessionvars['examsessionquestion']['questionrows'][v:quest]);}
+		{x2;endif}
+		{x2;eval: v:oid++}
         <dl class="clear">
-        	<dt class="float_l"><b>{x2;v:oid}、{x2;v:quest['questype']}</b></dt>
+        	<dt class="float_l"><b>{x2;v:oid}、{x2;$questype[v:quest]['questype']}</b></dt>
             <dd>
             	{x2;eval: v:tid = 0}
-                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest['questid']],question,qnid}
+                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest],question,qnid}
                 {x2;eval: v:tid++}
                 {x2;eval: v:qmid++}
-            	<a id="sign_{x2;v:question['questionid']}" href="javascript:;" onclick="javascript:gotoquestion({x2;v:question['questionid']},{x2;v:quest['questid']});" rel="0" class="badge questionindex{x2;if:$sessionvars['examsessionsign'][v:question['questionid']]} signBorder{x2;endif}">{x2;v:tid}</a>
+            	<a id="sign_{x2;v:question['questionid']}" href="javascript:;" onclick="javascript:gotoquestion({x2;v:question['questionid']},{x2;v:quest});" rel="0" class="badge questionindex{x2;if:$sessionvars['examsessionsign'][v:question['questionid']]} signBorder{x2;endif}">{x2;v:tid}</a>
             	{x2;endtree}
-            	{x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest['questid']],questionrow,qrid}
+            	{x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest],questionrow,qrid}
                 {x2;eval: v:tid++}
                 {x2;tree:v:questionrow['data'],data,did}
                 {x2;eval: v:qmid++}
-				<a id="sign_{x2;v:data['questionid']}" href="javascript:;" onclick="javascript:gotoquestion({x2;v:data['questionid']},{x2;v:quest['questid']});" rel="0" class="badge questionindex{x2;if:$sessionvars['examsessionsign'][v:data['questionid']]} signBorder{x2;endif}">{x2;v:tid}-{x2;v:did}</a>
+				<a id="sign_{x2;v:data['questionid']}" href="javascript:;" onclick="javascript:gotoquestion({x2;v:data['questionid']},{x2;v:quest});" rel="0" class="badge questionindex{x2;if:$sessionvars['examsessionsign'][v:data['questionid']]} signBorder{x2;endif}">{x2;v:tid}-{x2;v:did}</a>
                 {x2;endtree}
                 {x2;endtree}
             </dd>
         </dl>
         {x2;endif}
+		{x2;endif}
         {x2;endtree}
 	</div>
 	<div class="modal-footer">
@@ -42,7 +49,7 @@
 <div class="row-fluid">
 	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
-			<form class="examform form-horizontal" id="form1" name="form1" action="index.php?exam-app-exampaper-score" method="post">
+			<form class="examform form-horizontal" id="form1" name="form1" method="post" action="index.php?exam-app-exampaper-score">
 				<ul class="breadcrumb">
 					<li>
 						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
@@ -51,7 +58,7 @@
 						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
 					</li>
 					<li>
-						<a href="index.php?exam-app-exam">正式考试</a> <span class="divider">/</span>
+						<a href="index.php?exam-app-exampaper">模拟考试</a> <span class="divider">/</span>
 					</li>
 					<li class="active">
 						{x2;$sessionvars['examsession']}
@@ -60,17 +67,19 @@
 				<h3 class="text-center">{x2;$sessionvars['examsession']}</h3>
 				{x2;eval: v:oid = 0}
 				{x2;eval: v:qcid = 0}
-				{x2;tree:$questype,quest,qid}
-				{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
+				{x2;tree:$sessionvars['examsessionsetting']['examsetting']['questypelite'],lite,qid}
+		    	{x2;if:v:lite}
+		    	{x2;eval: v:quest = v:key}
+		    	{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest] || $sessionvars['examsessionquestion']['questionrows'][v:quest]}
 				{x2;eval: v:oid++}
-				<div id="panel-type-{x2;v:quest['questid']}" class="questionpanel tab-pane{x2;if:(!$ctype && v:qid == 1) || ($ctype == v:quest['questid'])} active{x2;endif}">
+				<div id="panel-type-{x2;v:quest}" class="questionpanel tab-pane{x2;if:(!$ctype && v:qid == 1) || ($ctype == v:quest)} active{x2;endif}">
 					<ul class="breadcrumb">
 						<li>
-							<h5>{x2;v:oid}、{x2;v:quest['questype']}{x2;$sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['describe']}</h5>
+							<h5>{x2;v:oid}、{x2;$questype[v:quest]['questype']}{x2;$sessionvars['examsessionsetting']['examsetting']['questype'][v:quest]['describe']}</h5>
 						</li>
 					</ul>
 					{x2;eval: v:tid = 0}
-	                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest['questid']],question,qnid}
+	                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest],question,qnid}
 	                {x2;eval: v:tid++}
 	                {x2;eval: v:qcid++}
 	                <div id="question_{x2;v:question['questionid']}" class="paperexamcontent">
@@ -81,16 +90,17 @@
 								</li>
 								<li class="btn-group pull-right">
 									<button class="btn" type="button" onclick="javascript:signQuestion('{x2;v:question['questionid']}',this);"><em class="{x2;if:$sessionvars['examsessionsign'][v:question['questionid']]}icon-star{x2;else}icon-star-empty{x2;endif}" title="标注"></em></button>
-									<button class="btn" type="button" onclick="javascript:favorquestion('{x2;v:question['questionid']}');"><em class="icon-heart" title="收藏"></em></button>
 								</li>
 							</ul>
 							<div class="media-body well text-warning">
-								<a name="question_{x2;v:question['questionid']}"></a>{x2;realhtml:v:question['question']}
+								<a name="question_{x2;v:question['questionid']}"></a>{x2;realhtml:v:question['question']}<input id="time_{x2;v:question['questionid']}" type="hidden" name="time[{x2;v:question['questionid']}]"/>
 							</div>
 							{x2;if:!v:quest['questsort']}
-							<div class="media-body well">
+							{x2;if:v:question['questionselect'] && $questype[v:quest]['questchoice'] != 5}
+							<div class="media-body well noborder">
 		                    	{x2;realhtml:v:question['questionselect']}
 		                    </div>
+		                    {x2;endif}
 							<div class="media-body well">
 		                    	{x2;if:v:quest['questchoice'] == 1 || v:quest['questchoice'] == 4}
 			                        {x2;tree:$selectorder,so,sid}
@@ -99,6 +109,8 @@
 			                        {x2;endif}
 			                        <label class="radio inline"><input type="radio" name="question[{x2;v:question['questionid']}]" rel="{x2;v:question['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:question['questionid']]}checked{x2;endif}/>{x2;v:so} </label>
 			                        {x2;endtree}
+		                        {x2;elseif:$questype[v:quest]['questchoice'] == 5}
+		                        	<input type="text" class="input-xlarge" name="question[{x2;v:question['questionid']}]" value="{x2;$sessionvars['examsessionuseranswer'][v:question['questionid']]}" rel="{x2;v:question['questionid']}"/>
 		                        {x2;else}
 			                        {x2;tree:$selectorder,so,sid}
 			                        {x2;if:v:key >= v:question['questionselectnumber']}
@@ -117,17 +129,17 @@
 							<div class="media-body well">
 								<div class="btn-group pull-right">
 				            		{x2;if:v:qcid > 1}
-				            		<a class="btn" href="javascript:;" onclick="javascript:gotoindexquestion({x2;eval: echo v:qcid - 2},{x2;v:quest['questid']});" title="上一题">上一题</a>
+				            		<a class="btn" href="javascript:;" onclick="javascript:gotoindexquestion({x2;eval: echo v:qcid - 2},{x2;v:quest});" title="上一题">上一题</a>
 				            		{x2;endif}
 				            		{x2;if:v:qcid < v:qmid}
-				            		<a class="btn" href="javascript:;" onclick="javascript:gotoindexquestion({x2;v:qcid},{x2;v:quest['questid']});" title="下一题">下一题</a>
+				            		<a class="btn" href="javascript:;" onclick="javascript:gotoindexquestion({x2;v:qcid},{x2;v:quest});" title="下一题">下一题</a>
 									{x2;endif}
 				            	</div>
 			            	</div>
 						</div>
 					</div>
 					{x2;endtree}
-					{x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest['questid']],questionrow,qrid}
+					{x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest],questionrow,qrid}
 	                {x2;eval: v:tid++}
 	                {x2;tree:v:questionrow['data'],data,did}
 	                {x2;eval: v:qcid++}
@@ -144,20 +156,21 @@
 							<div>
 								<ul class="nav nav-tabs">
 									<li class="active">
-										<span class="badge questionindex">{x2;v:did}</span></a>
+										<span class="badge questionindex">{x2;v:did}</span>
 									</li>
 									<li class="btn-group pull-right">
 										<button class="btn" type="button" onclick="javascript:signQuestion('{x2;v:data['questionid']}',this);"><em class="{x2;if:$sessionvars['examsessionsign'][v:data['questionid']]}icon-star{x2;else}icon-star-empty{x2;endif}" title="标注"></em></button>
-										<button class="btn" type="button" onclick="javascript:favorquestion('{x2;v:data['questionid']}');"><em class="icon-heart" title="收藏"></em></button>
 									</li>
 								</ul>
 								<div class="media-body well text-warning">
-									<a name="question_{x2;v:data['questionid']}"></a>{x2;realhtml:v:data['question']}
+									<a name="question_{x2;v:data['questionid']}"></a>{x2;realhtml:v:data['question']}<input id="time_{x2;v:data['questionid']}" type="hidden" name="time[{x2;v:data['questionid']}]"/>
 								</div>
 								{x2;if:!v:quest['questsort']}
-								<div class="media-body well">
+								{x2;if:v:data['questionselect'] && $questype[v:quest]['questchoice'] != 5}
+								<div class="media-body well noborder">
 			                    	{x2;realhtml:v:data['questionselect']}
 			                    </div>
+			                    {x2;endif}
 								<div class="media-body well">
 			                    	{x2;if:v:quest['questchoice'] == 1 || v:quest['questchoice'] == 4}
 				                        {x2;tree:$selectorder,so,sid}
@@ -166,6 +179,8 @@
 				                        {x2;endif}
 				                        <label class="radio inline"><input type="radio" name="question[{x2;v:data['questionid']}]" rel="{x2;v:data['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:data['questionid']]}checked{x2;endif}/>{x2;v:so} </label>
 				                        {x2;endtree}
+				                    {x2;elseif:$questype[v:quest]['questchoice'] == 5}
+		                        		<input type="text" class="input-xlarge" name="question[{x2;v:data['questionid']}]" value="{x2;$sessionvars['examsessionuseranswer'][v:data['questionid']]}" rel="{x2;v:data['questionid']}"/>
 			                        {x2;else}
 				                        {x2;tree:$selectorder,so,sid}
 				                        {x2;if:v:key >= v:data['questionselectnumber']}
@@ -185,10 +200,10 @@
 							<div class="media-body well">
 								<div class="btn-group pull-right">
 				            		{x2;if:v:qcid > 1}
-				            		<a class="btn" href="javascript:;" onclick="javascript:gotoindexquestion({x2;eval: echo v:qcid - 2},{x2;v:quest['questid']});" title="上一题">上一题</a>
+				            		<a class="btn" href="javascript:;" onclick="javascript:gotoindexquestion({x2;eval: echo v:qcid - 2},{x2;v:quest});" title="上一题">上一题</a>
 				            		{x2;endif}
 				            		{x2;if:v:qcid < v:qmid}
-				            		<a class="btn" href="javascript:;" onclick="javascript:gotoindexquestion({x2;v:qcid},{x2;v:quest['questid']});" title="下一题">下一题</a>
+				            		<a class="btn" href="javascript:;" onclick="javascript:gotoindexquestion({x2;v:qcid},{x2;v:quest});" title="下一题">下一题</a>
 									{x2;endif}
 				            	</div>
 			            	</div>
@@ -197,6 +212,7 @@
 					{x2;endtree}
 					{x2;endtree}
 				</div>
+				{x2;endif}
 				{x2;endif}
 				{x2;endtree}
 				<div aria-hidden="true" id="submodal" class="modal hide fade" role="dialog" aria-labelledby="#mySubModalLabel">
@@ -289,6 +305,7 @@ $(document).ready(function(){
 		$(".paperexamcontent:first").show();
 	};
 	m();
+	//setInterval(refreshRecord,15000);
 	setInterval(saveanswer,300000);
 
 	$('.allquestionnumber').html($('.paperexamcontent').length);
@@ -299,31 +316,39 @@ $(document).ready(function(){
 		for(var p in initData){
 			if(p!='set')
 			formData[p]=initData[p];
+			$("#time_"+$('[name="'+p+'"]').attr('rel')).val(initData[p].time);
 		}
+
 		var textarea = $('#form1 textarea');
 		$.each(textarea,function(){
 			var _this = $(this);
-			_this.val(initData[_this.attr('name')]);
-			CKEDITOR.instances[_this.attr('id')].setData(initData[_this.attr('name')]);
-			if(initData[_this.attr('name')] && initData[_this.attr('name')] != '')
-			batmark(_this.attr('rel'),initData[_this.attr('name')]);
+			if(initData[_this.attr('name')])
+			{
+				_this.val(initData[_this.attr('name')].value);
+				CKEDITOR.instances[_this.attr('id')].setData(initData[_this.attr('name')].value);
+				if(initData[_this.attr('name')].value && initData[_this.attr('name')].value != '')
+				batmark(_this.attr('rel'),initData[_this.attr('name')].value);
+			}
 		});
 
 		var texts = $('#form1 :input[type=text]');
 		$.each(texts,function(){
 			var _this = $(this);
-			_this.val(initData[_this.attr('name')]);
-			if(initData[_this.attr('name')] && initData[_this.attr('name')] != '')
-			batmark(_this.attr('rel'),initData[_this.attr('name')]);
+			if(initData[_this.attr('name')])
+			{
+				_this.val(initData[_this.attr('name')]?initData[_this.attr('name')].value:'');
+				if(initData[_this.attr('name')].value && initData[_this.attr('name')].value != '')
+				batmark(_this.attr('rel'),initData[_this.attr('name')].value);
+			}
 		});
 
 		var radios = $('#form1 :input[type=radio]');
 		$.each(radios,function(){
-			var _= this, v = initData[_.name];
+			var _= this, v = initData[_.name]?initData[_.name].value:null;
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked = true;
-				batmark(_this.attr('rel'),initData[_this.attr('name')]);
+				batmark(_this.attr('rel'),initData[_this.attr('name')].value);
 			}else{
 				_.checked=false;
 			}
@@ -331,11 +356,11 @@ $(document).ready(function(){
 
 		var checkboxs=$('#form1 :input[type=checkbox]');
 		$.each(checkboxs,function(){
-			var _=this,v=initData[_.name];
+			var _=this,v=initData[_.name]?initData[_.name].value:null;
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked=true;
-				batmark(_this.attr('rel'),initData[_this.attr('name')]);
+				batmark(_this.attr('rel'),initData[_this.attr('name')].value);
 			}else{
 				_.checked=false;
 			}
@@ -347,8 +372,10 @@ $(document).ready(function(){
 		var p=[];
 		p.push(_this.attr('name'));
 		p.push(_this.val());
+		p.push(Date.parse(new Date())/1000);
+		$('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
 		set.apply(formData,p);
-		markQuestion(_this.attr('rel'));
+		markQuestion(_this.attr('rel'),true);
 	});
 
 	$('#form1 :input[type=radio]').change(function(){
@@ -358,9 +385,12 @@ $(document).ready(function(){
 		p.push(_.name);
 		if(_.checked){
 			p.push(_.value);
+			p.push(Date.parse(new Date())/1000);
+			$('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
 			set.apply(formData,p);
 		}else{
 			p.push('');
+			p.push(null);
 			set.apply(formData,p);
 		}
 		markQuestion(_this.attr('rel'));
@@ -372,8 +402,10 @@ $(document).ready(function(){
 		var p=[];
 		p.push(_.name);
 		p.push(_.value);
+		p.push(Date.parse(new Date())/1000);
+		$('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
 		set.apply(formData,p);
-		markQuestion(_this.attr('rel'));
+		markQuestion(_this.attr('rel'),true);
 	});
 
 	$('#form1 :input[type=checkbox]').change(function(){
@@ -383,9 +415,12 @@ $(document).ready(function(){
 		p.push(_.name);
 		if(_.checked){
 			p.push(_.value);
+			p.push(Date.parse(new Date())/1000);
+			$('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
 			set.apply(formData,p);
 		}else{
 			p.push('');
+			p.push(null);
 			set.apply(formData,p);
 		}
 		markQuestion(_this.attr('rel'));

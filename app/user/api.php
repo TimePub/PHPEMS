@@ -66,15 +66,18 @@ class app
 		{
 			if($this->ev->get('trade_status') == 'TRADE_FINISHED' ||$this->ev->get('trade_status') == 'TRADE_SUCCESS')
 			{
-				$user = $this->user->getUserById($order['orderuserid']);
-				$args['usercoin'] = $user['usercoin']+$order['orderprice']*10;
-				$this->user->modifyUserInfo($args,$order['orderuserid']);
-				$orderobj->modifyOrderById($orderid,array('orderstatus' => 2));
+				if($order['orderstatus'] != 2)
+				{
+					$user = $this->user->getUserById($order['orderuserid']);
+					$args['usercoin'] = $user['usercoin']+$order['orderprice']*10;
+					$this->user->modifyUserInfo($args,$order['orderuserid']);
+					$orderobj->modifyOrderById($orderid,array('orderstatus' => 2));
+				}
 				exit('sucess');
 			}
 			elseif($_POST['trade_status'] == 'WAIT_BUYER_PAY')
 			{
-				exit('sucess');
+				exit('fail');
 			}
 			else
 			{

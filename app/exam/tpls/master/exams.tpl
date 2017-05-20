@@ -45,6 +45,7 @@
 								<option value="0">不限</option>
 								<option value="1"{x2;if:$search['examtype'] == 1} selected{x2;endif}>随机抽题</option>
 								<option value="2"{x2;if:$search['examtype'] == 2} selected{x2;endif}>手动抽题</option>
+								<option value="2"{x2;if:$search['examtype'] == 3} selected{x2;endif}>即时组卷</option>
 							</select>
 						</td>
 						<td>
@@ -90,7 +91,7 @@
 							{x2;v:exam['examauthor']}
 						</td>
 						<td>
-							{x2;if:v:exam['examtype'] == 1}随机组卷{x2;else}手工组卷{x2;endif}
+							{x2;if:v:exam['examtype'] == 1}随机组卷{x2;elseif:v:exam['examtype'] == 2}手工组卷{x2;else}即时组卷{x2;endif}
 						</td>
 						<td>
 							{x2;date:v:exam['examtime'],'Y-m-d'}
@@ -100,6 +101,12 @@
 						</td>
 						<td>
 							<div class="btn-group">
+	                    		{x2;if:v:exam['examtype'] != 1}
+	                    		<a class="btn" target="_blank" href="index.php?{x2;$_app}-master-exams-preview&examid={x2;v:exam['examid']}{x2;$u}" title="查看试卷"><em class="icon-list-alt"></em></a>
+	                    		{x2;endif}
+	                    		{x2;if:v:exam['examtype'] == 3}
+	                    		<a class="btn ajax" href="index.php?{x2;$_app}-master-exams-outcsv&page={x2;$page}&examid={x2;v:exam['examid']}{x2;$u}" title="下载csv"><em class="icon-download-alt"></em></a>
+	                    		{x2;endif}
 	                    		<a class="btn" href="index.php?{x2;$_app}-master-exams-modify&page={x2;$page}&examid={x2;v:exam['examid']}{x2;$u}" title="修改"><em class="icon-edit"></em></a>
 								<a class="btn confirm" href="index.php?{x2;$_app}-master-exams-del&page={x2;$page}&examid={x2;v:exam['examid']}{x2;$u}" title="删除"><em class="icon-remove"></em></a>
 	                    	</div>

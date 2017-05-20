@@ -8,26 +8,25 @@
 <meta name="keywords" content="无纸化模拟考试系统">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <title>无纸化模拟考试系统</title>
-<!–[if lt IE9]>
-<script src="app/core/styles/js/html5.js"></script>
-<![endif]–>
-<!-- Le styles -->
 <link href="app/core/styles/css/bootstrap.css" rel="stylesheet">
 <link href="app/core/styles/css/layoutit.css" rel="stylesheet">
 <link href="app/core/styles/css/plugin.css" rel="stylesheet">
-<!--
-<script type="text/javascript" src="app/core/styles/js/jquery.min.js"></script>
--->
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
+<script src="app/core/styles/js/html5.js"></script>
 <script src="app/core/styles/js/html5shiv.js"></script>
 <![endif]-->
 <script type="text/javascript" src="app/core/styles/js/jquery-1.9.1.min.js"></script>
-
 <script type="text/javascript" src="app/core/styles/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="app/core/styles/js/jquery-ui.js"></script>
 <script type="text/javascript" src="app/core/styles/js/ckeditor/ckeditor.js"></script>
 <script type="text/javascript" src="app/core/styles/js/swfu/swfupload.js"></script>
+<!--
+<script type="text/javascript" src="app/core/styles/js/evercookie/swfobject-2.2.min.js"></script>
+<script type="text/javascript" src="app/core/styles/js/evercookie/evercookie.js"></script>
+<script type="text/javascript" src="index.php?core-api-setsessionid"></script>
+<script type="text/javascript" src="app/core/styles/js/fingerprint/fingerprint.js"></script>
+<script type="text/javascript" src="app/core/styles/js/fingerprint/plugin.js"></script>
+-->
 <script type="text/javascript" src="app/core/styles/js/plugin.js"></script>
 <link href="app/user/styles/css/theme.css" rel="stylesheet" type="text/css" />
 </head>

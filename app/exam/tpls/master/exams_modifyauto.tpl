@@ -72,57 +72,75 @@
 					</div>
 				</div>
 				<div class="control-group">
+					<label class="control-label">题型排序</label>
+					<div class="controls">
+						<div class="sortable btn-group">
+							{x2;if:$exam['examsetting']['questypelite']}
+							{x2;tree:$exam['examsetting']['questypelite'],qlid,eqid}
+							<a class="btn questpanel panel_{x2;v:key}">{x2;$questypes[v:key]['questype']}<input type="hidden" name="args[examsetting][questypelite][{x2;v:key}]" value="1" class="questypepanelinput" id="panel_{x2;v:key}"/></a>
+							{x2;endtree}
+							{x2;else}
+							{x2;tree:$questypes,questype,qid}
+							<a class="btn questpanel panel_{x2;v:questype['questid']}">{x2;v:questype['questype']}<input type="hidden" name="args[examsetting][questypelite][{x2;v:questype['questid']}]" value="1" class="questypepanelinput" id="panel_{x2;v:questype['questid']}"/></a>
+							{x2;endtree}
+							{x2;endif}
+						</div>
+						<span class="help-block">拖拽进行题型排序</span>
+					</div>
+				</div>
+			    <div class="control-group">
 			        <label class="control-label">题量配比模式：</label>
 		          	<div class="controls">
 						<label class="radio inline">
-			          		<input type="radio" class="input-text" name="args[examsetting][scalemodel]" value="1" onchange="javascript:$('#sptype').show();$('#normaltype').hide();"{x2;if:$exam['examsetting']['scalemodel']} checked{x2;endif}/> 开启
+			          		<input type="radio" autocomplete="off" class="input-text" name="args[examsetting][scalemodel]" value="1" onchange="javascript:$('#modeplane').html($('#sptype').html());"{x2;if:$exam['examsetting']['scalemodel']} checked{x2;endif}/> 开启
 			          	</label>
 			          	<label class="checkbox inline">
-			          		<input type="radio" class="input-text" name="args[examsetting][scalemodel]" value="0" onchange="javascript:$('#sptype').hide();$('#normaltype').show();"{x2;if:!$exam['examsetting']['scalemodel']} checked{x2;endif}/> 关闭
+			          		<input type="radio" autocomplete="off" class="input-text" name="args[examsetting][scalemodel]" value="0" onchange="javascript:$('#modeplane').html($('#normaltype').html());"{x2;if:!$exam['examsetting']['scalemodel']} checked{x2;endif}/> 关闭
 			          	</label>
 			       </div>
 			    </div>
-			    <div id="sptype"{x2;if:!$exam['examsetting']['scalemodel']} class="hide"{x2;endif}>
-				    <div class="control-group">
+			    <div id="modeplane">
+			    	{x2;if:$exam['examsetting']['scalemodel']}
+			    	<div class="control-group">
 				        <label class="control-label">题量配比：</label>
 			          	<div class="controls">
 				          	<label class="radio inline">题量配比模式关闭时，此设置不生效。题量配比操作繁琐，请尽量熟悉后再行操作。题量配比会受考场中考试范围制约，请谨慎配置。</label>
 				       </div>
 				    </div>
 				    {x2;tree:$questypes,questype,qid}
-					<div class="control-group">
+					<div class="control-group questpanel panel_{x2;v:questype['questid']}">
 						<label class="control-label" for="content">{x2;v:questype['questype']}：</label>
 						<div class="controls">
 							<span class="info">共&nbsp;</span>
-							<input id="iselectallnumber_{x2;v:key}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:key}][number]" value="{x2;$exam['examsetting']['questype'][v:key]['number']}" size="2" msg="您必须填写总题数"/>
-							<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:key}][score]" value="{x2;$exam['examsetting']['questype'][v:key]['score']}" size="2" msg="您必须填写每题的分值"/>
+							<input id="iselectallnumber_{x2;v:key}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:key}][number]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:key]['number'])}" size="2" msg="您必须填写总题数"/>
+							<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:key}][score]" value="{x2;eval: echo floatval($exam['examsetting']['questype'][v:key]['score'])}" size="2" msg="您必须填写每题的分值"/>
 							<span class="info">&nbsp;分，描述&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:key}][describe]" value="{x2;$exam['examsetting']['questype'][v:key]['describe']}" size="12"/>
 						</div>
 					</div>
-					<div class="control-group">
+					<div class="control-group questpanel panel_{x2;v:questype['questid']}">
 						<label class="control-label" for="content">配比率：</label>
 						<div class="controls">
 							<textarea class="input-xxlarge" rows="7" cols="4" name="args[examsetting][examscale][{x2;v:questype['questid']}]">{x2;$exam['examsetting']['examscale'][v:questype['questid']]}</textarea>
 						</div>
 					</div>
 					{x2;endtree}
-				</div>
-				<div id="normaltype"{x2;if:$exam['examsetting']['scalemodel']} class="hide"{x2;endif}>
-					{x2;tree:$questypes,questype,qid}
-					<div class="control-group">
+					{x2;else}
+			    	{x2;tree:$questypes,questype,qid}
+					<div class="control-group questpanel panel_{x2;v:questype['questid']}">
 						<label class="control-label" for="content">{x2;v:questype['questype']}：</label>
 						<div class="controls">
 							<span class="info">共&nbsp;</span>
-							<input id="iselectallnumber_{x2;v:key}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:key}][number]" value="{x2;$exam['examsetting']['questype'][v:key]['number']}" size="2" msg="您必须填写总题数"/>
-							<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:key}][score]" value="{x2;$exam['examsetting']['questype'][v:key]['score']}" size="2" msg="您必须填写每题的分值"/>
+							<input id="iselectallnumber_{x2;v:key}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:key}][number]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:key]['number'])}" size="2" msg="您必须填写总题数"/>
+							<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:key}][score]" value="{x2;eval: echo floatval($exam['examsetting']['questype'][v:key]['score'])}" size="2" msg="您必须填写每题的分值"/>
 							<span class="info">&nbsp;分，描述&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:key}][describe]" value="{x2;$exam['examsetting']['questype'][v:key]['describe']}" size="12"/>
-							<span class="info">&nbsp;难度题数：易&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:key}][easynumber]" value="{x2;$exam['examsetting']['questype'][v:key]['easynumber']}" size="2" msg="您需要填写简单题的数量，最小为0"/>
-		  					<span class="info">&nbsp;中&nbsp;</span><input class="input-mini" type="text" needle="needle" name="args[examsetting][questype][{x2;v:key}][middlenumber]" value="{x2;$exam['examsetting']['questype'][v:key]['middlenumber']}" size="2" msg="您需要填写中等难度题的数量，最小为0"/>
-		  					<span class="info">&nbsp;难&nbsp;</span><input class="input-mini" type="text" needle="needle" name="args[examsetting][questype][{x2;v:key}][hardnumber]" value="{x2;$exam['examsetting']['questype'][v:key]['hardnumber']}" size="2" datatype="number" msg="您需要填写难题的数量，最小为0"/>
+							<span class="info">&nbsp;难度题数：易&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:key}][easynumber]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:key]['easynumber'])}" size="2" msg="您需要填写简单题的数量，最小为0"/>
+		  					<span class="info">&nbsp;中&nbsp;</span><input class="input-mini" type="text" needle="needle" name="args[examsetting][questype][{x2;v:key}][middlenumber]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:key]['middlenumber'])}" size="2" msg="您需要填写中等难度题的数量，最小为0"/>
+		  					<span class="info">&nbsp;难&nbsp;</span><input class="input-mini" type="text" needle="needle" name="args[examsetting][questype][{x2;v:key}][hardnumber]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:key]['hardnumber'])}" size="2" datatype="number" msg="您需要填写难题的数量，最小为0"/>
 						</div>
 					</div>
 					{x2;endtree}
-				</div>
+					{x2;endif}
+			    </div>
 				<div class="control-group">
 					<div class="controls">
 						<button class="btn btn-primary" type="submit">提交</button>
@@ -136,10 +154,54 @@
 					</div>
 				</div>
 			</form>
+			<div id="sptype" class="hide">
+			    <div class="control-group">
+			        <label class="control-label">题量配比：</label>
+		          	<div class="controls">
+			          	<label class="radio inline">题量配比模式关闭时，此设置不生效。题量配比操作繁琐，请尽量熟悉后再行操作。题量配比会受考场中考试范围制约，请谨慎配置。</label>
+			       </div>
+			    </div>
+			    {x2;tree:$questypes,questype,qid}
+				<div class="control-group questpanel panel_{x2;v:questype['questid']}">
+					<label class="control-label" for="content">{x2;v:questype['questype']}：</label>
+					<div class="controls">
+						<span class="info">共&nbsp;</span>
+						<input id="iselectallnumber_{x2;v:key}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:key}][number]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:key]['number'])}" size="2" msg="您必须填写总题数"/>
+						<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:key}][score]" value="{x2;eval: echo floatval($exam['examsetting']['questype'][v:key]['score'])}" size="2" msg="您必须填写每题的分值"/>
+						<span class="info">&nbsp;分，描述&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:key}][describe]" value="{x2;$exam['examsetting']['questype'][v:key]['describe']}" size="12"/>
+					</div>
+				</div>
+				<div class="control-group questpanel panel_{x2;v:questype['questid']}">
+					<label class="control-label" for="content">配比率：</label>
+					<div class="controls">
+						<textarea class="input-xxlarge" rows="7" cols="4" name="args[examsetting][examscale][{x2;v:questype['questid']}]">{x2;$exam['examsetting']['examscale'][v:questype['questid']]}</textarea>
+					</div>
+				</div>
+				{x2;endtree}
+			</div>
+			<div id="normaltype" class="hide">
+				{x2;tree:$questypes,questype,qid}
+				<div class="control-group questpanel panel_{x2;v:questype['questid']}">
+					<label class="control-label" for="content">{x2;v:questype['questype']}：</label>
+					<div class="controls">
+						<span class="info">共&nbsp;</span>
+						<input id="iselectallnumber_{x2;v:key}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:key}][number]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:key]['number'])}" size="2" msg="您必须填写总题数"/>
+						<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:key}][score]" value="{x2;eval: echo floatval($exam['examsetting']['questype'][v:key]['score'])}" size="2" msg="您必须填写每题的分值"/>
+						<span class="info">&nbsp;分，描述&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:key}][describe]" value="{x2;$exam['examsetting']['questype'][v:key]['describe']}" size="12"/>
+						<span class="info">&nbsp;难度题数：易&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:key}][easynumber]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:key]['easynumber'])}" size="2" msg="您需要填写简单题的数量，最小为0"/>
+	  					<span class="info">&nbsp;中&nbsp;</span><input class="input-mini" type="text" needle="needle" name="args[examsetting][questype][{x2;v:key}][middlenumber]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:key]['middlenumber'])}" size="2" msg="您需要填写中等难度题的数量，最小为0"/>
+	  					<span class="info">&nbsp;难&nbsp;</span><input class="input-mini" type="text" needle="needle" name="args[examsetting][questype][{x2;v:key}][hardnumber]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:key]['hardnumber'])}" size="2" datatype="number" msg="您需要填写难题的数量，最小为0"/>
+					</div>
+				</div>
+				{x2;endtree}
+			</div>
 {x2;if:!$userhash}
 		</div>
 	</div>
 </div>
+<script>
+$.getJSON('index.php?exam-master-basic-getsubjectquestype&subjectid={x2;$exam['examsubject']}&'+Math.random(),function(data){$('.questpanel').hide();$('.questypepanelinput').val('0');for(x in data){$('.panel_'+data[x]).show();$('#panel_'+data[x]).val('1');}});
+</script>
 </body>
 </html>
 {x2;endif}

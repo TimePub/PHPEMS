@@ -32,7 +32,7 @@
 					{x2;eval: v:tid = 0}
 	                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest['questid']],question,qnid}
 	                {x2;eval: v:tid++}
-	                {x2;if:$sessionvars['examsessionscorelist'][v:question['questionid']] != 1}
+	                {x2;if:$sessionvars['examsessionscorelist'][v:question['questionid']]  != $sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['score']}
 	                {x2;eval: v:wrongnumber++}
 	                <div id="question_{x2;v:question['questionid']}" class="paperexamcontent decidediv">
 						<div class="wrong"></div>
@@ -85,7 +85,7 @@
 								{x2;realhtml:v:questionrow['qrquestion']}
 							</div>
 							{x2;tree:v:questionrow['data'],data,did}
-							{x2;if:$sessionvars['examsessionscorelist'][v:data['questionid']] != 1}
+							{x2;if:$sessionvars['examsessionscorelist'][v:data['questionid']]  != $sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['score']}
                 			{x2;eval: v:wrongnumber++}
 							<div class="paperexamcontent decidediv">
 								<div class="wrong"></div>

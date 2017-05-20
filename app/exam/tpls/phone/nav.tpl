@@ -8,7 +8,7 @@
 						<button class="btn dropdown-toggle" data-toggle="dropdown"><em class="icon-user"></em><span class="caret"></span></button>
 						<ul class="dropdown-menu">
 							<li><a href="javascript;">{x2;$_user['username']}</a></li>
-							<li><a href="index.php?user-phone-logout">退出</a></li>
+							<li><a class="ajax" href="index.php?user-phone-logout">退出</a></li>
 						</ul>
 					</div>
 				</li>

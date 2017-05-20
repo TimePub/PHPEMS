@@ -27,6 +27,16 @@
 						</div>
 					</div>
 					<div class="control-group">
+						<label for="subject" class="control-label">科目题型：</label>
+						<div class="controls">
+							{x2;tree:$questypes,questype,qid}
+							<label class="checkbox inline">
+				          		<input type="checkbox" name="args[subjectsetting][questypes][{x2;v:questype['questid']}]" value="1"{x2;if:$subject['subjectsetting']['questypes'][v:questype['questid']]} checked{x2;endif}/> {x2;v:questype['questype']}
+				          	</label>
+				          	{x2;endtree}
+						</div>
+					</div>
+					<div class="control-group">
 					  	<div class="controls">
 						  	<button class="btn btn-primary" type="submit">提交</button>
 							<input type="hidden" name="modifysubject" value="1"/>

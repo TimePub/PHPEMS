@@ -69,14 +69,14 @@
 					  	<span class="help-block">需要填空处请以()表示。</span>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="control-group" id="selecttext">
 					<label class="control-label">备选项：</label>
 				  	<div class="controls">
 					  	<textarea class="ckeditor" name="args[questionselect]" id="questionselect">{x2;$question['questionselect']}</textarea>
 					  	<span class="help-block">无选择项的请不要填写，如填空题、问答题等主观题。</span>
 					</div>
 				</div>
-				<div class="input" id="selectnumber">
+				<div class="control-group" id="selectnumber">
 					<label class="control-label">备选项数量：</label>
 				  	<div class="controls">
 					  	<select class="combox" name="args[questionselectnumber]">

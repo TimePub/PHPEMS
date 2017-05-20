@@ -10,7 +10,7 @@ class app
 		$this->ev = $this->G->make('ev');
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->module = $this->G->make('module');
 		$this->session = $this->G->make('session');

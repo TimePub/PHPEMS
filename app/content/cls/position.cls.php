@@ -13,7 +13,8 @@ class position
 	{
 		$this->positions = NULL;
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->ev = $this->G->make('ev');
 	}
@@ -21,34 +22,34 @@ class position
 	public function getPosList()
 	{
 		$data = array(false,'position');
-		$sql = $this->sql->makeSelect($data);
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetchAll($sql,'posid');
 	}
 
 	public function addPos($args)
 	{
 		$data = array('position',$args);
-		$sql = $this->sql->makeInsert($data);
+		$sql = $this->pdosql->makeInsert($data);
 		$this->db->exec($sql);
 		return $this->db->lastInsertId();
 	}
 
 	public function delPos($id)
 	{
-		return $this->db->delElement(array('table' => 'position','query' => "posid = '{$id}'"));
+		return $this->db->delElement(array('table' => 'position','query' => array(array("AND","posid = :posid",'posid',$id))));
 	}
 
 	public function getPosById($id)
 	{
-		$data = array(false,'position',"posid = '{$id}'");
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'position',array(array("AND","posid = :posid",'posid',$id)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql);
 	}
 
 	public function modifyPos($id,$args)
 	{
-		$data = array('position',$args,"posid = '{$id}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array('position',$args,array(array("AND","posid = :posid",'posid',$id)));
+		$sql = $this->pdosql->makeUpdate($data);
 		$this->db->exec($sql);
 		return $this->db->affectedRows();
 	}
@@ -66,45 +67,45 @@ class position
 
 	public function getPosContentById($id)
 	{
-		$data = array(false,'poscontent',"pcid = '{$id}'");
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'poscontent',array(array("AND","pcid = :pcid",'pcid',$id)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql);
 	}
 
 	public function getPosContentByArgs($args)
 	{
 		$data = array(false,'poscontent',$args,false,"pcid DESC");
-		$sql = $this->sql->makeSelect($data);
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql);
 	}
 
 	public function addPosContent($args)
 	{
 		$data = array('poscontent',$args);
-		$sql = $this->sql->makeInsert($data);
+		$sql = $this->pdosql->makeInsert($data);
 		$this->db->exec($sql);
 		return $this->db->lastInsertId();
 	}
 
 	public function modifyPosContentByContentId($id,$args)
 	{
-		$data = array('poscontent',$args,"pccontentid = '{$id}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array('poscontent',$args,array(array("AND","pccontentid = :pccontentid",'pccontentid',$id)));
+		$sql = $this->pdosql->makeUpdate($data);
 		$this->db->exec($sql);
 		return $this->db->affectedRows();
 	}
 
 	public function modifyPosContent($id,$args)
 	{
-		$data = array('poscontent',$args,"pcid = '{$id}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array('poscontent',$args,array(array("AND","pcid = :pcid",'pcid',$id)));
+		$sql = $this->pdosql->makeUpdate($data);
 		$this->db->exec($sql);
 		return $this->db->affectedRows();
 	}
 
 	public function delPosContent($id)
 	{
-		return $this->db->delElement(array('table' => 'poscontent','query' => "pcid = '{$id}'"));
+		return $this->db->delElement(array('table' => 'poscontent','query' => array(array("AND","pcid = :pcid",'pcid',$id))));
 	}
 }
 

@@ -57,16 +57,16 @@
 					</tr>
 				</table>
 				<div class="control-group">
-					<label class="control-label">章节选择：</label>
+					<label class="control-label">章节选择：<input type="checkbox" onclick="javascript:$('.section:checkbox').prop('checked',$(this).is(':checked'));"> </label>
 				</div>
 				{x2;tree:$sections,section,sid}
 				<div class="control-group">
 					<label class="control-label">
-				        {x2;v:section['section']}
+				        <label class="checkbox inline"><input type="checkbox" onclick="javascript:$('.sec_{x2;v:section['sectionid']}:checkbox').prop('checked',$(this).is(':checked'));"> {x2;v:section['section']}</label>
 				    </label>
 				    <div class="controls" style="text-indent:10px;">
 				    	{x2;tree:$knows[v:section['sectionid']],know,kid}
-				    	<label class="checkbox inline"><input type="checkbox" value="{x2;v:know['knowsid']}" name="args[basicknows][{x2;v:section['sectionid']}][{x2;v:know['knowsid']}]" {x2;if:$basic['basicknows'][v:section['sectionid']][v:know['knowsid']] == v:know['knowsid']}checked{x2;endif}/>{x2;v:know['knows']}</label>
+				    	<label class="checkbox inline"><input type="checkbox" value="{x2;v:know['knowsid']}" name="args[basicknows][{x2;v:section['sectionid']}][{x2;v:know['knowsid']}]" class="section sec_{x2;v:section['sectionid']}" {x2;if:$basic['basicknows'][v:section['sectionid']][v:know['knowsid']] == v:know['knowsid']}checked{x2;endif}/>{x2;v:know['knows']}</label>
 				    	{x2;endtree}
 				    </div>
 				</div>
@@ -99,7 +99,7 @@
 				<div class="control-group">
 					<label for="basicexam_auto" class="control-label">绑定模拟考试试卷：</label>
 					<div class="controls">
-						<textarea id="basicexam_auto" name="args[basicexam][auto]" needle="needle" msg="您必须填写至少一个试卷">{x2;$basic['basicexam']['auto']}</textarea>
+						<input type="text" id="basicexam_auto" name="args[basicexam][auto]" needle="needle" msg="您必须填写至少一个试卷" value="{x2;$basic['basicexam']['auto']}" /> <a class="selfmodal btn" href="javascript:;" data-target="#modal" url="index.php?exam-master-exams-selectexams&search[subjectid]={x2;$basic['basicsubjectid']}&exams={basicexam_auto}&useframe=1&target=basicexam_auto" valuefrom="basicexam_auto">选卷</a>
 						<span class="help-block">请在试卷管理处查看试卷ID，将数字ID填写在这里，多个请用英文逗号（,）隔开。留空或填0时将无法进行该项考试。</span>
 					</div>
 				</div>
@@ -116,7 +116,7 @@
 				<div class="control-group">
 					<label for="basicexam_self" class="control-label">绑定正式考试试卷：</label>
 					<div class="controls">
-						<textarea id="basicexam_self" name="args[basicexam][self]" needle="needle" msg="您必须填写至少一个试卷">{x2;$basic['basicexam']['self']}</textarea>
+						<input type="text" id="basicexam_self" name="args[basicexam][self]" needle="needle" msg="您必须填写至少一个试卷" value="{x2;$basic['basicexam']['self']}" /> <a class="selfmodal btn" href="javascript:;" data-target="#modal" url="index.php?exam-master-exams-selectexams&search[subjectid]={x2;$basic['basicsubjectid']}&exams={basicexam_self}&useframe=1&target=basicexam_self" valuefrom="basicexam_self">选卷</a>
 						<span class="help-block">请在试卷管理处查看试卷ID，将数字ID填写在这里，多个请用英文逗号（,）隔开。留空或填0时将无法进行该项考试。</span>
 					</div>
 				</div>
@@ -156,6 +156,17 @@
 						<span class="help-block">不限制次数请填写0，当您选择抽卷规则为系统随机抽卷时，限考次数为所有试卷限考次数，当您选择抽卷规则为用户自选时，限考次数为每套试卷限考次数。即如果设置限考次数为x，当随机抽卷时，用户一共可以考试x次；手选试卷时，用户每套试卷可考试x次。</span>
 					</div>
 				</div>
+				<div class="control-group">
+					<label for="basicexam_auto" class="control-label">交卷后：</label>
+					<div class="controls">
+						<label class="radio inline">
+				          		<input type="radio" class="input-text" name="args[basicexam][notviewscore]" value="0"{x2;if:$basic['basicexam']['notviewscore'] == 0} checked{x2;endif}/> 直接显示分数
+			          	</label>
+			          	<label class="radio inline">
+			          		<input type="radio" class="input-text" name="args[basicexam][notviewscore]" value="1"{x2;if:$basic['basicexam']['notviewscore'] == 1} checked{x2;endif}/> 暂不显示分数
+			          	</label>
+					</div>
+				</div>
 				<div class="submit">
 					<div class="controls">
 						<button class="btn btn-primary" type="submit">提交</button>
@@ -170,6 +181,18 @@
 			</form>
 {x2;if:!$userhash}
 		</div>
+	</div>
+</div>
+<div aria-hidden="true" id="modal" class="modal hide fade" role="dialog" aria-labelledby="#myModalLabel">
+	<div class="modal-header">
+		<button aria-hidden="true" class="close" type="button" data-dismiss="modal">×</button>
+		<h3 id="myModalLabel">
+			试卷列表
+		</h3>
+	</div>
+	<div class="modal-body" id="modal-body">asdasdasdasdsa</div>
+	<div class="modal-footer">
+		 <button aria-hidden="true" class="btn" data-dismiss="modal">完成</button>
 	</div>
 </div>
 </body>

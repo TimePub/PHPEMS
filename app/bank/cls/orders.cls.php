@@ -12,7 +12,8 @@ class orders_bank
 	public function _init()
 	{
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->ev = $this->G->make('ev');
 		$this->files = $this->G->make('files');
 	}
@@ -32,7 +33,7 @@ class orders_bank
 
 	public function delOrder($id)
 	{
-		return $this->db->delElement(array('table' => 'orders','query' => "ordersn = '{$id}'"));
+		return $this->db->delElement(array('table' => 'orders','query' => array(array("AND","ordersn = :ordersn",'ordersn',$id))));
 	}
 
 	public function modifyOrder($id,$args)
@@ -40,7 +41,7 @@ class orders_bank
 		$data = array(
 			'table' => 'orders',
 			'value' => $args,
-			'query' => "ordersn = '{$id}'"
+			'query' => array(array("AND","ordersn = :ordersn",'ordersn',$id))
 		);
 		$this->db->updateElement($data);
 		return $this->db->affectedRows();
@@ -51,17 +52,20 @@ class orders_bank
 		return $this->db->insertElement(array('table' => 'orders','query' => $args));
 	}
 
-	public function getOrderById($id)
+	public function getOrderById($id,$userid)
 	{
-		$data = array(false,'orders',"ordersn = '{$id}'");
-		$sql = $this->sql->makeSelect($data);
+		if($userid)
+		$data = array(false,'orders',array(array("AND","ordersn = :ordersn",'ordersn',$id),array("AND","orderuserid = :orderuserid",'orderuserid',$userid)));
+		else
+		$data = array(false,'orders',array(array("AND","ordersn = :ordersn",'ordersn',$id)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql,array('orderitems','orderpost','orderuserinfo'));
 	}
 
 	public function modifyOrderById($id,$args)
 	{
-		$data = array('orders',$args,"ordersn = '{$id}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array('orders',$args,array(array("AND","ordersn = :ordersn",'ordersn',$id)));
+		$sql = $this->pdosql->makeUpdate($data);
 		return $this->db->exec($sql);
 	}
 

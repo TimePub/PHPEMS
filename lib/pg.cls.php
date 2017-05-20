@@ -5,6 +5,7 @@ class pg
 	public $G;
 	public $pre = '<li>';
 	public $end = '</li>';
+	public $number;
 
 	public function __construct(&$G)
     {
@@ -27,6 +28,7 @@ class pg
 	public function getPagesNumber($number,$sepnumber = PN)
 	{
 		if(!$sepnumber)$sepnumber = PN;
+		$this->number = $number;
 		if($number % $sepnumber)
 		return intval($number/$sepnumber)+1;
 		else
@@ -49,8 +51,11 @@ class pg
 				}
 			}
 		}
-		$pageString = NULL;
-		if($pages <2)return false;
+		$pageString = '';
+		if($pages <2)
+		{
+			return false;
+		}
 		elseif($pages <= 10)
 		{
 			for($p = 1; $p <= $pages; $p++)
@@ -59,6 +64,7 @@ class pg
 				else $t = $this->pre.'<a target="'.$this->target.'" href="'.$url.$separate.$p.'">'.$p.'</a>'.$this->end;
 				$pageString .= $t;
 			}
+			$pageString .= $this->pre.'<a>共'.$this->number.'条数据</a>'.$this->end;
 			return $pageString;
 		}else
 		{
@@ -93,6 +99,7 @@ class pg
 			}
 			if(isset($endString))$pageString .= $endString;
 			$pageString .= $this->pre.'<a target="'.$this->target.'" href="'.$url.$separate.$pages.'">&rsaquo;|</a>'.$this->end;
+			$pageString .= $this->pre.'<a>共'.$this->number.'条数据</a>'.$this->end;
 			return $pageString;
 		}
 	}

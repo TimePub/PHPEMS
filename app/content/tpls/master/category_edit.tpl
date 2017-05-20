@@ -48,7 +48,7 @@
 					<div class="control-group">
 						<label for="modulename" class="control-label">在首页展示内容</label>
 						<div class="controls">
-							<input type="text" name="args[catindex]" value="{x2;if:$cat['catindex']}{x2;$category['catindex']}{x2;else}0{x2;endif}" datatype="number" needle="needle" msg="您必须填写展示内容条数">
+							<input type="text" name="args[catindex]" value="{x2;if:$category['catindex']}{x2;$category['catindex']}{x2;else}0{x2;endif}" datatype="number" needle="needle" msg="您必须填写展示内容条数"> 条
 							<span class="help-block">填写展示内容条数，如果不需要在首页展示，请填写0。</span>
 						</div>
 					</div>

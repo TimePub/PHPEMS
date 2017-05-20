@@ -1,6 +1,6 @@
 <?php
 
-class db
+class db2
 {
 	private $queryid = 0;
 	private $linkid = 0;

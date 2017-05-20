@@ -1,5 +1,5 @@
                             <table class="table table-hover table-bordered">
-								<tr class="success"><td colspan="6">{x2;$knows['knows']}</td></tr>
+								<tr class="success"><td colspan="2">{x2;$knows['knows']}</td></tr>
 	                            <tr>
 	                            {x2;tree:$questype,quest,qid}
 	                            	<td>
@@ -10,7 +10,7 @@
 	                            	<a href="javascript:;" class="btn">练习</a>
 	                            	{x2;endif}
 	                            	</td>
-	                            	{x2;if:v:qid % 6 == 0}
+	                            	{x2;if:v:qid % 2 == 0}
                             	</tr>
                             	<tr>
 	                            	{x2;endif}

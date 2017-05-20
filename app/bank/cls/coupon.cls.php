@@ -12,7 +12,8 @@ class coupon_bank
 	public function _init()
 	{
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->ev = $this->G->make('ev');
 		$this->files = $this->G->make('files');
 	}
@@ -30,7 +31,7 @@ class coupon_bank
 
 	public function delCoupon($id)
 	{
-		return $this->db->delElement(array('table' => 'coupon','query' => "couponsn = '{$id}'"));
+		return $this->db->delElement(array('table' => 'coupon','query' => array(array("AND","couponsn = :couponsn",'couponsn',$id))));
 	}
 
 	public function addCoupon($args)
@@ -40,15 +41,15 @@ class coupon_bank
 
 	public function getCouponById($id)
 	{
-		$data = array(false,'coupon',"couponsn = '{$id}'");
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'coupon',array(array("AND","couponsn = :couponsn",'couponsn',$id)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql);
 	}
 
 	public function getAllOKCoupon($stime,$etime)
 	{
-		$data = array('couponsn','coupon',array("couponaddtime >= '{$stime}'","couponaddtime <= '{$etime}'","couponstatus = 0"),false,false,false);
-		$sql = $this->sql->makeSelect($data);
+		$data = array('couponsn','coupon',array(array("AND","couponaddtime >= :couponaddstime",'couponaddstime',$stime),array("AND","couponaddtime <= :couponaddetime",'couponaddetime',$etime),array("AND","couponstatus = 0")),false,false,false);
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetchAll($sql);
 	}
 
@@ -69,8 +70,8 @@ class coupon_bank
 			$args = array('usercoin' => $coin);
 			$user->modifyUserInfo($args,$userid);
 			$args = array('couponstatus' => 1);
-			$data = array('coupon',$args,"couponsn = '{$id}'");
-			$sql = $this->sql->makeUpdate($data);
+			$data = array('coupon',$args,array(array("AND","couponsn = :couponsn",'couponsn',$id)));
+			$sql = $this->pdosql->makeUpdate($data);
 			$this->db->exec($sql);
 			return 200;
 		}

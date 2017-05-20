@@ -12,7 +12,8 @@ class app
 		$this->session = $this->G->make('session');
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pdodb');
 		$this->category = $this->G->make('category');
 		$this->html = $this->G->make('html');
 		$this->module = $this->G->make('module');
@@ -69,7 +70,7 @@ class app
 			if($this->ev->get('modifyad'))
 			{
 				$args = $this->ev->get('args');
-				$args['adstyle'] = $this->ev->addSlashes(serialize($args['adstyle']));
+				$args['adstyle'] = $args['adstyle'];
 				$adid = $this->ev->get('adid');
 				$this->ad->modifyAd($adid,$args);
 				$message = array(
@@ -111,7 +112,7 @@ class app
 			{
 				$blockid = $this->ev->get('blockid');
 				$args = $this->ev->get('args');
-				$args['blockcontent'] = $this->ev->addSlashes(serialize($args['blockcontent']));
+				$args['blockcontent'] = $args['blockcontent'];
 				unset($args['blocktype']);
 				$this->block->modifyBlock($blockid,$args);
 				$message = array(
@@ -148,7 +149,7 @@ class app
 			if($this->ev->get('addblock'))
 			{
 				$args = $this->ev->get('args');
-				$args['blockcontent'] = $this->ev->addSlashes(serialize($args['blockcontent']));
+				$args['blockcontent'] = $args['blockcontent'];
 				$this->block->addBlock($args);
 				$message = array(
 					'statusCode' => 200,
@@ -235,7 +236,7 @@ class app
 				$posid = $this->ev->get('posid');
 				$page = $this->ev->get('page');
 				$args = $this->ev->get('args');
-				$args['blockcontent'] = $this->ev->addSlashes(serialize($args['blockcontent']));
+				$args['blockcontent'] = $args['blockcontent'];
 				unset($args['blocktype']);
 				$this->block->modifyBlock($posid,$args);
 				$message = array(
@@ -274,7 +275,7 @@ class app
 			if($this->ev->get('addpos'))
 			{
 				$args = $this->ev->get('args');
-				$args['blockcontent'] = $this->ev->addSlashes(serialize($args['blockcontent']));
+				$args['blockcontent'] = $args['blockcontent'];
 				$this->block->addBlock($args);
 				$message = array(
 					'statusCode' => 200,
@@ -380,7 +381,7 @@ class app
 
 			default:
 			$page = $this->ev->get('page');
-			if($search['posid'])$args = array("pcposid = '{$search['posid']}'");
+			if($search['posid'])$args = array(array("AND","pcposid = :pcposid",'pcposid',$search['posid']));
 			else $args = 1;
 			$poses = $this->position->getPosList();
 			$positions = $this->position->getPosContentList($args,$page,10);
@@ -432,6 +433,22 @@ class app
 			}
 			break;
 
+			case 'lite':
+			$ids = $this->ev->get('ids');
+			foreach($ids as $key => $p)
+			{
+				$args = array('catlite' => $p);
+				$this->category->modifyCategory($key,$args);
+			}
+			$message = array(
+				'statusCode' => 200,
+				"message" => "操作成功",
+			    "callbackType" => "forward",
+			    "forwardUrl" => "reload"
+			);
+			$this->G->R($message);
+			break;
+
 			case 'ajax':
 			switch($this->ev->url(4))
 			{
@@ -440,7 +457,7 @@ class app
 				$out = '';
 				if($catid)
 				{
-					$child = $this->category->getCategoriesByArgs("catparent = '{$catid}'");
+					$child = $this->category->getCategoriesByArgs(array(array("AND","catparent = :catparent",':catparent',$catid)));
 					foreach($child as $c)
 					{
 						$out .= '<option value="'.$c['catid'].'">'.$c['catname'].'</option>';
@@ -465,7 +482,7 @@ class app
 
 				case 'getchilddata':
 				$catid = $this->ev->get('catid');
-				$child = $this->category->getCategoriesByArgs("catparent = '{$catid}'");
+				$child = $this->category->getCategoriesByArgs(array(array("AND","catparent = :catparent",':catparent',$catid)));
 				exit(json_encode($child));
 				$this->tpl->assign('child',$child);
 				$this->tpl->assign('catid',$catid);
@@ -489,8 +506,6 @@ class app
 				$message = array(
 					'statusCode' => 200,
 					"message" => "操作成功",
-				    "target" => "",
-				    "rel" => "",
 				    "callbackType" => "forward",
 				    "forwardUrl" => "index.php?content-master-category&parent={$cat['catparent']}&page={$page}"
 				);
@@ -518,7 +533,7 @@ class app
 			$page = $this->ev->get('page');
 			$cat = $this->category->getCategoryById($catid);
 			$catstring = $this->category->getChildCategoryString($catid,0);
-			$contents = $this->content->getContentList("contentcatid = '{$catid}'");
+			$contents = $this->content->getContentList(array(array("AND","contentcatid = :contentcatid",'contentcatid',$catid)));
 			if($catstring || $contents['number'])
 			{
 				$message = array(
@@ -543,7 +558,7 @@ class app
 			$page = intval($this->ev->get('page'));
 			$page = $page?$page:1;
 			$parent = intval($this->ev->get('parent'));
-			$categorys = $this->category->getCategoryList("catparent = '{$parent}'",$page,5);
+			$categorys = $this->category->getCategoryList(array(array("AND","catparent = :catparent",'catparent',$parent)),$page,5);
 			$categories = $this->category->getAllCategory();
 			$this->tpl->assign('parent',$parent);
 			$this->tpl->assign('categorys',$categorys);
@@ -605,7 +620,7 @@ class app
 			else
 			{
 				$catid = intval($this->ev->get('catid'));
-				$parentcat = $this->category->getCategoriesByArgs("catparent = 0");
+				$parentcat = $this->category->getCategoriesByArgs(array(array("AND","catparent = 0")));
 				$modules = $this->module->getModulesByApp($this->G->app);
 				$tpls = array();
 				foreach(glob("app/content/tpls/app/content_*.tpl") as $p)
@@ -732,7 +747,7 @@ class app
 						if($key)$contentids[] = $key;
 					}
 					$contentids = implode(',',$contentids);
-					$parentcat = $this->category->getCategoriesByArgs("catparent = 0");
+					$parentcat = $this->category->getCategoriesByArgs(array(array("AND","catparent = 0")));
 					$this->tpl->assign('parentcat',$parentcat);
 					$this->tpl->assign('contentids',$contentids);
 					$this->tpl->display('content_move');
@@ -747,7 +762,7 @@ class app
 						if($key)$contentids[] = $key;
 					}
 					$contentids = implode(',',$contentids);
-					$parentcat = $this->category->getCategoriesByArgs("catparent = 0");
+					$parentcat = $this->category->getCategoriesByArgs(array(array("AND","catparent = 0")));
 					$this->tpl->assign('parentcat',$parentcat);
 					$this->tpl->assign('contentids',$contentids);
 					$this->tpl->display('content_copy');
@@ -884,28 +899,28 @@ class app
 			if(!$catid)$catid = $search['contentcatid'];
 			$page = $page?$page:1;
 			$categories = $this->category->getAllCategory();
-			$parentcat = $this->category->getCategoriesByArgs(array("catparent = 0","catapp = 'content'"));
+			$parentcat = $this->category->getCategoriesByArgs(array(array("AND","catparent = 0"),array("AND","catapp = 'content'")));
 			if($catid)
 			{
 				$childstring = $this->category->getChildCategoryString($catid);
-				$args = array("contentcatid IN ({$childstring})");
+				$args = array(array("AND","find_in_set(contentcatid,:contentcatid)",'contentcatid',$childstring));
 			}
 			else $args = array();
 			if($search['contentid'])
 			{
-				$args[] = "contentid = '{$search['contentid']}'";
+				$args[] = array("AND","contentid = :contentid",'contentid',$search['contentid']);
 			}
 			else
 			{
-				if($search['contentcatid'])$args[] = "contentcatid = '{$search['contentcatid']}'";
-				if($search['contentmoduleid'])$args[] = "contentmoduleid = '{$search['contentmoduleid']}'";
-				if($search['stime'])$args[] = "contentinputtime >= '".strtotime($search['stime'])."'";
-				if($search['etime'])$args[] = "contentinputtime <= '".strtotime($search['etime'])."'";
-				if($search['keyword'])$args[] = "contenttitle LIKE '%{$search['keyword']}%'";
+				if($search['contentcatid'])$args[] = array("AND","contentcatid = :contentcatid",'contentcatid',$search['contentcatid']);
+				if($search['contentmoduleid'])$args[] = array("AND","contentmoduleid = :contentmoduleid",'contentmoduleid',$search['contentmoduleid']);
+				if($search['stime'])$args[] = array("AND","contentinputtime >= :contentinputtime",'contentinputtime',strtotime($search['stime']));
+				if($search['etime'])$args[] = array("AND","contentinputtime <= :contentinputtime",'contentinputtime',strtotime($search['etime']));
+				if($search['keyword'])$args[] = array("AND","contenttitle LIKE :contenttitle",'contenttitle',"%{$search['keyword']}%");
 				if($search['username'])
 				{
 					$user = $this->user->getUserByUserName($search['username']);
-					$args[] = "contentuserid = '{$user['userid']}'";
+					$args[] = array("AND","contentuserid = :contentuserid",'contentuserid',$user['userid']);
 				}
 			}
 			$contents = $this->content->getContentList($args,$page,10);
@@ -1128,7 +1143,7 @@ class app
 			{
 				$args = $this->ev->post('args');
 				$errmsg = false;
-				if($this->module->searchModules("modulecode = '{$args['modulecode']}'"))
+				if($this->module->searchModules(array(array("AND","modulecode = :modulecode",'modulecode',$args['modulecode']))))
 				{
 					$message = array(
 						'statusCode' => 300,
@@ -1209,7 +1224,7 @@ class app
 			{
 				$args = $this->ev->get('args');
 				$args['workday'] = strtotime($args['workday']);
-				$args['workinfo'] = $this->ev->addSlashes(serialize($args['workinfo']));
+				$args['workinfo'] = $args['workinfo'];
 				$this->work->addWork($args);
 				$message = array(
 					'statusCode' => 200,
@@ -1232,7 +1247,7 @@ class app
 			if($this->ev->get('modifywork'))
 			{
 				$args = $this->ev->get('args');
-				$args['workinfo'] = $this->ev->addSlashes(serialize($args['workinfo']));
+				$args['workinfo'] = $args['workinfo'];
 				$this->work->modifyWork($workid,$args);
 				$message = array(
 					'statusCode' => 200,

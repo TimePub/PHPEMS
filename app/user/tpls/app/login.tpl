@@ -39,11 +39,6 @@
 		<div class="logbotm"></div>
 	</div>
 </div>
-<script type="text/javascript">
-$(document).ready(function(){
-	window.localStorage.removeItem('questions');
-});
-</script>
 {x2;include:foot}
 </body>
 </html>

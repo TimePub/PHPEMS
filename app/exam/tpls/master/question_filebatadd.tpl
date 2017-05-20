@@ -27,7 +27,7 @@
 				<div class="control-group">
 					<label for="username" class="control-label">示范格式</label>
 					<div class="controls">
-						<img src="app/exam/styles/image/importdemo.jpg" />
+						<img src="app/exam/styles/image/demo.png" />
 					</div>
 				</div>
 				<div class="control-group">

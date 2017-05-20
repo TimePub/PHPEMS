@@ -12,7 +12,7 @@ class app
 		$this->ev = $this->G->make('ev');
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->html = $this->G->make('html');
 		$this->session = $this->G->make('session');
@@ -27,12 +27,36 @@ class app
 
 	public function test()
 	{
-		$userid = 110;
-		$username = 'phpemsnewtester';
-		$email = '2787686388@qq.com';
-		$ts = TIME;
-		echo '<a href="index.php?exam-api-login&userid='.$userid.'&username='.$username.'&useremail='.$email.'&ts='.$ts.'&sign='.md5($userid.$username.$email.$this->sc.$ts).'">直接登录</a>';
-		exit;
+		$page = intval($this->ev->get('page'));
+		$r = glob("csv/*.csv");
+		if(!$r[$page])
+		{
+			echo 'OK';
+			exit;
+		}
+		setlocale(LC_ALL,'zh_CN');
+		$handle = fopen($r[$page],"r");
+		$out = "out/".$r[$page];
+		echo $out;
+		$fp = fopen($out,"w");
+		$i = 0;
+		$alldata = array();
+		while ($data = fgetcsv($handle,1024))
+		{
+			if($i && $data[5])
+			{
+				$code = $data[5];
+				$cnt = strip_tags(file_get_contents("http://oypx.kjcytk.com/member/QuestionAnswerOne.aspx?QuestionId={$data[5]}&action=dYhUr5v9eh0="));
+				$cnt = iconv("utf-8","gbk",$cnt);
+				$data[6] = $cnt;
+				fputcsv($fp,$data);
+			}
+			$i++;
+		}
+		fclose($handle);
+		fclose($fp);
+		$page++;
+		echo "<script>window.location = 'index.php?exam-api-test&page={$page}'</script>";
 	}
 
 	//通过接口进行登录

@@ -10,7 +10,9 @@ class app
 		$this->ev = $this->G->make('ev');
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+
+		$this->db = $this->G->make('pdodb');
 		$this->pg = $this->G->make('pg');
 		$this->html = $this->G->make('html');
 		$this->files = $this->G->make('files');
@@ -27,14 +29,14 @@ class app
 	public function index()
 	{
 		$catids = array();
-		$catids['index'] = $this->category->getCategoriesByArgs(array("catindex > 0"));
+		$catids['index'] = $this->category->getCategoriesByArgs(array(array("AND","catindex > 0")));
 		$contents = array();
 		if($catids['index'])
 		{
 			foreach($catids['index'] as $p)
 			{
 				$catstring = $this->category->getChildCategoryString($p['catid']);
-				$contents[$p['catid']] = $this->content->getContentList("contentcatid IN ({$catstring})",1,$p['catindex']?$p['catindex']:10);
+				$contents[$p['catid']] = $this->content->getContentList(array(array("AND","find_in_set(contentcatid,:catstring)",'catstring',$catstring)),1,$p['catindex']?$p['catindex']:10);
 			}
 		}
 		$favor = $this->G->make('favor','exam');
@@ -44,7 +46,7 @@ class app
 		$students['tm'] = $favor->getBestStudentsThisMonth();
 		$basics = array();
 		$basics['hot'] = $basic->getBestBasics();
-		$basics['new'] = $basic->getBasicList(1,10);
+		$basics['new'] = $basic->getBasicList(1,6);
 		$this->tpl->assign('basics',$basics);
  		$this->tpl->assign('students',$students);
 		$this->tpl->assign('contents',$contents);
@@ -61,9 +63,9 @@ class app
 		if($cat['catparent'])$catparent = $this->category->getCategoryById($cat['catparent']);
 		$catbread = $this->category->getCategoryPos($catid);
 		$catstring = $this->category->getChildCategoryString($catid);
-		$catchildren = $this->category->getCategoriesByArgs(array("catparent = '{$catid}'","catinmenu = '0'"));
-		$contents = $this->content->getContentList("contentcatid IN ({$catstring})",$page);
-		$catbrother = $this->category->getCategoriesByArgs(array("catparent = '{$cat['catparent']}'","catinmenu = '0'"));
+		$catchildren = $this->category->getCategoriesByArgs(array(array('AND',"catparent = :catparent",'catparent',$catid),array('AND',"catinmenu = '0'")));
+		$contents = $this->content->getContentList(array(array("AND","find_in_set(contentcatid,:contentcatid)",'contentcatid',$catstring)),$page);
+		$catbrother = $this->category->getCategoriesByArgs(array(array('AND',"catparent = :catparent",'catparent',$cat['catparent']),array('AND',"catinmenu = '0'")));
 		if($cat['cattpl'])$template = $cat['cattpl'];
 		else $template = 'category_default';
 		$this->tpl->assign('cat',$cat);
@@ -86,7 +88,7 @@ class app
 		{
 			$catbread = $this->category->getCategoryPos($content['contentcatid']);
 			$cat = $this->category->getCategoryById($content['contentcatid']);
-			$catbrother = $this->category->getCategoriesByArgs(array("catparent = '{$cat['catparent']}'","catinmenu = '0'"));
+			$catbrother = $this->category->getCategoriesByArgs(array(array('AND',"catparent = :catparent",'catparent',$cat['catparent']),array('AND',"catinmenu = '0'")));
 			if($content['contenttemplate'])$template = $content['contenttemplate'];
 			else $template = 'content_default';
 			$nearContent = $this->content->getNearContentById($contentid,$content['contentcatid']);

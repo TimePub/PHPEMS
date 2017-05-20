@@ -12,7 +12,7 @@ class app
 		$this->ev = $this->G->make('ev');
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->html = $this->G->make('html');
 		$this->session = $this->G->make('session');
@@ -37,16 +37,14 @@ class app
 		$this->basic = $this->G->make('basic','exam');
 		$this->section = $this->G->make('section','exam');
 		$this->question = $this->G->make('question','exam');
-		$this->info = $this->G->make('info','exam');
 		$this->favor = $this->G->make('favor','exam');
-		$this->answer = $this->G->make('answer','exam');
 		$this->sessionvars = $this->exam->getExamSessionBySessionid();
 		$this->questypes = $this->basic->getQuestypeList();
 		$this->subjects = $this->basic->getSubjectList();
 		$openbasics = trim($this->sessionvars['examsessionopenbasics']," ,");
 		$this->data['openbasics'] = $this->basic->getBasicsByApi($openbasics);
 		if(!$this->data['openbasics'])$this->data['openbasics'] = $this->basic->getOpenBasicsByUserid($this->_user['sessionuserid']);
-		//if(!$this->data['openbasics'])$this->data['openbasics'] = $this->basic->getBasicsByArgs("basicdemo = '1'");
+		//if(!$this->data['openbasics'])$this->data['openbasics'] = $this->basic->getBasicsByArgs(array(array("AND","basicdemo = 1")));
 		if(!$this->_user['sessioncurrent'] || !$this->data['openbasics'][$this->_user['sessioncurrent']])
 		{
 			$this->data['currentbasic'] = current($this->data['openbasics']);
@@ -62,7 +60,7 @@ class app
 		$this->tpl->assign('data',$this->data);
 		$this->tpl->assign('questypes',$this->questypes);
 		$this->tpl->assign('subjects',$this->subjects);
-		$this->tpl->assign('globalsections',$this->section->getSectionListByArgs("sectionsubjectid = '{$this->data['currentbasic']['basicsubjectid']}'"));
+		$this->tpl->assign('globalsections',$this->section->getSectionListByArgs(array(array("AND","sectionsubjectid = :sectionsubjectid",'sectionsubjectid',$this->data['currentbasic']['basicsubjectid']))));
 		$this->tpl->assign('globalknows',$this->section->getAllKnowsBySubject($this->data['currentbasic']['basicsubjectid']));
 		$this->tpl->assign('_user',$this->user->getUserById($this->_user['sessionuserid']));
 		$this->tpl->assign('userhash',$this->ev->get('userhash'));
@@ -107,7 +105,7 @@ class app
 				case 'getknowsbysectionid':
 				$sectionid = $this->ev->get('sectionid');
 				$knowsids = trim(implode(",",$this->data['currentbasic']['basicknows'][$sectionid]),", ");
-				$aknows = $this->section->getKnowsListByArgs(array("knowsid IN ({$knowsids})","knowsstatus = 1"));
+				$aknows = $this->section->getKnowsListByArgs(array(array("AND","find_in_set(knowsid,:knowsid)",'knowsid',$knowsids),array("AND","knowsstatus = 1")));
 				if($sectionid)
 				$data = '<option value="0">选择知识点</option>'."\n";
 				else
@@ -131,7 +129,7 @@ class app
 				case 'getsectionsbysubjectid':
 				$esid = $this->ev->get('subjectid');
 				$knowsids = trim(implode(",",$this->data['currentbasic']['basicknows'][$sectionid]),", ");
-				$aknows = $this->section->getSectionListByArgs(array("sectionsubjectid = '{$esid}'"));
+				$aknows = $this->section->getSectionListByArgs(array(array("AND","sectionsubjectid = :sectionsubjectid",'sectionsubjectid',$esid)));
 				$data = array(array(0,'选择章节'));
 				foreach($aknows as $knows)
 				{
@@ -149,14 +147,14 @@ class app
 				if($questionid && !$args['examsessionsign'][$questionid])
 				{
 					$args['examsessionsign'][$questionid] = 1;
-					$args['examsessionsign'] = $this->ev->addSlashes(serialize($args['examsessionsign']));
+					$args['examsessionsign'] = $this->ev->addSlashes($args['examsessionsign']);
 					$this->exam->modifyExamSession($args);
 					exit('1');
 				}
 				else
 				{
 					unset($args['examsessionsign'][$questionid]);
-					$args['examsessionsign'] = $this->ev->addSlashes(serialize($args['examsessionsign']));
+					$args['examsessionsign'] = $this->ev->addSlashes($args['examsessionsign']);
 					$this->exam->modifyExamSession($args);
 					exit('2');
 				}
@@ -227,7 +225,7 @@ class app
 				{
 					if(!$sectionid)$knows = $this->section->getAllKnowsBySubject($this->data['currentsubject']['subjectid']);
 					else
-					$knows = $this->section->getKnowsListByArgs(array("knowssectionid = '{$sectionid}'","knowsstatus = 1"));
+					$knows = $this->section->getKnowsListByArgs(array(array("AND","knowssectionid = :knowssectionid",'knowssectionid',$sectionid),array("AND","knowsstatus = 1")));
 					foreach($knows as $key => $p)
 					$knowids .= "{$key},";
 					$knowids = trim($knowids," ,");
@@ -249,7 +247,7 @@ class app
 				{
 					if($t == '')unset($question[$key]);
 				}
-				$this->exam->modifyExamSession(array('examsessionuseranswer'=>$this->ev->addSlashes(serialize($question))));
+				$this->exam->modifyExamSession(array('examsessionuseranswer'=>$this->ev->addSlashes($question)));
 				echo is_array($question)?count($question):0;
 				exit;
 				break;
@@ -277,7 +275,8 @@ class app
 			//计算主观题分数和显示分数
 			case 'makescore':
 			if($this->ev->get('makescore'))
-			{				$questype = $this->basic->getQuestypeList();
+			{
+				$questype = $this->basic->getQuestypeList();
 				$sessionvars = $this->exam->getExamSessionBySessionid();
 				$score = $this->ev->get('score');
 				$sumscore = 0;
@@ -293,7 +292,7 @@ class app
 					$sumscore = $sumscore + floatval($p);
 				}
 				$sessionvars['examsessionscore'] = $sumscore;
-				$args['examsessionscorelist'] = $this->ev->addSlashes(serialize($sessionvars['examsessionscorelist']));
+				$args['examsessionscorelist'] = $sessionvars['examsessionscorelist'];
 				$allnumber = floatval(count($sessionvars['examsessionscorelist']));
 				$args['examsessionscore'] = floatval(($sessionvars['examsessionscore']*100)/$allnumber);
 				$args['examsessionstatus'] = 2;
@@ -505,8 +504,8 @@ class app
 						}
 					}
 				}
-				$args['examsessionuseranswer'] = $this->ev->addSlashes(serialize($question));
-				$args['examsessionscorelist'] = $this->ev->addSlashes(serialize($scorelist));
+				$args['examsessionuseranswer'] = $question;
+				$args['examsessionscorelist'] = $scorelist;
 				if(!$needhand)
 				{
 					$args['examsessionstatus'] = 2;
@@ -664,7 +663,7 @@ class app
 				{
 					$args['knowsid'] = '';
 					if($args['sectionid'])
-					$knowsids = $this->section->getKnowsListByArgs(array("knowssectionid = '{$args['sectionid']}'","knowsstatus = 1"));
+					$knowsids = $this->section->getKnowsListByArgs(array(array("AND","knowssectionid = :knowssectionid",'knowssectionid',$args['sectionid']),array("AND","knowsstatus = 1")));
 					else
 					{
 						$knowsids = $this->section->getAllKnowsBySubject($this->data['currentsubject']['subjectid']);
@@ -692,7 +691,7 @@ class app
 				$questionids = $this->question->selectQuestionsByKnows($args['knowsid'],$args['number'],$dt);
 				**/
 				$args['number'] = array($args['questid'] => 10);
-				$questionids = $this->question->selectQuestionsByKnows($args['knowsid'],$args['number'],$args['questid']);
+				$questionids = $this->question->selectQuestionsByKnows($args['knowsid'],$args['number']);
 				$questions = array();
 				$questionrows = array();
 				foreach($questionids['question'] as $key => $p)
@@ -722,10 +721,10 @@ class app
 							}
 						}
 					}
-					else $questionrows[$key][$p] = $this->exam->getQuestionRowsByArgs("qrid = '{$p}'");
+					else $questionrows[$key][$p] = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$p)));
 				}
-				$sargs['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questionids'=>$questionids,'questions'=>$questions,'questionrows'=>$questionrows)));
-				$sargs['examsessionsetting'] = $this->ev->addSlashes(serialize($args));
+				$sargs['examsessionquestion'] = array('questionids'=>$questionids,'questions'=>$questions,'questionrows'=>$questionrows);
+				$sargs['examsessionsetting'] = $args;
 				$sargs['examsessionstarttime'] = TIME;
 				$sargs['examsessionuseranswer'] = NULL;
 				$sargs['examsession'] = $args['title'];
@@ -751,7 +750,7 @@ class app
 			}
 			else
 			{
-				$sections = $this->section->getSectionListByArgs("sectionsubjectid = '{$this->data['currentbasic']['basicsubjectid']}'");
+				$sections = $this->section->getSectionListByArgs(array(array("AND","sectionsubjectid = :sectionsubjectid",'sectionsubjectid',$this->data['currentbasic']['basicsubjectid'])));
 				$knows = $this->section->getAllKnowsBySubject($this->data['currentbasic']['basicsubjectid']);
 				$knowids = '';
 				foreach($knows as $key => $p)
@@ -850,9 +849,9 @@ class app
 			$args = array(
 							'examsession' => $eh['ehexam'].'重做',
 							'examsessiontype'=>$eh['ehtype'] == 2?1:$eh['ehtype'],
-							'examsessionsetting'=>$this->ev->addSlashes(serialize($eh['ehsetting'])),
+							'examsessionsetting'=>$eh['ehsetting'],
 							'examsessionbasic'=>$eh['ehbasicid'],
-							'examsessionquestion'=>$this->ev->addSlashes(serialize($eh['ehquestion'])),
+							'examsessionquestion'=>$eh['ehquestion'],
 							'examsessionuseranswer'=>'',
 							'examsessiontime'=>$eh['ehtime'],
 							'examsessionscorelist'=>'',
@@ -900,7 +899,7 @@ class app
 			$ehtype = intval($this->ev->get('ehtype'));
 			$page = $page > 0?$page:1;
 			$basicid = $this->data['currentbasic']['basicid'];
-			$exams = $this->favor->getExamHistoryListByArgs($page,10,array("ehuserid = '".$this->_user['sessionuserid']."'","ehbasicid = '{$basicid}'","ehtype = '{$ehtype}'"));
+			$exams = $this->favor->getExamHistoryListByArgs($page,10,array(array("AND","ehuserid = :ehuserid",'ehuserid',$this->_user['sessionuserid']),array("AND","ehbasicid = :ehbasicid",'ehbasicid',$basicid),array("AND","ehtype = :ehtype",'ehtype',$ehtype)));
 			foreach($exams['data'] as $key => $p)
 			{
 				$exams['data'][$key]['errornumber'] = 0;
@@ -956,7 +955,7 @@ class app
 					}
 				}
 			}
-			$avgscore = floatval($this->favor->getAvgScore(array("ehuserid = '".$this->_user['sessionuserid']."'","ehbasicid = '{$basicid}'","ehtype = '{$ehtype}'")));
+			$avgscore = floatval($this->favor->getAvgScore(array(array("AND","ehuserid = :ehuserid",'ehuserid',$this->_user['sessionuserid']),array("AND","ehbasicid = :ehbasicid",'ehbasicid',$basicid),array("AND","ehtype = :ehtype",'ehtype',$ehtype))));
 			$this->tpl->assign('ehtype',$ehtype);
 			$this->tpl->assign('page',$page);
 			$this->tpl->assign('exams',$exams);
@@ -1013,7 +1012,7 @@ class app
 			$page = $this->ev->get('page');
 			$type = $this->ev->get('type');
 			$search = $this->ev->get('search');
-			$tmp = $this->section->getKnowsListByArgs(array("knowssectionid = '{$search['sectionid']}'","knowsstatus = 1"));
+			$tmp = $this->section->getKnowsListByArgs(array(array("AND","knowssectionid = :knowssectionid",'knowssectionid',$search['sectionid']),array("AND","knowsstatus = 1")));
 			if($search['sectionid'] && !$search['knowsid'])
 			{
 				$search['knowsid'] = '';
@@ -1025,19 +1024,19 @@ class app
 			}
 			$search['knowsid'] = trim($search['knowsid']," ,");
 			$page = $page > 0?$page:1;
-			$args = array("favorsubjectid = '{$this->data['currentbasic']['basicsubjectid']}'","favoruserid = '{$this->_user['sessionuserid']}'");
-			if($search['knowsid'])$args[] = "quest2knows.qkknowsid IN ({$search['knowsid']})";
+			$args = array(array("AND","favorsubjectid = :favorsubjectid",'favorsubjectid',$this->data['currentbasic']['basicsubjectid']),array("AND","favoruserid = :favoruserid",'favoruserid',$this->_user['sessionuserid']));
+			if($search['knowsid'])$args[] = array("AND","find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid',$search['knowsid']);
 			if($type)
 			{
-				if($search['questype'])$args[] = "questionrows.qrtype = '{$search['questype']}'";
+				if($search['questype'])$args[] =  array("AND","questionrows.qrtype = :qrtype",'qrtype',$search['questype']);
 				$favors = $this->favor->getFavorListByUserid($page,20,$args,1);
 			}
 			else
 			{
-				if($search['questype'])$args[] = "questions.questiontype = '{$search['questype']}'";
+				if($search['questype'])$args[] = array("AND","questions.questiontype = :questiontype",'questiontype',$search['questype']);
 				$favors = $this->favor->getFavorListByUserid($page,20,$args);
 			}
-			$sections = $this->section->getSectionListByArgs("sectionsubjectid = '{$this->_user['sessioncurrent']}'");
+			$sections = $this->section->getSectionListByArgs(array(array("AND","sectionsubjectid = :sectionsubjectid",'sectionsubjectid',$this->_user['sessioncurrent'])));
 			$questype = $this->basic->getQuestypeList();
 			$this->tpl->assign('sections',$sections);
 			$this->tpl->assign('questype',$questype);

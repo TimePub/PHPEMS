@@ -74,6 +74,10 @@
 							</div>
 						</div>
 					</li>
+					{x2;if:v:hid % 6 == 0}
+					</ul>
+					<ul class="thumbnails">
+					{x2;endif}
 					{x2;endtree}
 				</ul>
 			</div>
@@ -97,6 +101,10 @@
 							</div>
 						</div>
 					</li>
+					{x2;if:v:hid % 6 == 0}
+					</ul>
+					<ul class="thumbnails">
+					{x2;endif}
 					{x2;endtree}
 				</ul>
 			</div>

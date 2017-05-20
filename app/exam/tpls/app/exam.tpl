@@ -98,6 +98,10 @@
 							</div>
 						</div>
 					</li>
+					{x2;if:v:eid % 6 == 0}
+					</ul>
+					<ul class="thumbnails">
+					{x2;endif}
 					{x2;endtree}
 					<div class="pagination pagination-right">
 			            <ul>{x2;$exams['pages']}</ul>

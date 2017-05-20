@@ -250,7 +250,7 @@ class tpl
 	public function compileSql(&$content)
 	{
 		$limit = '/{x2;sql:"([^"]+)",([a-z]+)}/e';
-		$replace = "'<?php \$\${2}=\\\$this->G->make(\'db\')->fetchAll(\"'.\$this->_compileArray('\${1}').'\"); ?>'";
+		$replace = "'<?php \$\${2}=\\\$this->G->make(\'pepdo\')->fetchAll(array(\"sql\"=>\"'.\$this->_compileArray('\${1}').'\")); ?>'";
 		$content = preg_replace($limit,$replace,$content);
 	}
 

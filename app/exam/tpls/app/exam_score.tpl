@@ -20,6 +20,11 @@
 					</li>
 				</ul>
 				<legend class="text-center"><h3>{x2;$sessionvars['examsession']}</h3></legend>
+				{x2;if:$data['currentbasic']['basicexam']['notviewscore']}
+				<div class="alert alert-info">
+					<p>您已经成功交卷，请等待教师统计并公布分数。</p>
+				</div>
+				{x2;else}
                 <div>
                 	<div class="span4">
                 		<div class="boardscore">
@@ -52,9 +57,12 @@
                             <td colspan="5" align="left">本次考试共<b class="text-warning">{x2;$allnumber}</b>道题，总分<b class="text-warning">{x2;$sessionvars['examsessionsetting']['examsetting']['score']}</b>分，您做对<b class="text-warning">{x2;$allright}</b>道题，得到<b class="text-warning">{x2;$sessionvars['examsessionscore']}</b>分</td>
                           </tr>
                        </table>
+                       {x2;if:$data['currentbasic']['basicexam']['model'] != 2}
                        <div class="text-center"><a href="index.php?exam-app-history-view&ehid={x2;$ehid}" class="btn btn-info">查看答案和解析</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="index.php?exam-app-history&ehtype=2" class="btn btn-info">进入我的考试记录</a></div>
+                	   {x2;endif}
                 	</div>
                 </div>
+                {x2;endif}
 			</div>
 		</div>
 	</div>

@@ -12,7 +12,8 @@ class app
 		$this->session = $this->G->make('session');
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->html = $this->G->make('html');
 		$this->module = $this->G->make('module');
@@ -310,22 +311,21 @@ class app
 					$u .= "&search[{$key}]={$arg}";
 				}
 			}
-			if($search['userid'])$args = array("userid = '{$search['userid']}'");
-			elseif($search['username'])$args = array("username LIKE '%{$search['username']}%'");
-			elseif($search['useremail'])$args = array("useremail  LIKE '%{$search['useremail']}%'");
-			elseif($search['groupid'])$args = array("usergroupid = '{$search['groupid']}'");
-			else
-			$args = 1;
+			$args = array();
+			if($search['userid'])$args[] = array('AND',"userid = :userid",'userid',$search['userid']);
+			if($search['username'])$args[] = array('AND',"username LIKE :username",'username','%'.$search['username'].'%');
+			if($search['useremail'])$args[] = array('AND',"useremail  LIKE :useremail",'useremail','%'.$search['useremail'].'%');
+			if($search['groupid'])$args[] = array('AND',"usergroupid = :usergroupid",'usergroupid',$search['groupid']);
 			if($search['stime'] || $search['etime'])
 			{
 				if(!is_array($args))$args = array();
 				if($search['stime']){
 					$stime = strtotime($search['stime']);
-					$args[] = "userregtime >= '{$stime}'";
+					$args[] = array('AND',"userregtime >= :userregtime",'userregtime',$stime);
 				}
 				if($search['etime']){
 					$etime = strtotime($search['etime']);
-					$args[] = "userregtime <= '{$etime}'";
+					$args[] = array('AND',"userregtime <= :userregtime",'userregtime',$etime);
 				}
 			}
 			$users = $this->user->getUserList($page,10,$args);
@@ -467,7 +467,7 @@ class app
 			$page = $page>1?$page:1;
 			if($search['groupmoduleid'])
 			{
-				$args = "groupmoduleid = '{$search['groupmoduleid']}'";
+				$args = array(array('AND',"groupmoduleid = :groupmoduleid",'groupmoduleid',$search['groupmoduleid']));
 			}
 			$actors = $this->user->getUserGroupList($args,10,$page);
 			$this->tpl->assign('page',$page);
@@ -674,7 +674,7 @@ class app
 			{
 				$args = $this->ev->post('args');
 				$errmsg = false;
-				if($this->module->searchModules("modulecode = '{$args['modulecode']}'"))
+				if($this->module->searchModules(array(array('AND',"modulecode = :modulecode",'modulecode',$args['modulecode']))))
 				{
 					$message = array(
 						'statusCode' => 300,

@@ -36,9 +36,13 @@
 						<td>{x2;v:subject['subject']}</td>
 						<td>
 							<div class="btn-group">
-								<a class="btn" href="index.php?exam-master-basic-section&subjectid={x2;v:subject['subjectid']}&page={x2;$page}&basicid={x2;v:basic['basicid']}{x2;$u}" title="修改模型信息"><em class="icon-th-list"></em></a>
-								<a class="btn" href="index.php?exam-master-basic-modifysubject&subjectid={x2;v:subject['subjectid']}&page={x2;$page}{x2;$u}" title="修改模型信息"><em class="icon-edit"></em></a>
-								<a class="btn ajax" href="index.php?exam-master-basic-delsubject&subjectid={x2;v:subject['subjectid']}&page={x2;$page}{x2;$u}" title="删除模型"><em class="icon-remove"></em></a>
+								<a class="btn ajax" href="index.php?exam-master-basic-output&subjectid={x2;v:subject['subjectid']}&page={x2;$page}{x2;$u}" title="导出题库"><em class="icon-download-alt"></em></a>
+								<!--
+								<a class="btn ajax" href="index.php?exam-master-basic-outputknows&subjectid={x2;v:subject['subjectid']}&page={x2;$page}{x2;$u}" title="导出知识点"><em class="icon-download-alt"></em></a>
+								-->
+								<a class="btn" href="index.php?exam-master-basic-section&subjectid={x2;v:subject['subjectid']}&page=1&basicid={x2;v:basic['basicid']}{x2;$u}" title="章节列表"><em class="icon-th-list"></em></a>
+								<a class="btn" href="index.php?exam-master-basic-modifysubject&subjectid={x2;v:subject['subjectid']}&page={x2;$page}{x2;$u}" title="修改科目信息"><em class="icon-edit"></em></a>
+								<a class="btn ajax" href="index.php?exam-master-basic-delsubject&subjectid={x2;v:subject['subjectid']}&page={x2;$page}{x2;$u}" title="删除科目"><em class="icon-remove"></em></a>
 							</div>
 						</td>
 					</tr>

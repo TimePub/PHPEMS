@@ -44,11 +44,8 @@
 				<div class="control-group">
 					<label class="control-label">考试科目：</label>
 				  	<div class="controls">
-					  	<label class="radio inline">
-						  	<input type="hidden" name="args[examsubject]" value="{x2;$exam['examsubject']}" />
-						  	{x2;$subjects[$exam['examsubject']]['subject']}
-					  	</label>
-			  		</div>
+					  	<label class="radio">{x2;$subjects[$exam['examsubject']]['subject']}</label>
+					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label">考试时间：</label>
@@ -74,13 +71,30 @@
 			  			<input type="text" name="args[examsetting][passscore]" value="{x2;$exam['examsetting']['passscore']}" size="4" needle="needle" msg="你要为本考卷设置一个及格分数线" datatype="number"/>
 			  		</div>
 				</div>
-				{x2;tree:$questypes,questype,qid}
 				<div class="control-group">
+					<label class="control-label">题型排序</label>
+					<div class="controls">
+						<div class="sortable btn-group">
+							{x2;if:$exam['examsetting']['questypelite']}
+							{x2;tree:$exam['examsetting']['questypelite'],qlid,eqid}
+							<a class="btn questpanel panel_{x2;v:key}">{x2;$questypes[v:key]['questype']}<input type="hidden" name="args[examsetting][questypelite][{x2;v:key}]" value="1" class="questypepanelinput" id="panel_{x2;v:key}"/></a>
+							{x2;endtree}
+							{x2;else}
+							{x2;tree:$questypes,questype,qid}
+							<a class="btn questpanel panel_{x2;v:questype['questid']}">{x2;v:questype['questype']}<input type="hidden" name="args[examsetting][questypelite][{x2;v:questype['questid']}]" value="1" class="questypepanelinput" id="panel_{x2;v:questype['questid']}"/></a>
+							{x2;endtree}
+							{x2;endif}
+						</div>
+						<span class="help-block">拖拽进行题型排序</span>
+					</div>
+				</div>
+				{x2;tree:$questypes,questype,qid}
+				<div class="control-group questpanel panel_{x2;v:questype['questid']}">
 					<label class="control-label">{x2;v:questype['questype']}：</label>
 					<div class="controls">
 						<span class="info">共&nbsp;</span>
-						<input id="iselectallnumber_{x2;v:questype['questid']}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:questype['questid']}][number]" value="{x2;$exam['examsetting']['questype'][v:questype['questid']]['number']}" size="2" msg="您必须填写总题数"/>
-						<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][score]" value="{x2;$exam['examsetting']['questype'][v:questype['questid']]['score']}" size="2" msg="您必须填写每题的分值"/>
+						<input id="iselectallnumber_{x2;v:questype['questid']}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:questype['questid']}][number]" value="{x2;eval: echo intval($exam['examsetting']['questype'][v:questype['questid']]['number'])}" size="2" msg="您必须填写总题数"/>
+						<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][score]" value="{x2;eval: echo floatval($exam['examsetting']['questype'][v:questype['questid']]['score'])}" size="2" msg="您必须填写每题的分值"/>
 						<span class="info">&nbsp;分，描述&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][describe]" value="{x2;$exam['examsetting']['questype'][v:questype['questid']]['describe']}" size="12"/>
 						<span class="info">&nbsp;已选题数：<a id="ialreadyselectnumber_{x2;v:key}">{x2;eval: echo intval($exam['examnumber'][v:key])}</a>&nbsp;&nbsp;题</span>
 						<span class="info">&nbsp;<a class="selfmodal btn" href="javascript:;" data-target="#modal" url="index.php?exam-master-exams-selected&questionids={iselectquestions_{x2;v:key}}&rowsquestionids={iselectrowsquestions_{x2;v:key}}" valuefrom="iselectquestions_{x2;v:key}|iselectrowsquestions_{x2;v:key}">看题</a></span>
@@ -114,6 +128,9 @@
 		</div>
 	</div>
 </div>
+<script>
+$.getJSON('index.php?exam-master-basic-getsubjectquestype&subjectid={x2;$exam['examsubject']}&'+Math.random(),function(data){$('.questpanel').hide();$('.questypepanelinput').val('0');for(x in data){$('.panel_'+data[x]).show();$('#panel_'+data[x]).val('1');}});
+</script>
 </body>
 </html>
 {x2;endif}

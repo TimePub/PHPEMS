@@ -19,7 +19,8 @@ class question_exam
 		if(!$this->init)
 		{
 			$this->sql = $this->G->make('sql');
-			$this->db = $this->G->make('db');
+			$this->pdosql = $this->G->make('pdosql');
+			$this->db = $this->G->make('pepdo');
 			$this->ev = $this->G->make('ev');
 			$this->html = $this->G->make('html');
 			$this->basic = $this->G->make('basic','exam');
@@ -93,8 +94,8 @@ class question_exam
 	//获取某些指定知识点的试题列表
 	public function getRandQuestionListByKnowid($knowid,$typeid)
 	{
-		$data = array('DISTINCT questions.questionid',array('questions','quest2knows'),array("quest2knows.qkknowsid IN ({$knowid})","quest2knows.qktype = 0","quest2knows.qkquestionid = questions.questionid","questions.questiontype = '{$typeid}'","questions.questionstatus = 1"),false,false,false);
-		$sql = $this->sql->makeSelect($data);
+		$data = array('DISTINCT questions.questionid',array('questions','quest2knows'),array(array("AND","find_in_set(quest2knows.qkknowsid,:knowid)",'knowid',$knowid),array("AND","quest2knows.qktype = 0"),array("AND","quest2knows.qkquestionid = questions.questionid"),array("AND","questions.questiontype = :typeid",'typeid',$typeid),array("AND","questions.questionstatus = 1")),false,false,false);
+		$sql = $this->pdosql->makeSelect($data);
 		$r = $this->db->fetchAll($sql);
 		$t = array();
 		foreach($r as $p)
@@ -108,10 +109,10 @@ class question_exam
 	public function getRandQuestionRowsListByKnowid($knowid,$typeid,$number = false)
 	{
 		if($number)
-		$data = array('DISTINCT questionrows.qrid',array('questionrows','quest2knows'),array("quest2knows.qkknowsid IN ({$knowid})","quest2knows.qktype = 1","quest2knows.qkquestionid = questionrows.qrid","questionrows.qrtype = '{$typeid}'","questionrows.qrnumber <= '{$number}'","questionrows.qrstatus = 1"),false,false,false);
+		$data = array('DISTINCT questionrows.qrid',array('questionrows','quest2knows'),array(array("AND","find_in_set(quest2knows.qkknowsid,:knowid)",'knowid',$knowid),array("AND","quest2knows.qktype = 1"),array("AND","quest2knows.qkquestionid = questionrows.qrid"),array("AND","questionrows.qrtype = :typeid",'typeid',$typeid),array("AND","questionrows.qrnumber <= :number",'number',$number),array("AND","questionrows.qrstatus = 1")),false,false,false);
 		else
-		$data = array('DISTINCT questionrows.qrid',array('questionrows','quest2knows'),array("quest2knows.qkknowsid IN ({$knowid})","quest2knows.qktype = 1","quest2knows.qkquestionid = questionrows.qrid","questionrows.qrtype = '{$typeid}'","questionrows.qrstatus = 1"),false,false,false);
-		$sql = $this->sql->makeSelect($data);
+		$data = array('DISTINCT questionrows.qrid',array('questionrows','quest2knows'),array(array("AND","find_in_set(quest2knows.qkknowsid ,:knowid)",'knowid',$knowid),array("AND","quest2knows.qktype = 1"),array("AND","quest2knows.qkquestionid = questionrows.qrid"),array("AND","questionrows.qrtype = :typeid",'typeid',$typeid),array("AND","questionrows.qrstatus = 1")),false,false,false);
+		$sql = $this->pdosql->makeSelect($data);
 		$r = $this->db->fetchAll($sql);
 		$t = array();
 		foreach($r as $p)
@@ -125,11 +126,11 @@ class question_exam
 	public function getRandQuestionList($args = 1)
 	{
 		if(!is_array($args))$args = array();
-		$args[] = "questions.questionstatus = 1";
-		$args[] = "quest2knows.qkquestionid = questions.questionid";
-		$args[] = "quest2knows.qktype = 0";
+		$args[] = array("AND","questions.questionstatus = 1");
+		$args[] = array("AND","quest2knows.qkquestionid = questions.questionid");
+		$args[] = array("AND","quest2knows.qktype = 0");
 		$data = array('DISTINCT questions.questionid',array('questions','quest2knows'),$args,false,false,false);
-		$sql = $this->sql->makeSelect($data);
+		$sql = $this->pdosql->makeSelect($data);
 		$r = $this->db->fetchAll($sql);
 		$t = array();
 		foreach($r as $p)
@@ -143,11 +144,11 @@ class question_exam
 	public function getRandQuestionRowsList($args = 1)
 	{
 		if(!is_array($args))$args = array();
-		$args[] = "questionrows.qrstatus = 1";
-		$args[] = "quest2knows.qkquestionid = questionrows.qrid";
-		$args[] = "quest2knows.qktype = 1";
+		$args[] = array("AND","questionrows.qrstatus = 1");
+		$args[] = array("AND","quest2knows.qkquestionid = questionrows.qrid");
+		$args[] = array("AND","quest2knows.qktype = 1");
 		$data = array('DISTINCT questionrows.qrid',array('questionrows','quest2knows'),$args,false,false,false);
-		$sql = $this->sql->makeSelect($data);
+		$sql = $this->pdosql->makeSelect($data);
 		$r = $this->db->fetchAll($sql);
 		$t = array();
 		foreach($r as $p)
@@ -160,8 +161,8 @@ class question_exam
 	//根据ID获取特殊试题编号
 	public function getSpecialQuestionById($questionid)
 	{
-		$data = array('questionid','questions',array("questionparent = '{$questionid}'","questionstatus = 1"),false,"questionsequence ASC");
-		$sql = $this->sql->makeSelect($data);
+		$data = array('questionid','questions',array(array("AND","questionparent = :questionid",'questionid',$questionid),array("AND","questionstatus = 1")),false,"questionsequence ASC");
+		$sql = $this->pdosql->makeSelect($data);
 		$r = $this->db->fetchAll($sql);
 		$t = array(0 => $questionid);
 		foreach($r as $p)
@@ -174,16 +175,16 @@ class question_exam
 	//根据科目和地区信息获取知识点
 	public function getKnowsBySubjectAndAreaid($subjectid,$areaid)
 	{
-		$data = array('esknowsids','examsection',array("essubjectid = '{$subjectid}'","esareaid = '{$areaid}'"));
-		$sql = $this->sql->makeSelect($data);
+		$data = array('esknowsids','examsection',array(array("AND","essubjectid = :subjectid",'subjectid',$subjectid),array("AND","esareaid = :esareaid",'esareaid',$areaid)));
+		$sql = $this->pdosql->makeSelect($data);
 		$r = $this->db->fetchAll($sql);
 		foreach($r as $p)
 		{
 			$t[] = $p['esknowsids'];
 		}
 		$n = implode(',',$t);
-		$data = array("knowsid","knows",array("knowsid IN ({$n})","knowsstatus = 1"));
-		$sql = $this->sql->makeSelect($data);
+		$data = array("knowsid","knows",array(array("AND","find_in_set(knowsid,:knowsid)",'knowsid',$n),array("AND","knowsstatus = 1")));
+		$sql = $this->pdosql->makeSelect($data);
 		$r = $this->db->fetchAll($sql);
 		foreach($r as $p)
 		{
@@ -232,19 +233,19 @@ class question_exam
 							$trand = rand(1,4);
 							if($trand < 3)
 							{
-								$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrlevel = '{$nkey}'","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'"));
+								$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrlevel = :qrlevel",'qrlevel',$nkey),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
 								if(count($qrs))
 								{
 									$qrid = $qrs[array_rand($qrs,1)];
 									$questionrow[$key][] = $qrid;
-									$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+									$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
 									$t = intval($t - $qr['qrnumber']);
 								}
 							}
 						}
 						if($t)
 						{
-							$r = $this->getRandQuestionList(array("quest2knows.qkknowsid IN ({$knowsids})","questions.questionlevel = '{$nkey}'","questions.questiontype = '{$key}'"));
+							$r = $this->getRandQuestionList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questions.questionlevel = :questionlevel",'questionlevel',$nkey),array("AND","questions.questiontype = :questiontype",'questiontype',$key)));
 							if(is_array($r))
 							{
 								if((count($r) >= $t))
@@ -271,12 +272,12 @@ class question_exam
 						}
 						while($t)
 						{
-							$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrlevel = '{$nkey}'","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'","questionrows.qrnumber > 0"));
+							$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrlevel = :qrlevel",'qrlevel',$nkey),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t),array("AND","questionrows.qrnumber > 0")));
 							if(count($qrs))
 							{
 								$qrid = $qrs[array_rand($qrs,1)];
 								$questionrow[$key][] = $qrid;
-								$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+								$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
 								$t = intval($t - $qr['qrnumber']);
 							}
 							else
@@ -294,19 +295,19 @@ class question_exam
 						$trand = rand(1,4);
 						if($trand < 3)
 						{
-							$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'"));
+							$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
 							if(count($qrs))
 							{
 								$qrid = $qrs[array_rand($qrs,1)];
 								$questionrow[$key][] = $qrid;
-								$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+								$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
 								$t = intval($t - $qr['qrnumber']);
 							}
 						}
 					}
 					if($t)
 					{
-						$r = $this->getRandQuestionList(array("quest2knows.qkknowsid IN ({$knowsids})","questions.questiontype = '{$key}'"));
+						$r = $this->getRandQuestionList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questions.questiontype = :questiontype",'questiontype',$key)));
 						if(is_array($r))
 						{
 							if((count($r) >= $t))
@@ -323,23 +324,34 @@ class question_exam
 										$question[$key][] = $r[$tmp];
 									}
 								}
+								$t = 0;
 							}
 							else
 							{
 								foreach($r as $tmp)
 								$question[$key][] = $tmp;
+								$t = $t - count($r);
 							}
 						}
 					}
+					$expqr = 0;
 					while($t)
 					{
-						$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'"));
+						$expqr = trim($expqr,',');
+						if($expqr)
+						$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","NOT find_in_set(questionrows.qrid,:expqr)",'expqr',$expqr),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t))));
+						else
+						$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t))));
 						if(count($qrs))
 						{
 							$qrid = $qrs[array_rand($qrs,1)];
 							$questionrow[$key][] = $qrid;
-							$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
-							$t = intval($t - $qr['qrnumber']?$qr['qrnumber']:1);
+							if($qrid)
+							{
+								$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
+								$t = intval($t - intval($qr['qrnumber']?$qr['qrnumber']:1));
+								$expqr = $expqr.','.$qrid;
+							}
 						}
 						else
 						break;
@@ -376,19 +388,19 @@ class question_exam
 					$trand = rand(1,4);
 					if($trand < 3)
 					{
-						$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrlevel = '{$nkey}'","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'"));
+						$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrlevel = :qrlevel",'qrlevel',$nkey),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
 						if(count($qrs))
 						{
 							$qrid = $qrs[array_rand($qrs,1)];
 							$questionrow[$key][] = $qrid;
-							$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+							$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
 							$t = intval($t - $qr['qrnumber']);
 						}
 					}
 				}
 				if($t)
 				{
-					$r = $this->getRandQuestionList(array("quest2knows.qkknowsid IN ({$knowsids})","questions.questionlevel = '{$nkey}'","questions.questiontype = '{$key}'"));
+					$r = $this->getRandQuestionList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questions.questionlevel = :questionlevel",'questionlevel',$nkey),array("AND","questions.questiontype = :questiontype",'questiontype',$key)));
 					if(is_array($r))
 					{
 						if((count($r) >= $t))
@@ -405,26 +417,35 @@ class question_exam
 									$question[$key][] = $r[$tmp];
 								}
 							}
+							$t = 0;
 						}
 						else
 						{
 							foreach($r as $tmp)
 							$question[$key][] = $tmp;
+							$t = intval($t - count($r));
 						}
 					}
 				}
+				$expqr = 0;
 				while($t)
 				{
-					$nouserid = implode(',',$questionrow[$key]);
-					$tmpargs = array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrlevel = '{$nkey}'","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'","questionrows.qrnumber > 0");
-					if($nouserid)$tmpargs[] = "questionrows.qrid NOT IN ({$nouserid}) ";
-					$qrs = $this->getRandQuestionRowsList($tmpargs);
+					$expqr = trim($expqr,',');
+					if($expqr)
+					$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","NOT find_in_set(questionrows.qrid,:expqr)",'expqr',$expqr),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
+					else
+					$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
 					if(count($qrs))
 					{
 						$qrid = $qrs[array_rand($qrs,1)];
 						$questionrow[$key][] = $qrid;
-						$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
-						$t = intval($t - $qr['qrnumber']);
+						if($qrid)
+						{
+							$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
+							//$t = intval($t - $qr['qrnumber']?$qr['qrnumber']:1);
+							$t = intval($t - intval($qr['qrnumber']?$qr['qrnumber']:1));
+							$expqr = $expqr.','.$qrid;
+						}
 					}
 					else
 					break;
@@ -446,19 +467,19 @@ class question_exam
 				$trand = rand(1,4);
 				if($trand < 3)
 				{
-					$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'"));
+					$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
 					if(count($qrs))
 					{
 						$qrid = $qrs[array_rand($qrs,1)];
 						$questionrow[$key][] = $qrid;
-						$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+						$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
 						$t = intval($t - $qr['qrnumber']);
 					}
 				}
 			}
 			if($t)
 			{
-				$r = $this->getRandQuestionList(array("quest2knows.qkknowsid IN ({$knowsids})","questions.questiontype = '{$key}'"));
+				$r = $this->getRandQuestionList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questions.questiontype = :questiontype",'questiontype',$key)));
 				if(is_array($r))
 				{
 					if((count($r) >= $t))
@@ -483,15 +504,24 @@ class question_exam
 					}
 				}
 			}
+			$expqr = 0;
 			while($t)
 			{
-				$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'","questionrows.qrnumber > 0"));
+				$expqr = trim($expqr,',');
+				if($expqr)
+				$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","NOT find_in_set(questionrows.qrid,:expqr)",'expqr',$expqr),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
+				else
+				$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
 				if(count($qrs))
 				{
 					$qrid = $qrs[array_rand($qrs,1)];
 					$questionrow[$key][] = $qrid;
-					$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
-					$t = intval($t - $qr['qrnumber']);
+					if($qrid)
+					{
+						$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
+						$t = intval($t - $qr['qrnumber']?$qr['qrnumber']:1);
+						$expqr = $expqr.','.$qrid;
+					}
 				}
 				else
 				break;

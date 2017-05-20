@@ -13,22 +13,23 @@ class ad
 	{
 		$this->positions = NULL;
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->ev = $this->G->make('ev');
 	}
 
 	public function getAdById($id)
 	{
-		$data = array(false,'ad',"adid = '{$id}'");
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'ad',array(array("AND","adid = :adid",'adid',$id)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql,'adstyle');
 	}
 
 	public function modifyAd($id,$args)
 	{
-		$data = array('ad',$args,"adid = '{$id}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array('ad',$args,array(array("AND","adid = :adid",'adid',$id)));
+		$sql = $this->pdosql->makeUpdate($data);
 		$this->db->exec($sql);
 		return $this->db->affectedRows();
 	}

@@ -41,7 +41,7 @@
 				  		<span class="help-block">需要填空处请以()表示。</span>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="control-group" id="selecttext">
 					<label class="control-label">备选项：</label>
 				  	<div class="controls">
 				  		<textarea cols="72" rows="7" class="ckeditor" name="args[questionselect]" id="rcquestionselect">{x2;$question['questionselect']}</textarea>
@@ -87,6 +87,9 @@
 						<div id="rcianswerbox_4" class="rcianswerbox" style="display:none;">
 						  	<label class="radio inline"><input type="radio" name="targs[questionanswer4]" value="A" checked>对</label>
 						  	<label class="radio inline"><input type="radio" name="targs[questionanswer4]" value="B">错</label>
+						</div>
+						<div id="answerbox_5" class="answerbox" style="display:none;">
+						  	<input type="text" name="targs[questionanswer5]" value="{x2;$question['questionanswer']}" />
 						</div>
 						<div id="rcianswerbox_0" style="display:none;" class="rcianswerbox">
 						  	<textarea cols="72" rows="7" class="ckeditor" id="rciquestionanswer0" name="targs[questionanswer0]">{x2;$question['questionanswer']}</textarea>

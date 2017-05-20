@@ -19,7 +19,8 @@ class module
 	public function _init()
 	{
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->ev = $this->G->make('ev');
 	}
@@ -28,15 +29,15 @@ class module
 	public function searchModules($args)
 	{
 		$data = array(false,'module',$args);
-		$sql = $this->sql->makeSelect($data);
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetchAll($sql,'moduleid');
 	}
 
 	//根据应用获取模型
 	public function getModulesByApp($app)
 	{
-		$data = array(false,'module',"moduleapp = '{$app}'",false,'moduleid DESC',false);
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'module',array(array("AND","moduleapp = :app",'app',$app)),false,'moduleid DESC',false);
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetchAll($sql,'moduleid');
 	}
 
@@ -45,8 +46,8 @@ class module
 	{
 		if(!$this->cache['module'][$moduleid])
 		{
-			$data = array(false,'module',"moduleid = '{$moduleid}'");
-			$sql = $this->sql->makeSelect($data);
+			$data = array(false,'module',array(array('AND',"moduleid = :moduleid",'moduleid',$moduleid)));
+			$sql = $this->pdosql->makeSelect($data);
 			$this->cache['module'][$moduleid] = $this->db->fetch($sql,'modulefields');
 		}
 		return $this->cache['module'][$moduleid];
@@ -57,7 +58,7 @@ class module
 	{
 		if(!$args['moduleapp'])$args['moduleapp'] = $this->G->app;
 		$data = array('module',$args);
-		$sql = $this->sql->makeInsert($data);
+		$sql = $this->pdosql->makeInsert($data);
 		$this->db->exec($sql);
 		return $this->db->lastInsertId();
 	}
@@ -68,7 +69,7 @@ class module
 		$fields = array(array('name'=>$primary,'type'=>'INT','length'=>11));
 		$indexs = array(array('type'=>'PRIMARY KEY','field'=>$primary));
 		$sql = $this->sql->createTable($table,$fields,$indexs);
-		return $this->db->exec($sql);
+		return $this->db->query($sql);
 	}
 
 	//根据用户获取模型所有字段
@@ -76,10 +77,10 @@ class module
 	public function getMoudleFields($moduleid,$userinfo = 1)
 	{
 		if($userinfo == 1)
-		$data = array(false,'module_fields',array("fieldmoduleid = '{$moduleid}' OR (fieldpublic = 1 AND fieldappid = '{$this->G->app}')"),false,'fieldsequence DESC,fieldid DESC');
+		$data = array(false,'module_fields',array(array('AND',"fieldmoduleid = :moduleid",'moduleid',$moduleid), array('OR'," (fieldpublic = 1 AND fieldappid = :app)",'app',$this->G->app)),false,'fieldsequence DESC,fieldid DESC');
 		else
-		$data = array(false,'module_fields',array("(fieldmoduleid = '{$moduleid}' OR (fieldpublic = 1 AND fieldappid = '{$this->G->app}'))","fieldlock = '0'"),false,'fieldsequence DESC,fieldid DESC');
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'module_fields',array(array('AND',"fieldmoduleid = :moduleid",'moduleid',$moduleid), array('OR'," (fieldpublic = 1 AND fieldappid = :app)",'app',$this->G->app),array('AND',"fieldlock = '0'")),false,'fieldsequence DESC,fieldid DESC');
+		$sql = $this->pdosql->makeSelect($data);
 		$r = $this->db->fetchAll($sql);
 		if($userinfo == 1)return $r;
 		foreach($r as $key => $p)
@@ -104,16 +105,16 @@ class module
 	//获取模型直属字段
 	public function getPrivateMoudleFields($moduleid)
 	{
-		$data = array(false,'module_fields',array("fieldmoduleid = '{$moduleid}'","fieldpublic = 0"),false,'fieldsequence DESC,fieldid DESC');
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'module_fields',array(array('AND',"fieldmoduleid = :moduleid",'moduleid',$moduleid),"fieldpublic = 0"),false,'fieldsequence DESC,fieldid DESC');
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetchAll($sql);
 	}
 
 	//删除模型
 	public function delModule($moduleid)
 	{
-		$data = array('module',"moduleid = '{$moduleid}'");
-		$sql = $this->sql->makeDelete($data);
+		$data = array('module',array(array('AND',"moduleid = :moduleid",'moduleid',$moduleid)));
+		$sql = $this->pdosql->makeDelete($data);
 		$this->db->exec($sql);
 		return $this->db->affectedRows();
 	}
@@ -124,10 +125,10 @@ class module
 		$field = $this->getFieldById($fieldid);
 		$sql = $this->sql->delField($field['field'],$this->G->app);
 		$this->db->exec($sql);
-		$data = array('module_fields',"fieldid = '{$fieldid}'");
-		$sql = $this->sql->makeDelete($data);
-		$this->db->exec($sql);
-		return $this->db->affectedRows();
+		$data = array('module_fields',array(array('AND',"fieldid = :fieldid",'fieldid',$fieldid)));
+		$sql = $this->pdosql->makeDelete($data);
+		return $this->db->exec($sql);
+		//return $this->db->affectedRows();
 	}
 
 	//整理模型所需的参数，除去多余参数
@@ -153,8 +154,8 @@ class module
 	//根据字段名称和模型ID查找字段
 	public function getFieldByNameAndModuleid($field,$moduleid)
 	{
-		$data = array(false,'module_fields',array("fieldmoduleid = '{$moduleid}'","field = '{$field}'"));
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'module_fields',array(array('AND',"fieldmoduleid = :moduleid",'moduleid',$moduleid),array('AND',"field = :field",'field',$field)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql);
 	}
 
@@ -163,8 +164,8 @@ class module
 	{
 		if(!$this->cache['field'][$fieldid])
 		{
-			$data = array(false,'module_fields',"fieldid = '{$fieldid}'");
-			$sql = $this->sql->makeSelect($data);
+			$data = array(false,'module_fields',array(array('AND',"fieldid = :fieldid",'fieldid',$fieldid)));
+			$sql = $this->pdosql->makeSelect($data);
 			$this->cache['field'][$fieldid] = $this->db->fetch($sql);
 		}
 		return $this->cache['field'][$fieldid];
@@ -176,7 +177,7 @@ class module
 		$args['fieldappid'] = $this->G->app;
 		$this->insertModuleFieldData($args);
 		$data = array('module_fields',$args);
-		$sql = $this->sql->makeInsert($data);
+		$sql = $this->pdosql->makeInsert($data);
 		$this->db->exec($sql);
 		return $this->db->lastInsertId();
 	}
@@ -184,8 +185,8 @@ class module
 	//编辑字段的HTML属性
 	public function modifyFieldHtmlType($args,$fieldid)
 	{
-		$data = array('module_fields',$args,"fieldid = '{$fieldid}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array('module_fields',$args,array(array('AND',"fieldid = :fieldid",'fieldid',$fieldid)));
+		$sql = $this->pdosql->makeUpdate($data);
 		return $this->db->exec($sql);
 	}
 
@@ -193,8 +194,8 @@ class module
 	public function modifyFieldDataType($args,$fieldid)
 	{
 		$this->modifyModuleField($args,$fieldid);
-		$data = array('module_fields',$args,"fieldid = '{$fieldid}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array('module_fields',$args,array(array('AND',"fieldid = :fieldid",'fieldid',$fieldid)));
+		$sql = $this->pdosql->makeUpdate($data);
 		return $this->db->exec($sql);
 	}
 
@@ -206,7 +207,7 @@ class module
 		$r = $this->getModuleById($args['fieldmoduleid']);
 		$table = $this->G->app;
 		$sql = $this->sql->addField($args,$table);
-		return $this->db->exec($sql);
+		return $this->db->query($sql);
 	}
 
 	//修改模型字段
@@ -219,14 +220,14 @@ class module
 		$r = $this->getModuleById($field['fieldmoduleid']);
 		$table = $this->G->app;
 		$sql = $this->sql->modifyField($args,$table);
-		return $this->db->exec($sql);
+		return $this->db->query($sql);
 	}
 
 	//修改模型
 	public function modifyModule($args,$moduleid)
 	{
-		$data = array("module",$args,"moduleid = '{$moduleid}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array("module",$args,array(array('AND',"moduleid = :moduleid",'moduleid',$moduleid)));
+		$sql = $this->pdosql->makeUpdate($data);
 		return $this->db->exec($sql);
 	}
 }

@@ -1,10 +1,9 @@
 <?php
-
+error_reporting(0);
 define('IN_DISCUZ', TRUE);
 
 define('UC_CLIENT_VERSION', '1.5.0');	//note UCenter 版本标识
 define('UC_CLIENT_RELEASE', '20081031');
-
 define('API_DELETEUSER', 1);		//note 用户删除 API 接口开关
 define('API_RENAMEUSER', 1);		//note 用户改名 API 接口开关
 define('API_GETTAG', 1);		//note 获取标签 API 接口开关
@@ -53,7 +52,6 @@ if(!defined('IN_UC')) {
 
 	require_once 'uc_client/lib/xml.class.php';
 	$post = xml_unserialize(file_get_contents('php://input'));
-
 	if(in_array($get['action'], array('test', 'deleteuser', 'renameuser', 'gettag', 'synlogin', 'synlogout', 'updatepw', 'updatebadwords', 'updatehosts', 'updateapps', 'updateclient', 'updatecredit', 'getcreditsettings', 'updatecreditsettings'))) {
 		/**
 		require_once 'include/db_mysql.class.php';
@@ -188,9 +186,10 @@ class uc_note {
     		}
     		else
     		{
-    			$sid = md5($this->_getClientIp().'/'.$_SERVER['HTTP_X_FORWARDED_FOR'].'/'.$_SERVER['REMOTE_ADDR'].':'.$_SERVER['REMOTE_PORT'].':'.$_SERVER['HTTP_USER_AGENT'].':'.date('Y-m-d'));
-    			$this->_setCookie('psid',$sid,3600*24);
-    			$sessionid = $sid;
+    			session_start();
+    			$this->sessionid = session_id();
+    			$this->_setCookie('psid',$this->sessionid,3600*24);
+    			$sessionid = $this->sessionid;
     		}
     		$data = array('session',array('sessionid'=>$sessionid,'sessionuserid'=>0,'sessionip'=>$this->_getClientIp()));
     		$sql = $this->_makeReplace($data);
@@ -258,6 +257,7 @@ class uc_note {
 
 	function synlogin($get, $post) {
 		$uid = $get['uid'];
+		file_put_contents('aaa.txt',$uid);
 		//$username = iconv('gbk','utf-8',$get['username']);
 		//gbk版本论坛使用上行
 		$username = $get['username'];

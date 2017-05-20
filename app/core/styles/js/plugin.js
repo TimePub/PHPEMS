@@ -1,9 +1,9 @@
 String.prototype.replaceAll = function(s1,s2) {
     return this.replace(new RegExp(s1,"gm"),s2);
 }
+function ddd(){alert('ddd');}
 jQuery.extend({'zoombox':(function(){
 	var m = $("<div class=\"modal hide fade\" id=\"zoombox\"></div>");
-	var cnt = "";
 	return {'show':function(type,obj,url){
 			switch(type)
 			{
@@ -15,22 +15,22 @@ jQuery.extend({'zoombox':(function(){
 				}
 				else
 				msg = '您确定要删除吗？';
-				cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>操作确认</h5></div><div class=\"modal-body\"><p class=\"alert alert-error\">"+msg+"</p></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" onclick=\"javascript:submitAjax({'url':'"+url+"'});\">确定</button><button class=\"btn\" onclick=\"javascript:$.zoombox.hide();\">取消</button></div";
+				var cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>操作确认</h5></div><div class=\"modal-body\"><p class=\"text-error\">"+msg+"</p></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" onclick=\"javascript:submitAjax({'url':'"+url+"'});\">确定</button><button class=\"btn\" onclick=\"javascript:$.zoombox.hide();\">取消</button></div";
 				break;
 
 				case 'ajax':
-				cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>出现错误</h5></div><div class=\"modal-body\"><p class=\"alert alert-error\">"+obj.message+"</p></div>";
+				var cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>出现错误</h5></div><div class=\"modal-body\"><p class=\"text-error\">"+obj.message+"</p></div>";
 				break;
 
 				case 'ajaxOK':
-				cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>操作成功</h5></div><div class=\"modal-body\"><p class=\"alert alert-success\">"+obj.message+"</p></div>";
+				var cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>操作成功</h5></div><div class=\"modal-body\"><p class=\"text-success\">"+obj.message+"</p></div>";
 				break;
 
 				default:
-				cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>出现错误</h5></div><div class=\"modal-body\"><p class=\"alert alert-error\">"+$(obj).attr('message')+"</p></div>";
+				var cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>出现错误</h5></div><div class=\"modal-body\"><p class=\"text-error\">"+$(obj).attr('message')+"</p></div>";
 			}
 			m.html(cnt);
-			m.modal({});
+			m.modal();
 		},
 		'hide':function(){
 			m.modal('hide');
@@ -42,6 +42,14 @@ jQuery.extend({'zoombox':(function(){
 	var l = $("<div class=\"modal hide fade\" id=\"peloginbox\"></div>");
 	var lcnt = "";
 	return {'show':function(){
+			/**
+			if(Fingerprint)
+			{
+				var fp = new Fingerprint();
+				$.getScript('index.php?core-api-finger&unreload=1&finger='+fp.get());
+				fp = null;
+			}
+			**/
 			lcnt = "<div class=\"modal-header\"><button class=\"close\" type=\"button\" data-dismiss=\"modal\">×</button><h5>用户登录</h5></div><div class=\"modal-body\"><form class=\"form-horizontal\" id=\"peloginform\" action=\"index.php?user-app-login\" style=\"padding-top:20px;\"><div class=\"control-group\"><label class=\"control-label\" for=\"inputEmail\">用户名</label><div class=\"controls\"><input name=\"args[username]\" type=\"text\" needle=\"needle\" msg=\"请输入正确格式的用户名\"/></div></div><div class=\"control-group\"><label class=\"control-label\" for=\"inputPassword\">密　码</label><div class=\"controls\"><input needle=\"needle\" msg=\"请输入正确格式的密码\" name=\"args[userpassword]\" type=\"password\" /><input type=\"hidden\" value=\"1\" name=\"userlogin\"/></div></div></form></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" type=\"button\" onclick=\"javascript:$('#peloginform').submit();\">登录</button><button aria-hidden=\"true\" class=\"btn\" data-dismiss=\"modal\">取消</button></div>";
 			l.html(lcnt);
 			l.find("form").on('submit',formsubmit);
@@ -104,8 +112,16 @@ function setAnswerHtml(t,o)
 {
 	$("."+o).hide();
 	$("#"+o+"_"+t).show();
-	if(parseInt(t) == 0)$("#selectnumber").hide();
-	else $("#selectnumber").show();
+	if(parseInt(t) == 0 || parseInt(t) == 5)
+	{
+		$("#selectnumber").hide();
+		$("#selecttext").hide();
+	}
+	else
+	{
+		$("#selectnumber").show();
+		$("#selecttext").show();
+	}
 }
 jQuery.cookie = function(key, value, options) {
     if (arguments.length > 1 && String(value) !== "[object Object]") {
@@ -695,6 +711,8 @@ function submitAjax(parms){
 					data = tmp;
 					$.zoombox.hide();
 					if(parseInt(data.statusCode) == 200){
+						$.loginbox.hide();
+						if(data.message)
 						$.zoombox.show('ajaxOK',data);
 						setTimeout(function(){if(data.callbackType == 'forward'){
 								if(data.forwardUrl && data.forwardUrl != '')
@@ -718,20 +736,46 @@ function submitAjax(parms){
 								}
 								else $.zoombox.hide();
 							}
-						},500);
+						},1000);
 					}else if(parseInt(data.statusCode) == 201){
 						if(data.callbackType == 'forward'){
 							if(data.forwardUrl && data.forwardUrl != '')
 							{
-								if(data.forwardUrl == 'reload')
-								window.location.reload();
-								else if(data.forwardUrl == 'back')
+								if(data.loadJs)
 								{
-									window.history.back();
-									window.location.reload();
+									var tjs = data.loadJs;
+									var num = tjs.length - 1;
+									for(i=0;i<=num;i++)
+									{
+										if(i == num)
+										$.getScript(tjs[i], function()
+										{
+											if(data.forwardUrl == 'reload')
+											window.location.reload();
+											else if(data.forwardUrl == 'back')
+											{
+												window.history.back();
+												window.location.reload();
+											}
+											else
+											window.location.href = data.forwardUrl;
+										});
+										else
+										$.getScript(tjs[i]);
+									}
 								}
 								else
-								window.location.href = data.forwardUrl;
+								{
+									if(data.forwardUrl == 'reload')
+									window.location.reload();
+									else if(data.forwardUrl == 'back')
+									{
+										window.history.back();
+										//window.location.reload();
+									}
+									else
+									window.location.href = data.forwardUrl;
+								}
 							}
 						}
 						else{
@@ -743,6 +787,7 @@ function submitAjax(parms){
 							else window.location.reload();
 						}
 					}else if(parseInt(data.statusCode) == 300){
+						$.loginbox.hide();
 						$.zoombox.show('ajax',data);
 					}else if(parseInt(data.statusCode) == 301){
 						$.loginbox.show();
@@ -758,6 +803,7 @@ function submitAjax(parms){
 					{
 						$('#'+parms.target).html(data);
 						var dom = document.getElementById(parms.target);
+						$(".autoloaditem",dom).each(function(){$(this).load($(this).attr('autoload')+"&current="+$(this).attr('current'));});
 						$("a.ajax",dom).each(htmlajax);
 						$(".uploadbutton",dom).each(flashupload);
 						$('.sortable',dom).sortable();
@@ -949,6 +995,7 @@ function modalAjax(){
 	$.get(url+'&'+Math.random(),function(data){
 		var c = m.children(".modal-body");
 		c.html(data);
+		c.find(".autoloaditem").each(function(){$(this).load($(this).attr('autoload')+"&current="+$(this).attr('current'));});
 		c.find("a.ajax").each(htmlajax);
 		c.find(".uploadbutton").each(flashupload);
 		c.find('.sortable').sortable();
@@ -983,6 +1030,8 @@ function initEditor(){
 	        var p=[];
 			p.push(_.element.$.attributes.name.value);
 			p.push(_.getData());
+			p.push(Date.parse(new Date())/1000);
+			$('#time_'+$(_this).attr('rel')).val(Date.parse(new Date())/1000);
 			set.apply(formData,p);
 	        batmark(_.element.$.attributes.rel.value,_.getData());
 	    });
@@ -1070,6 +1119,7 @@ function initdatepicker(){
 }
 
 $(function(){
+	$(".autoloaditem").each(function(){$(this).load($(this).attr('autoload')+"&current="+$(this).attr('current'));});
 	$(".uploadbutton").each(flashupload);
 	$(".jckeditor").each(initEditor);
 	$(".randCode").on('click',function(){

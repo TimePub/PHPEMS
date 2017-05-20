@@ -14,7 +14,8 @@ class block_content
 		$this->categories = NULL;
 		$this->tidycategories = NULL;
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->ev = $this->G->make('ev');
 	}
@@ -33,29 +34,28 @@ class block_content
 	public function addBlock($args)
 	{
 		$data = array('block',$args);
-		$sql = $this->sql->makeInsert($data);
+		$sql = $this->pdosql->makeInsert($data);
 		$this->db->exec($sql);
 		return $this->db->lastInsertId();
 	}
 
 	public function delBlock($id)
 	{
-		return $this->db->delElement(array('table' => 'block','query' => "blockid = '{$id}'"));
+		return $this->db->delElement(array('table' => 'block','query' => array(array("AND","blockid = :blockid",'blockid',$id))));
 	}
 
 	public function getBlockById($id)
 	{
-		$data = array(false,'block',"blockid = '{$id}'");
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'block',array(array("AND","blockid = :blockid",'blockid',$id)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql,'blockcontent');
 	}
 
 	public function modifyBlock($id,$args)
 	{
-		$data = array('block',$args,"blockid = '{$id}'");
-		$sql = $this->sql->makeUpdate($data);
-		$this->db->exec($sql);
-		return $this->db->affectedRows();
+		$data = array('block',$args,array(array("AND","blockid = :blockid",'blockid',$id)));
+		$sql = $this->pdosql->makeUpdate($data);
+		return $this->db->exec($sql);
 	}
 }
 

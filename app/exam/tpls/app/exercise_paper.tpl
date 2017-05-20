@@ -48,9 +48,11 @@
 								<a name="question_{x2;v:question['questionid']}"></a>{x2;realhtml:v:question['question']}
 							</div>
 							{x2;if:!v:quest['questsort']}
-							<div class="media-body well">
+							{x2;if:v:question['questionselect'] && $questype[v:quest]['questchoice'] != 5}
+							<div class="media-body well noborder">
 		                    	{x2;realhtml:v:question['questionselect']}
 		                    </div>
+		                    {x2;endif}
 							<div class="media-body well">
 		                    	{x2;if:v:quest['questchoice'] == 1 || v:quest['questchoice'] == 4}
 			                        {x2;tree:$selectorder,so,sid}
@@ -59,6 +61,8 @@
 			                        {x2;endif}
 			                        <label class="radio inline"><input type="radio" name="question[{x2;v:question['questionid']}]" rel="{x2;v:question['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:question['questionid']]}checked{x2;endif}/>{x2;v:so} </label>
 			                        {x2;endtree}
+			                    {x2;elseif:$questype[v:quest]['questchoice'] == 5}
+		                        	<input type="text" class="input-xlarge" name="question[{x2;v:question['questionid']}]" value="{x2;$sessionvars['examsessionuseranswer'][v:question['questionid']]}" rel="{x2;v:question['questionid']}"/>
 		                        {x2;else}
 			                        {x2;tree:$selectorder,so,sid}
 			                        {x2;if:v:key >= v:question['questionselectnumber']}
@@ -104,9 +108,11 @@
 									<a name="question_{x2;v:data['questionid']}"></a>{x2;realhtml:v:data['question']}
 								</div>
 								{x2;if:!v:quest['questsort']}
-								<div class="media-body well">
+								{x2;if:v:data['questionselect'] && $questype[v:quest]['questchoice'] != 5}
+								<div class="media-body well noborder">
 			                    	{x2;realhtml:v:data['questionselect']}
 			                    </div>
+			                    {x2;endif}
 								<div class="media-body well">
 			                    	{x2;if:v:quest['questchoice'] == 1 || v:quest['questchoice'] == 4}
 				                        {x2;tree:$selectorder,so,sid}
@@ -115,7 +121,9 @@
 				                        {x2;endif}
 				                        <label class="radio inline"><input type="radio" name="question[{x2;v:data['questionid']}]" rel="{x2;v:data['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:data['questionid']]}checked{x2;endif}/>{x2;v:so} </label>
 				                        {x2;endtree}
-			                        {x2;else}
+			                        {x2;elseif:$questype[v:quest]['questchoice'] == 5}
+		                        		<input type="text" class="input-xlarge" name="question[{x2;v:data['questionid']}]" value="{x2;$sessionvars['examsessionuseranswer'][v:data['questionid']]}" rel="{x2;v:data['questionid']}"/>
+		                        	{x2;else}
 				                        {x2;tree:$selectorder,so,sid}
 				                        {x2;if:v:key >= v:data['questionselectnumber']}
 				                        {x2;eval: break;}
@@ -243,32 +251,39 @@ $(document).ready(function(){
 		for(var p in initData){
 			if(p!='set')
 			formData[p]=initData[p];
+			$("#time_"+$('[name="'+p+'"]').attr('rel')).val(initData[p].time);
 		}
 
 		var textarea = $('#form1 textarea');
 		$.each(textarea,function(){
 			var _this = $(this);
-			_this.val(initData[_this.attr('name')]);
-			CKEDITOR.instances[_this.attr('id')].setData(initData[_this.attr('name')]);
-			if(initData[_this.attr('name')] && initData[_this.attr('name')] != '')
-			batmark(_this.attr('rel'),initData[_this.attr('name')]);
+			if(initData[_this.attr('name')])
+			{
+				_this.val(initData[_this.attr('name')].value);
+				CKEDITOR.instances[_this.attr('id')].setData(initData[_this.attr('name')].value);
+				if(initData[_this.attr('name')].value && initData[_this.attr('name')].value != '')
+				batmark(_this.attr('rel'),initData[_this.attr('name')].value);
+			}
 		});
 
 		var texts = $('#form1 :input[type=text]');
 		$.each(texts,function(){
 			var _this = $(this);
-			_this.val(initData[_this.attr('name')]);
-			if(initData[_this.attr('name')] && initData[_this.attr('name')] != '')
-			batmark(_this.attr('rel'),initData[_this.attr('name')]);
+			if(initData[_this.attr('name')])
+			{
+				_this.val(initData[_this.attr('name')]?initData[_this.attr('name')].value:'');
+				if(initData[_this.attr('name')].value && initData[_this.attr('name')].value != '')
+				batmark(_this.attr('rel'),initData[_this.attr('name')].value);
+			}
 		});
 
 		var radios = $('#form1 :input[type=radio]');
 		$.each(radios,function(){
-			var _= this, v = initData[_.name];
+			var _= this, v = initData[_.name]?initData[_.name].value:null;
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked = true;
-				batmark(_this.attr('rel'),initData[_this.attr('name')]);
+				batmark(_this.attr('rel'),initData[_this.attr('name')].value);
 			}else{
 				_.checked=false;
 			}
@@ -276,11 +291,11 @@ $(document).ready(function(){
 
 		var checkboxs=$('#form1 :input[type=checkbox]');
 		$.each(checkboxs,function(){
-			var _=this,v=initData[_.name];
+			var _=this,v=initData[_.name]?initData[_.name].value:null;
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked=true;
-				batmark(_this.attr('rel'),initData[_this.attr('name')]);
+				batmark(_this.attr('rel'),initData[_this.attr('name')].value);
 			}else{
 				_.checked=false;
 			}
@@ -292,8 +307,10 @@ $(document).ready(function(){
 		var p=[];
 		p.push(_this.attr('name'));
 		p.push(_this.val());
+		p.push(Date.parse(new Date())/1000);
+		$('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
 		set.apply(formData,p);
-		markQuestion(_this.attr('rel'));
+		markQuestion(_this.attr('rel'),true);
 	});
 
 	$('#form1 :input[type=radio]').change(function(){
@@ -303,9 +320,12 @@ $(document).ready(function(){
 		p.push(_.name);
 		if(_.checked){
 			p.push(_.value);
+			p.push(Date.parse(new Date())/1000);
+			$('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
 			set.apply(formData,p);
 		}else{
 			p.push('');
+			p.push(null);
 			set.apply(formData,p);
 		}
 		markQuestion(_this.attr('rel'));
@@ -317,8 +337,10 @@ $(document).ready(function(){
 		var p=[];
 		p.push(_.name);
 		p.push(_.value);
+		p.push(Date.parse(new Date())/1000);
+		$('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
 		set.apply(formData,p);
-		markQuestion(_this.attr('rel'));
+		markQuestion(_this.attr('rel'),true);
 	});
 
 	$('#form1 :input[type=checkbox]').change(function(){
@@ -328,9 +350,12 @@ $(document).ready(function(){
 		p.push(_.name);
 		if(_.checked){
 			p.push(_.value);
+			p.push(Date.parse(new Date())/1000);
+			$('#time_'+_this.attr('rel')).val(Date.parse(new Date())/1000);
 			set.apply(formData,p);
 		}else{
 			p.push('');
+			p.push(null);
 			set.apply(formData,p);
 		}
 		markQuestion(_this.attr('rel'));

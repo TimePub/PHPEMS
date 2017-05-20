@@ -54,7 +54,6 @@ class AlipaySubmit {
 	function buildRequestPara($para_temp) {
 		//除去待签名参数数组中的空值和签名参数
 		$para_filter = paraFilter($para_temp);
-
 		//对待签名参数数组排序
 		$para_sort = argSort($para_filter);
 
@@ -75,8 +74,8 @@ class AlipaySubmit {
      */
 	function buildRequestParaToString($para_temp) {
 		//待请求参数数组
-		$para = $this->buildRequestPara($para_temp);
 
+		$para = $this->buildRequestPara($para_temp);
 		//把参数组中所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串，并对字符串做urlencode编码
 		$request_data = createLinkstringUrlencode($para);
 

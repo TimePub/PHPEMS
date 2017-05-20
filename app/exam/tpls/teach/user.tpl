@@ -68,7 +68,7 @@
 						<td>{x2;date:v:user['userregtime'],'Y-m-d H:i:s'}</td>
 						<td>
 						  	<div class="btn-group">
-	                    		<a class="btn" href="index.php?exam-teach-users-basics&userid={x2;v:user['userid']}&page={x2;$page}{x2;$u}" title="开通课程"><em class="icon-th-list"></em></a>
+	                    		<a class="btn" href="index.php?exam-teach-users-basics&userid={x2;v:user['userid']}{x2;$u}" title="开通课程"><em class="icon-th-list"></em></a>
 							</div>
 						</td>
 	                </tr>

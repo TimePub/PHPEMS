@@ -1,3 +1,11 @@
+		    	<script type="text/javascript">
+		    	function selectall(obj,a,b){
+		    		$(".sbox").prop('checked', $(obj).is(':checked'));
+		    		$(".sbox").each(function(){
+		    			selectquestions(this,a,b);
+		    		});
+		    	}
+		    	</script>
 		    	<form action="index.php?exam-teach-exams-selectquestions" method="post" direct="modal-body">
 					<table class="table">
 						<tr>
@@ -27,7 +35,7 @@
 				        </tr>
 				        <tr>
 							<td class="form-inline">
-						  		<select name="search[questionsectionid]" class="combox input-medium" id="sectionselect" target="knowsselect" refUrl="?exam-teach-questions-ajax-getknowsbysectionid&sectionid={value}">
+						  		<select name="search[questionsectionid]" class="combox input-medium" id="sectionselect" target="knowsselect" refUrl="?exam-master-questions-ajax-getknowsbysectionid&sectionid={value}">
 							  		<option value="">选择章节</option>
 							  		{x2;if:$sections}
 							  		{x2;tree:$sections,section,sid}
@@ -53,7 +61,7 @@
 				<table class="table table-hover">
 					<thead>
 						<tr>
-					        <th>ID</th>
+					        <th><input type="checkbox" onclick="javascript:selectall(this,'iselectquestions_{x2;$search['questiontype']}','ialreadyselectnumber_{x2;$search['questiontype']}');"/></th>
 					        <th>试题内容</th>
 					        <th>小题量</th>
 					        <th>难度</th>
@@ -62,7 +70,7 @@
 					<tbody>
 						{x2;tree:$questions['data'],question,qid}
 				        <tr>
-				          <td><input rel="{x2;v:question['qrnumber']}" type="checkbox" name="ids[]" value="{x2;v:question['qrid']}" onclick="javascript:selectquestions(this,'iselectrowsquestions_{x2;$search['questiontype']}','ialreadyselectnumber_{x2;$search['questiontype']}')"/></td>
+				          <td><input rel="{x2;v:question['qrnumber']}" class="sbox" type="checkbox" name="ids[]" value="{x2;v:question['qrid']}" onclick="javascript:selectquestions(this,'iselectrowsquestions_{x2;$search['questiontype']}','ialreadyselectnumber_{x2;$search['questiontype']}')"/></td>
 				          <td>
 						  	  <a href="javascript:;" {x2;eval: echo strip_tags(html_entity_decode(v:question['qrquestion']))}>{x2;substring:strip_tags(html_entity_decode(v:question['qrquestion'])),165}</a>
 						  </td>
@@ -84,7 +92,7 @@
 				<table class="table table-hover">
 					<thead>
 						<tr>
-					        <th width="50"></th>
+					        <th width="50"><input type="checkbox" onclick="javascript:selectall(this,'iselectquestions_{x2;$search['questiontype']}','ialreadyselectnumber_{x2;$search['questiontype']}');"/></th>
 					        <th width="100">试题类型</th>
 					        <th>试题内容</th>
 					        <th width="50">难度</th>
@@ -93,7 +101,7 @@
 					<tbody>
 						{x2;tree:$questions['data'],question,qid}
 				        <tr>
-				          <td><input rel="1" type="checkbox" name="ids[]" value="{x2;v:question['questionid']}" onclick="javascript:selectquestions(this,'iselectquestions_{x2;$search['questiontype']}','ialreadyselectnumber_{x2;$search['questiontype']}')"/></td>
+				          <td><input rel="1" class="sbox" type="checkbox" name="ids[]" value="{x2;v:question['questionid']}" onclick="javascript:selectquestions(this,'iselectquestions_{x2;$search['questiontype']}','ialreadyselectnumber_{x2;$search['questiontype']}')"/></td>
 				          <td>{x2;$questypes[v:question['questiontype']]['questype']}</td>
 				          <td>
 						  	  <a href="javascript:;" title="{x2;eval: echo strip_tags(html_entity_decode(v:question['question']))}">{x2;substring:strip_tags(html_entity_decode(v:question['question'])),90}</a>

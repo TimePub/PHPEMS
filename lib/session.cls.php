@@ -9,8 +9,9 @@ class session
     public function __construct(&$G)
     {
     	$this->G = $G;
-    	$this->db = $this->G->make("db");
+    	$this->db = $this->G->make("pepdo");
     	$this->ev = $this->G->make("ev");
+    	$this->pdosql = $this->G->make("pdosql");
     	$this->sql = $this->G->make("sql");
     	$this->strings = $this->G->make("strings");
     	$this->sessionid = $this->getSessionId();
@@ -19,25 +20,20 @@ class session
     //获取会话ID
     public function getSessionId()
     {
-    	$sessionid = $this->ev->getCookie('psid');
-    	if(!$sessionid)
+    	if(!$this->sessionid)
+    	$this->sessionid = $this->ev->getCookie('psid');
+    	if(!$this->sessionid)
     	{
-    		if($this->ev->getCookie('PHPSESSID',1))
-    		{
-    			$this->ev->setCookie('psid',$this->ev->getCookie('PHPSESSID',1),3600*24);
-    			$sessionid = $this->ev->getCookie('PHPSESSID',1);
-    		}
-    		else
-    		{
-    			$sid = md5($this->ev->getClientIp().'/'.$_SERVER['HTTP_X_FORWARDED_FOR'].'/'.$_SERVER['REMOTE_ADDR'].':'.$_SERVER['REMOTE_PORT'].':'.$_SERVER['HTTP_USER_AGENT'].':'.date('Y-m-d'));
-    			$this->ev->setCookie('psid',$sid,3600*24);
-    			$sessionid = $sid;
-    		}
-    		$data = array('session',array('sessionid'=>$sessionid,'sessionuserid'=>0,'sessionip'=>$this->ev->getClientIp()));
-    		$sql = $this->sql->makeReplace($data);
-    		$this->db->exec($sql);
+    		session_start();
+    		$this->sessionid = session_id();
+    		$this->ev->setCookie('psid',$this->sessionid,3600*24);
     	}
-    	$this->sessionid = $sessionid;
+    	if(!$this->getSessionValue($this->sessionid))
+		{
+			$data = array('session',array('sessionid'=>$this->sessionid,'sessionuserid'=>0,'sessionip'=>$this->ev->getClientIp()));
+    		$sql = $this->pdosql->makeInsert($data);
+    		$this->db->exec($sql);
+		}
     	return $this->sessionid;
     }
 
@@ -54,14 +50,14 @@ class session
 	    	}
     	}
     	if(!$this->sessionid)$this->getSessionId();
-    	$data = array('session',array('sessionrandcode'=>$randCode),"sessionid = '".$this->sessionid."'");
-	    $sql = $this->sql->makeUpdate($data);
+    	$data = array('session',array('sessionrandcode'=>$randCode),array(array("AND","sessionid = :sessionid",'sessionid',$this->sessionid)));
+	    $sql = $this->pdosql->makeUpdate($data);
     	$r = $this->db->exec($sql);
     	if($r)return $randCode;
     	else
     	{
     		$data = array('session',array('sessionid'=>$this->sessionid,'sessionuserid'=>0,'sessionip'=>$this->ev->getClientIp()));
-    		$sql = $this->sql->makeReplace($data);
+    		$sql = $this->pdosql->makeInsert($data);
     		$this->db->exec($sql);
     		return $this->setRandCode($randCode);
     	}
@@ -71,9 +67,9 @@ class session
     public function getRandCode()
     {
     	if(!$this->sessionid)$this->getSessionId();
-    	$data = array('sessionrandcode','session','sessionid = '.$this->sessionid);
-    	$sql = $this->sql->makeSelect($data);
-    	$r = $this->db->fetch(1,$sql);
+    	$data = array('sessionrandcode','session',array(array('AND',"sessionid = :sessionid",'sessionid',$this->sessionid)));
+    	$sql = $this->pdosql->makeSelect($data);
+    	$r = $this->db->fetch($sql);
     	return $r['randcode'];
     }
 
@@ -85,8 +81,8 @@ class session
     		if(!$this->sessionid)$this->getSessionId();
     		$sessionid = $this->sessionid;
     	}
-    	$data = array(false,'session',"sessionid = '{$sessionid}'");
-    	$sql = $this->sql->makeSelect($data);
+    	$data = array(false,'session',array(array('AND',"sessionid = :sessionid",'sessionid',$this->sessionid)));
+    	$sql = $this->pdosql->makeSelect($data);
     	return $this->db->fetch($sql);
     }
 
@@ -100,8 +96,11 @@ class session
 	    	if(!$this->sessionid)$this->getSessionId();
 	    	$args['sessionid'] = $this->sessionid;
 	    	$args['sessiontimelimit'] = TIME;
+	    	$data = array('session',array(array('AND',"sessionid = :sessionid",'sessionid',$this->sessionid)));
+	    	$sql = $this->pdosql->makeDelete($data);
+	    	$this->db->exec($sql);
 	    	$data = array('session',$args);
-	    	$sql = $this->sql->makeReplace($data);
+	    	$sql = $this->pdosql->makeInsert($data);
 	    	$this->db->exec($sql);
 	    	$this->ev->setCookie($this->sessionname,$this->strings->encode($args),3600*24);
 	    	return true;
@@ -114,8 +113,9 @@ class session
 		if(!$args)return false;
     	else
     	{
-	    	$data = array('session',$args,"sessionid = '".$this->getSessionId()."'");
-	    	$sql = $this->sql->makeUpdate($data);
+	    	if(!$this->sessionid)$this->getSessionId();
+	    	$data = array('session',$args,array(array('AND',"sessionid = :sessionid",'sessionid',$this->sessionid)));
+	    	$sql = $this->pdosql->makeUpdate($data);
 	    	$this->db->exec($sql);
 	    	return true;
     	}
@@ -133,13 +133,30 @@ class session
     	}
     	if($cookie['sessionuserid'])
     	{
+    		if(!$this->ev->getCookie('psid') || $this->ev->getCookie('psid') != $cookie['sessionid'])
+    		{
+    			return false;
+    		}
+    		//$this->ev->setCookie('psid',$cookie['sessionid'],3600*24);
     		$user = $this->getSessionValue();
-    		//if($user['sessiontimelimit'] - TIME > 3600)return false;
-    		//if($user['sessiontimelimit'] - TIME > 60)$this->setSessionValue(array('sessiontimelimit'=>TIME));
     		if($cookie['sessionuserid'] == $user['sessionuserid'] && $cookie['sessionpassword'] == $user['sessionpassword'])
     		{
     			$this->sessionuser = $user;
     			return $user;
+    		}
+    		else
+    		{
+    			/**
+    			$user = $this->G->make('user','user')->getUserById($cookie['sessionuserid']);
+    			if($cookie['sessionpassword'] == $user['userpassword'])
+    			{
+					$this->sessionid = $cookie['sessionid'];
+    				$this->setSessionUser(array('sessionuserid'=>$user['userid'],'sessionpassword'=>$user['userpassword'],'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>$user['usergroupid'],'sessionlogintime'=>TIME,'sessionusername'=>$user['username']));
+    				$user = $this->getSessionValue();
+    				$this->sessionuser = $user;
+    				return $user;
+    			}
+    			**/
     		}
     	}
 		return false;
@@ -150,8 +167,8 @@ class session
     {
     	if(!$this->sessionid)$this->getSessionId();
     	$this->ev->setCookie($this->sessionname,NULL);
-    	$data = array('session',array('sessionid'=>$this->sessionid));
-		$sql = $this->sql->makeReplace($data);
+    	$data = array('session',array(array('AND',"sessionid = :sessionid",'sessionid',$this->sessionid)));
+		$sql = $this->pdosql->makeDelete($data);
 		$this->db->exec($sql);
 		return true;
     }
@@ -159,8 +176,8 @@ class session
     //清除所有会话
     public function clearSession()
     {
-    	$data = array('session','1');
-    	$sql = $this->sql->makeDelete($data);
+    	$data = array('session',array(array('AND',1)));
+    	$sql = $this->pdosql->makeDelete($data);
 	    $this->db->exec($sql);
     	return true;
     }
@@ -172,8 +189,8 @@ class session
     	$date = $time;
     	else
     	$date = TIME-24*3600;
-    	$data = array('session',"sessionlogintime < '{$date}'");
-    	$sql = $this->sql->makeDelete($data);
+    	$data = array('session',array(array('AND',"sessionlogintime < :sessionlogintime",'sessionlogintime',$date)));
+    	$sql = $this->pdosql->makeDelete($data);
 	    $this->db->exec($sql);
     	return true;
     }
@@ -186,7 +203,7 @@ class session
 			'table' => 'session',
 			'index' => false,
 			'serial' => false,
-			'query' => "sessionuserid > 0",
+			'query' => array(array('AND',"sessionuserid > 0")),
 			'orderby' => 'sessionlogintime DESC',
 			'groupby' => false
 		);
@@ -195,9 +212,15 @@ class session
 
     public function __destruct()
     {
-    	$data = array('session',array('sessionlasttime' => TIME),"sessionid = '".$this->getSessionId()."'");
-    	$sql = $this->sql->makeUpdate($data);
+    	$data = array('session',array('sessionlasttime' => TIME),array(array('AND',"sessionid = :sessionid",'sessionid',$this->sessionid)));
+    	$sql = $this->pdosql->makeUpdate($data);
     	$this->db->exec($sql);
+    	if(rand(0,5) > 4)
+    	{
+    		$data = array('session',array(array('AND',"sessionlasttime <= :sessionlasttime","sessionlasttime",intval((TIME - 3600*24*3)))));
+	    	$sql = $this->pdosql->makeDelete($data);
+	    	$this->db->exec($sql);
+    	}
     }
 }
 ?>

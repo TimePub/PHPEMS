@@ -35,13 +35,23 @@ class ev
 	{
 		if(isset($_REQUEST['route']))
 		{
-			return explode('-',$_REQUEST['route']);
+			$r = explode('-',$_REQUEST['route']);
+			foreach($r as $key => $p)
+			{
+				$r[$key] = urlencode($p);
+			}
+			return $r;
 		}
 		elseif(isset($_SERVER['QUERY_STRING']))
 		{
 			$tmp = explode('#',$_SERVER['QUERY_STRING'],2);
 			$tp = explode('&',$tmp[0],2);
-			return explode('-',$tp[0]);
+			$r = explode('-',$tp[0]);
+			foreach($r as $key => $p)
+			{
+				$r[$key] = urlencode($p);
+			}
+			return $r;
 		}
 		else return false;
 	}
@@ -73,8 +83,8 @@ class ev
     {
     	if($time)$time = TIME + $time;
 		else $time = 0;
-		if(CDO)setCookie(CH.$name,$value,$time,CP,CDO);
-    	else setCookie(CH.$name,$value,$time,CP);
+		if(CDO)setCookie(CH.$name,$value,$time,CP,CDO,false,false);
+    	else setCookie(CH.$name,$value,$time,CP,'',false,false);
     }
 
 	//获取cookie
@@ -112,12 +122,12 @@ class ev
 		{
 			if(is_numeric($data))
 			{
-				if($data[0] === 0)return $this->addSlashes(htmlspecialchars(str_replace("'","&#39;",$data)));
-				if(strlen($data) >= 11)return $this->addSlashes(htmlspecialchars(str_replace("'","&#39;",$data)));
+				if($data[0] === 0)return $this->addSlashes(htmlspecialchars($data));
+				if(strlen($data) >= 11)return $this->addSlashes(htmlspecialchars($data));
 				if(strpos($data,'.'))return floatval($data);
-				else return intval($data);
+				else return $data;
 			}
-			if(is_string($data))return $this->addSlashes(htmlspecialchars(str_replace("'","&#39;",$data)));
+			if(is_string($data))return $this->addSlashes(htmlspecialchars($data));
 			if(is_bool($data))return (bool)$data;
 			return false;
 		}

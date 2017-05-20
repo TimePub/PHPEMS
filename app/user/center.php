@@ -10,7 +10,7 @@ class app
 		$this->ev = $this->G->make('ev');
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->html = $this->G->make('html');
 		$this->module = $this->G->make('module');
@@ -53,7 +53,7 @@ class app
 		{
 			case 'remove':
 			$oid = $this->ev->get('ordersn');
-			$order = $this->order->getOrderById($oid);
+			$order = $this->order->getOrderById($oid,$this->_user['sessionuserid']);
 			if($order['orderstatus'] == 1)
 			{
 				$this->order->delOrder($oid);
@@ -75,7 +75,7 @@ class app
 			case 'orderdetail':
 			$oid = $this->ev->get('ordersn');
 			if(!$oid)exit(header("location:index.php?user-center"));
-			$order = $this->order->getOrderById($oid);
+			$order = $this->order->getOrderById($oid,$this->_user['sessionuserid']);
 			$alipay = $this->G->make('alipay');
 			$payforurl = $alipay->outPayForUrl($order,WP.'index.php?route=user-api-alipaynotify',WP.'index.php?route=user-api-alipayreturn');
 			$this->tpl->assign('payforurl',$payforurl);
@@ -115,8 +115,7 @@ class app
 			else
 			{
 				$page = $this->ev->get('page');
-				$args = array();
-				$args = "orderuserid = '".$this->_user['sessionuserid']."'";
+				$args = array(array("AND","orderuserid = :orderuserid",'orderuserid',$this->_user['sessionuserid']));
 				$myorders = $this->order->getOrderList($args,$page);
 				$this->tpl->assign('orders',$myorders);
 				$this->tpl->display('payfor');
@@ -141,12 +140,14 @@ class app
 		{
 			$args = $this->ev->get('args');
 			$userid = $this->_user['sessionuserid'];
+			$group = $this->user->getGroupById($this->_user['sessiongroupid']);
+			$args = $this->module->tidyNeedFieldsPars($args,$group['groupmoduleid'],array('iscurrentuser'=> 1,'group' => $group));
 			$id = $this->user->modifyUserInfo($args,$userid);
 			$message = array(
 				'statusCode' => 200,
 				"message" => "操作成功",
 			    "callbackType" => 'forward',
-			    "forwardUrl" => "index.php?user-center-privatement&page={$page}{$u}"
+			    "forwardUrl" => "index.php?user-center-privatement"
 			);
 			exit(json_encode($message));
 		}
@@ -170,8 +171,6 @@ class app
 				$message = array(
 					'statusCode' => 200,
 					"message" => "操作成功",
-				    "navTabId" => "",
-				    "rel" => "",
 				    "callbackType" => 'forward',
 				    "forwardUrl" => "index.php?user-center-privatement&page={$page}{$u}"
 				);

@@ -27,9 +27,17 @@
 				<div class="control-group">
 					<label for="questype" class="control-label">题型名称：</label>
 					<div class="controls">
-						<input name="args[questype]" id="questype" type="text" size="30" value="" class="required" alt="请输入题型名称" />
+						<input name="args[questype]" id="questype" type="text" size="30" value="" needle="needle" alt="请输入题型名称" />
 					</div>
 				</div>
+				<!--
+				<div class="control-group">
+					<label for="questype" class="control-label">识别码：</label>
+					<div class="controls">
+						<input name="args[questchar]" id="questype" type="text" size="30" value="" needle="needle" alt="请输入题型识别码" />
+					</div>
+				</div>
+				-->
 				<div class="control-group">
 					<label for="questsort" class="control-label">题型分类：</label>
 					<div class="controls">
@@ -47,6 +55,7 @@
 							<option value="2">多选</option>
 							<option value="3">不定项选</option>
 							<option value="4">判断</option>
+							<option value="5">定值填空题</option>
 						</select>
 						<span class="help-block">不定项选按照选对答案数给分，判断题将自动生成判断选项。</span>
 					</div>

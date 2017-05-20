@@ -44,7 +44,8 @@
 				<div class="control-group">
 					<label class="control-label">考试科目：</label>
 				  	<div class="controls">
-					  	<select class="combox" id="selectedsubjectid" needle="needle" min="1" name="args[examsubject]">
+					  	<select class="combox" autocomplete="off" id="selectedsubjectid" msg="请选择科目" needle="needle" min="1" name="args[examsubject]" onchange="javascript:loadsubjectsetting(this);">
+						  	<option value="">请选择科目</option>
 						  	{x2;tree:$subjects,subject,sid}
 						  	<option value="{x2;v:subject['subjectid']}">{x2;v:subject['subject']}</option>
 						  	{x2;endtree}
@@ -75,8 +76,19 @@
 			  			<input type="text" name="args[examsetting][passscore]" value="" size="4" needle="needle" msg="你要为本考卷设置一个及格分数线" datatype="number"/>
 					</div>
 				</div>
-				{x2;tree:$questypes,questype,qid}
 				<div class="control-group">
+					<label class="control-label">题型排序</label>
+					<div class="controls">
+						<div class="sortable btn-group">
+							{x2;tree:$questypes,questype,qid}
+							<a class="btn questpanel panel_{x2;v:questype['questid']}">{x2;v:questype['questype']}<input type="hidden" name="args[examsetting][questypelite][{x2;v:questype['questid']}]" value="1" class="questypepanelinput" id="panel_{x2;v:questype['questid']}"/></a>
+							{x2;endtree}
+						</div>
+					</div>
+					<div class="controls">拖拽进行题型排序</div>
+				</div>
+				{x2;tree:$questypes,questype,qid}
+				<div class="control-group questpanel panel_{x2;v:questype['questid']}">
 					<label class="control-label">{x2;v:questype['questype']}：</label>
 					<div class="controls">
 						<span class="info">共&nbsp;</span>
@@ -114,6 +126,12 @@
 		</div>
 	</div>
 </div>
+<script>
+function loadsubjectsetting(obj)
+{
+	$.getJSON('index.php?exam-master-basic-getsubjectquestype&subjectid='+$(obj).val()+'&'+Math.random(),function(data){$('.questpanel').hide();for(x in data){$('.panel_'+data[x]).show();}});
+}
+</script>
 </body>
 </html>
 {x2;endif}

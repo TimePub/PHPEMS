@@ -10,7 +10,8 @@ class app
 		$this->ev = $this->G->make('ev');
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pesql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->module = $this->G->make('module');
 		$this->session = $this->G->make('session');
@@ -26,11 +27,11 @@ class app
 				'statusCode' => 200,
 				"message" => "您已经登录",
 			    "callbackType" => 'forward',
-			    "forwardUrl" => "index.php?user-center"
+			    "forwardUrl" => "index.php?".$this->G->defaultApp
 			)));
 			else
 			{
-				header("location:index.php?user-center");
+				header("location:index.php?".$this->G->defaultApp);
 				exit;
 			}
 		}
@@ -65,7 +66,7 @@ class app
 						'statusCode' => 201,
 						"message" => "操作成功",
 					    "callbackType" => 'forward',
-					    "forwardUrl" => "index.php?".$this->G->defaultApp
+					    "forwardUrl" => "reload"
 					);
 					if($this->ev->get('userhash'))
 					exit(json_encode($message));
@@ -168,7 +169,13 @@ class app
 	public function logout()
 	{
 		$this->session->clearSessionUser();
-		header("location:index.php");
+		$message = array(
+			'statusCode' => 201,
+			"message" => "操作成功",
+			"callbackType" => 'forward',
+			"forwardUrl" => "index.php?".$this->G->defaultApp
+		);
+		$this->G->R($message);
 		exit;
 	}
 }

@@ -2,10 +2,11 @@ var storage = window.localStorage;
 var initData = {};
 var formData = {};
 
-function set(k,v){
+function set(k,v,t){
 	var _this = this;
-	if(typeof(_this) == "object"&& Object.prototype.toString.call(_this).toLowerCase() == "[object object]" && !_this.length){
-		_this[k] = v;
+	if(typeof(_this) == "object"&& Object.prototype.toString.call(_this).toLowerCase() == "[object object]" && !_this.length)
+	{
+		_this[k] = {'value':v,'time':t};
 		storage.setItem('questions',$.toJSON(formData));
 	}
 }
@@ -17,7 +18,7 @@ function clearStorage()
 
 function submitPaper()
 {
-	clearStorage();
+	//clearStorage();
 	$('#submodal').modal('hide');
 	$('#form1').submit();
 }
@@ -108,7 +109,7 @@ function signQuestion(id,obj)
 }
 
 function favorquestion(questionid){
-	$.get("index.php?exam-app-favor-ajax-addfavor&questionid="+questionid+'&'+Math.random(),function(){alert('收藏成功');});
+	$.get("index.php?exam-app-favor-ajax-addfavor&questionid="+questionid+'&'+Math.random(),function(data){if(data != 2)alert('收藏成功'); else alert('不能添加即时组卷试题');});
 }
 
 function delfavorquestion(questionid){

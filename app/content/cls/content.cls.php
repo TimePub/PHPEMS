@@ -14,7 +14,8 @@ class content_content
 		$this->categories = NULL;
 		$this->tidycategories = NULL;
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->ev = $this->G->make('ev');
 		$this->module = $this->G->make('module');
@@ -47,7 +48,7 @@ class content_content
 
 	public function delContent($id)
 	{
-		return $this->db->delElement(array('table' => 'content','query' => "contentid = '{$id}'"));
+		return $this->db->delElement(array('table' => 'content','query' => array(array('AND',"contentid = :contentid",'contentid',$id))));
 	}
 
 	public function modifyContent($id,$args)
@@ -57,10 +58,9 @@ class content_content
 		$data = array(
 			'table' => 'content',
 			'value' => $args,
-			'query' => "contentid = '{$id}'"
+			'query' => array(array('AND',"contentid = :contentid",'contentid',$id))
 		);
-		$this->db->updateElement($data);
-		return $this->db->affectedRows();
+		return $this->db->updateElement($data);
 	}
 
 	public function addContent($args)
@@ -70,15 +70,15 @@ class content_content
 
 	private function _getBasicContentById($id)
 	{
-		$data = array(false,'content',"contentid = '{$id}'");
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'content',array(array('AND',"contentid = :contentid",'contentid',$id)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql);
 	}
 
 	private function _modifyBasicContentById($id,$args)
 	{
-		$data = array('content',$args,"contentid = '{$id}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array('content',$args,array(array('AND',"contentid = :contentid",'contentid',$id)));
+		$sql = $this->pdosql->makeUpdate($data);
 		return $this->db->exec($sql);
 	}
 
@@ -94,19 +94,19 @@ class content_content
 
 	public function getContentById($id)
 	{
-		$data = array(false,'content',"contentid = '{$id}'");
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'content',array(array('AND',"contentid = :contentid",'contentid',$id)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql);
 	}
 
 	public function getNearContentById($id,$catid)
 	{
 		$r = array();
-		$data = array(false,'content',array("contentid < '{$id}'","contentcatid = '{$catid}'"),false,"contentid DESC",5);
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'content',array(array('AND',"contentid < :contentid",'contentid',$id),array('AND',"contentcatid = :catid",'catid',$catid)),false,"contentid DESC",5);
+		$sql = $this->pdosql->makeSelect($data);
 		$r['pre'] = $this->db->fetchAll($sql);
-		$data = array(false,'content',array("contentid > '{$id}'","contentcatid = '{$catid}'"),false,"contentid ASC",5);
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'content',array(array('AND',"contentid > :contentid",'contentid',$id),array('AND',"contentcatid = :catid",'catid',$catid)),false,"contentid ASC",5);
+		$sql = $this->pdosql->makeSelect($data);
 		$r['next'] = $this->db->fetchAll($sql);
 		return $r;
 	}

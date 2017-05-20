@@ -1,5 +1,30 @@
 <?php
 
+function handleError($errno, $errstr, $errfile, $errline)
+{
+	switch ($errno)
+	{
+		case E_USER_ERROR:
+			echo "<b>My ERROR</b> [$errno] $errstr<br />\n";
+			echo "  Fatal error in line $errline of file $errfile";
+			echo ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
+			echo "Aborting...<br />\n";
+		break;
+		case E_USER_WARNING:
+			echo "<b>My WARNING</b> [$errno] $errstr<br />\n";
+		break;
+		case E_USER_NOTICE:
+			echo "<b>My NOTICE</b> [$errno] $errstr<br />\n";
+		break;
+		default:
+		/**
+			echo "Unkown error type: [$errno] $errstr $errfile $errline<br />\n";
+			**/
+		break;
+	}
+}
+set_error_handler('handleError');
+
 class ginkgo
 {
 	public $G = array();
@@ -10,7 +35,7 @@ class ginkgo
 
 	public function __construct()
 	{
-		set_error_handler(array($this,'handleError'));
+		//
 	}
 
 	//错误信息显示控制
@@ -88,8 +113,13 @@ class ginkgo
 		if(!$app)$app = $this->defaultApp;
 		$this->app = $app;
 		$module = $ev->url(1);
+		if(!$module)$module = 'app';
 		$modulefile = 'app/'.$app.'/'.$module.'.php';
-		if(!file_exists($modulefile))$modulefile = 'app/'.$app.'/app.php';
+		if(!file_exists($modulefile))
+		{
+			$this->app = $app = $this->defaultApp;
+			$modulefile = 'app/'.$app.'/app.php';
+		}
 		if(file_exists($modulefile))
 		{
 			header('P3P: CP=CAO PSA OUR');

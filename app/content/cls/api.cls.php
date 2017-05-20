@@ -12,7 +12,8 @@ class api_content
 	public function _init()
 	{
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->tpl = $this->G->make('tpl');
 		$this->pg = $this->G->make('pg');
 		$this->ev = $this->G->make('ev');
@@ -29,7 +30,7 @@ class api_content
 		if($args['query'])
 		$query = explode("\n",str_replace("\r",'',html_entity_decode($this->ev->stripSlashes($args['query']))));
 		else $query = array();
-		$query[] = "contentcatid IN ({$catids})";
+		$query[] = array("AND","find_in_set(contentcatid,:contentcatid)",'contentcatid',$catids);
 		$r = $this->content->getContentList($query,1,$args['number']);
 		return $r['data'];
 	}
@@ -49,7 +50,7 @@ class api_content
 				$blockdata = $this->_getBlockContentList($args);
 				$tp = $this->tpl->fetchContent(html_entity_decode($this->ev->stripSlashes($block['blockcontent']['template'])));
 				$blockcat = $this->category->getCategoryById($block['blockcontent']['catid']);
-				$blockcatchildren = $this->category->getCategoriesByArgs("catparent = '{$block['blockcontent']['catid']}'");
+				$blockcatchildren = $this->category->getCategoriesByArgs(array(array("AND","catparent = :catparent",'catparent',$block['blockcontent']['catid'])));
 				eval(' ?>'.$tp.'<?php ');
 			}
 			else
@@ -67,14 +68,37 @@ class api_content
 		{
 			if($block['blockcontent']['sql'])
 			{
-				$sql = str_replace('[TABLEPRE]',DTH,$block['blockcontent']['sql']);
+				$sql = array('sql' => str_replace('[TABLEPRE]',DTH,$block['blockcontent']['sql']));
 			}
 			else
 			{
 				$tables = array_filter(explode(',',$block['blockcontent']['dbtable']));
-				$args = array_filter(explode("\n",str_replace("\r","",html_entity_decode($this->ev->stripSlashes($block['blockcontent']['query'])))));
+				$querys = array_filter(explode("\n",str_replace("\r","",html_entity_decode($this->ev->stripSlashes($block['blockcontent']['query'])))));
+				$args = array();
+				foreach($querys as $p)
+				{
+					$a = explode('|',$p);
+					if($a[3])
+					{
+						if($a[3][0] == '$')
+						{
+							$s = stripos($a[3],'[');
+							$k = substr($a[3],1,$s-1);
+							$v = substr($a[3],$s,(strlen($a[3]) - $s));
+							$execode = "\$a[3] = \"{\$this->tpl_var['$k']$v}\";";
+						}
+						else
+						{
+							$k = substr($a[3],2,(strlen($a[3]) - 2));
+							$execode = "\$a[3] = \"{\$$k}\";";
+						}
+						eval($execode);
+					}
+					$args[] = $a;
+				}
+
 				$data = array(false,$tables,$args,false,$block['blockcontent']['order'],$block['blockcontent']['limit']);
-				$sql = $this->sql->makeSelect($data);
+				$sql = $this->pdosql->makeSelect($data);
 			}
 			$blockdata = $this->db->fetchAll($sql,$block['blockcontent']['index']?$block['blockcontent']['index']:false,$block['blockcontent']['serial']?$block['blockcontent']['serial']:false);
 			$tp = $this->tpl->fetchContent(html_entity_decode($this->ev->stripSlashes($block['blockcontent']['template'])));

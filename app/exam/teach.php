@@ -13,6 +13,7 @@ class app
 		$this->files = $this->G->make('files');
 		$this->user = $this->G->make('user','user');
 		$_user = $this->session->getSessionUser();
+
 		$this->_user = $this->user->getUserById($_user['sessionuserid']);
 		$this->_user['teacher_subjects'] = unserialize($this->_user['teacher_subjects']);
 		$group = $this->user->getGroupById($_user['sessiongroupid']);
@@ -35,16 +36,18 @@ class app
 		$this->teachsubjects = implode(',',$this->_user['teacher_subjects']);
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->db = $this->G->make('pepdo');
+
 		$this->pg = $this->G->make('pg');
 		$this->html = $this->G->make('html');
 		$this->apps = $this->G->make('apps','core');
 		$this->basic = $this->G->make('basic','exam');
 		$this->area = $this->G->make('area','exam');
+
 		$this->section = $this->G->make('section','exam');
 		$this->favor = $this->G->make('favor','exam');
 		$this->exam = $this->G->make('exam','exam');
-		$this->answer = $this->G->make('answer','exam');
+
 		$this->tpl->assign('ols',array(1=>'一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'));
 		$this->tpl->assign('action',$this->ev->url(2)?$this->ev->url(2):'exams');
 		$this->tpl->assign('_user',$this->_user);
@@ -72,6 +75,20 @@ class app
 		$this->tpl->assign('page',$page);
 		switch($subaction)
 		{
+			case 'getsubjectquestype':
+			$subjectid = $this->ev->get('subjectid');
+			$subject = $this->basic->getSubjectById($subjectid);
+			$r = array();
+			if($subject['subjectsetting']['questypes'])
+			{
+				foreach($subject['subjectsetting']['questypes'] as $key => $p)
+				{
+					if($p)$r[] = $key;
+				}
+			}
+			exit(json_encode($r));
+			break;
+
 			//删除考试设置信息
 			case 'delbasic':
 			$page = $this->ev->get('page');
@@ -119,7 +136,7 @@ class app
 			{
 				$basicid = $this->ev->get('basicid');
 				$basic = $this->basic->getBasicById($basicid);
-				$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
+				$subjects = $this->basic->getSubjectList(array(array("AND","find_in_set(subjectid,:subjectid)",'subjectid',$this->teachsubjects)));
 				$areas = $this->area->getAreaList();
 				$this->tpl->assign('areas',$areas);
 				$this->tpl->assign('subjects',$subjects);
@@ -142,9 +159,9 @@ class app
 				}
 				$args['basicexam']['opentime']['start'] = strtotime($args['basicexam']['opentime']['start']);
 				$args['basicexam']['opentime']['end'] = strtotime($args['basicexam']['opentime']['end']);
-				$args['basicsection'] = $this->ev->addSlashes(serialize($args['basicsection']));
-				$args['basicknows'] = $this->ev->addSlashes(serialize($args['basicknows']));
-				$args['basicexam'] = $this->ev->addSlashes(serialize($args['basicexam']));
+				$args['basicsection'] = $args['basicsection'];
+				$args['basicknows'] = $args['basicknows'];
+				$args['basicexam'] = $args['basicexam'];
 				$this->basic->setBasicConfig($basicid,$args);
 				$message = array(
 					'statusCode' => 200,
@@ -157,11 +174,11 @@ class app
 			else
 			{
 				$basic = $this->basic->getBasicById($basicid);
-				$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
+				$subjects = $this->basic->getSubjectList(array(array('AND',"find_in_set(subjectid,:subjectid)",'subjectid',$this->teachsubjects)));
 				$areas = $this->area->getAreaList();
 				$tmpknows = $this->section->getAllKnowsBySubject($basic['basicsubjectid']);
 				$knows = array();
-				$sections = $this->section->getSectionListByArgs("sectionsubjectid = '{$basic['basicsubjectid']}'");
+				$sections = $this->section->getSectionListByArgs(array(array('AND',"sectionsubjectid = :sectionsubjectid",'sectionsubjectid',$basic['basicsubjectid'])));
 				foreach($tmpknows as $p)
 				{
 					$knows[$p['knowssectionid']][] = $p;
@@ -201,7 +218,7 @@ class app
 			}
 			else
 			{
-				$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
+				$subjects = $this->basic->getSubjectList(array(array("AND","find_in_set(subjectid,:subjectid)",'subjectid',$this->teachsubjects)));
 				$areas = $this->area->getAreaList();
 				$this->tpl->assign('areas',$areas);
 				$this->tpl->assign('subjects',$subjects);
@@ -212,15 +229,15 @@ class app
 			default:
 			$page = $this->ev->get('page');
 			$page = $page > 1?$page:1;
-			$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
-			$args = array("basicsubjectid IN ({$this->teachsubjects})");
-			if($search['basicid'])$args[] = "basicid = '{$search['basicid']}'";
+			$subjects = $this->basic->getSubjectList(array(array('AND','find_in_set(subjectid,:subjectid)','subjectid',$this->teachsubjects)));
+			$args = array(array('AND','find_in_set(basicsubjectid,:basicsubjectid)','basicsubjectid',$this->teachsubjects));
+			if($search['basicid'])$args[] = array('AND',"basicid = :basicid",'basicid',$search['basicid']);
 			else
 			{
-				if($search['keyword'])$args[] = "basic LIKE '%{$search['keyword']}%'";
-				if($search['basicareaid'])$args[] = "basicareaid = '{$search['basicareaid']}'";
-				if($search['basicsubjectid'])$args[] = "basicsubjectid = '{$search['basicsubjectid']}'";
-				if($search['basicapi'])$args[] = "basicapi = '{$search['basicapi']}'";
+				if($search['keyword'])$args[] = array('AND',"basic LIKE :basic",'basic',"%{$search['keyword']}%");
+				if($search['basicareaid'])$args[] = array('AND',"basicareaid = :basicareaid",'basicareaid',$search['basicareaid']);
+				if($search['basicsubjectid'])$args[] = array('AND',"basicsubjectid = :basicsubjectid",'basicsubjectid',$search['basicsubjectid']);
+				if($search['basicapi'])$args[] = array('AND',"basicapi = :basicapi",'basicapi',$search['basicapi']);
 			}
 			$basics = $this->basic->getBasicList($page,10,$args);
 			$areas = $this->area->getAreaList();
@@ -234,7 +251,8 @@ class app
 
 	public function index()
 	{
-		$this->tpl->display('index');
+		//$this->tpl->display('index');
+		header("location:index.php?exam-teach-users");
 	}
 
 	public function questions()
@@ -319,9 +337,9 @@ class app
 			{
 
 				$questypes = $this->basic->getQuestypeList();
-				$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
-				$sections = $this->section->getSectionListByArgs("sectionsubjectid = '{$search['questionsubjectid']}'");
-				$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
+				$subjects = $this->basic->getSubjectList(array(array('AND','find_in_set(subjectid,:subjectid)','subjectid',$this->teachsubjects)));
+				$sections = $this->section->getSectionListByArgs(array(array('AND',"sectionsubjectid = :sectionsubjectid",'sectionsubjectid',$search['questionsubjectid'])));
+				$knows = $this->section->getKnowsListByArgs(array(array('AND',"knowsstatus = 1"),array('AND',"knowssectionid = :knowssectionid",'knowssectionid',$search['questionsectionid'])));
 				$this->tpl->assign('subjects',$subjects);
 				$this->tpl->assign('sections',$sections);
 				$this->tpl->assign('knows',$knows);
@@ -418,11 +436,11 @@ class app
 				$knowsid = $this->ev->get('knowsid');
 				$questionid = $this->ev->get('questionid');
 				$questypes = $this->basic->getQuestypeList();
-				$question = $this->exam->getQuestionByArgs("questionid = '{$questionid}'");
-				$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
+				$question = $this->exam->getQuestionByArgs(array(array('AND',"questionid = :questionid",'questionid',$questionid)));
+				$subjects = $this->basic->getSubjectList(array(array('AND','find_in_set(subjectid,:subjectid)','subjectid',$this->teachsubjects)));
 				foreach($question['questionknowsid'] as $key => $p)
 				{
-					$knows = $this->section->getKnowsByArgs("knowsid = '{$p['knowsid']}'");
+					$knows = $this->section->getKnowsByArgs(array(array('AND',"knowsid = :knowsid",'knowsid',$p['knowsid'])));
 					$question['questionknowsid'][$key]['knows'] = $knows['knows'];
 				}
 				$this->tpl->assign('subjects',$subjects);
@@ -444,7 +462,7 @@ class app
 				//根据章节获取知识点信息
 				case 'getknowsbysectionid':
 				$sectionid = $this->ev->get('sectionid');
-				$aknows = $this->section->getKnowsListByArgs(array("knowssectionid = '{$sectionid}'","knowsstatus = 1"));
+				$aknows = $this->section->getKnowsListByArgs(array(array('AND',"knowssectionid = :knowssectionid",'knowssectionid',$sectionid),array('AND',"knowsstatus = 1")));
 				$data = array(array("",'选择知识点'));
 				foreach($aknows as $knows)
 				{
@@ -460,7 +478,7 @@ class app
 				//根据科目获取章节信息
 				case 'getsectionsbysubjectid':
 				$esid = $this->ev->get('subjectid');
-				$aknows = $this->section->getSectionListByArgs(array("sectionsubjectid = '{$esid}'"));
+				$aknows = $this->section->getSectionListByArgs(array(array('AND',"sectionsubjectid = :sectionsubjectid",'sectionsubjectid',$esid)));
 				$data = array(array(0,'选择章节'));
 				foreach($aknows as $knows)
 				{
@@ -482,17 +500,17 @@ class app
 			$questionparent = $this->ev->get('questionparent');
 			if($questionparent)
 			{
-				$questions = $this->exam->getQuestionByArgs("questionparent = '{$questionparent}'");
+				$questions = $this->exam->getQuestionByArgs(array(array('AND',"questionparent = :questionparent",'questionparent',$questionparent)));
 			}
 			else
 			{
-				$question = $this->exam->getQuestionByArgs("questionid = '{$questionid}'");
+				$question = $this->exam->getQuestionByArgs(array(array('AND',"questionid = :questionid",'questionid',$questionid)));
 				$sections = array();
 				foreach($question['questionknowsid'] as $key => $p)
 				{
-					$knows = $this->section->getKnowsByArgs("knowsid = '{$p['knowsid']}'");
+					$knows = $this->section->getKnowsByArgs(array(array('AND',"knowsid = :knowsid",'knowsid',$p['knowsid'])));
 					$question['questionknowsid'][$key]['knows'] = $knows['knows'];
-					$sections[] = $this->section->getSectionByArgs("sectionid = '{$knows['knowssectionid']}'");
+					$sections[] = $this->section->getSectionByArgs(array(array('AND',"sectionid = :sectionid",'sectionid',$knows['knowssectionid'])));
 				}
 				$subject = $this->basic->getSubjectById($sections[0]['sectionsubjectid']);
 			}
@@ -507,50 +525,50 @@ class app
 			default:
 			$page = $this->ev->get('page');
 			$page = $page > 0?$page:1;
-			$args = array("quest2knows.qkquestionid = questions.questionid","questions.questionstatus = '1'","questions.questionparent = 0","quest2knows.qktype = 0" );
+			$args = array(array('AND',"quest2knows.qkquestionid = questions.questionid"),array('AND',"questions.questionstatus = '1'"),array('AND',"questions.questionparent = 0"),array('AND',"quest2knows.qktype = 0") );
 			if($search['questionid'])
 			{
-				$args[] = "questions.questionid = '{$search['questionid']}'";
+				$args[] = array('AND',"questions.questionid = :questionid",'questionid',$search['questionid']);
 			}
 			if($search['keyword'])
 			{
-				$args[] = "questions.question LIKE '%".$search['keyword']."%'";
+				$args[] = array('AND',"questions.question LIKE :question",'question','%'.$search['keyword'].'%');
 			}
 			if($search['knowsids'])
 			{
-				$args[] = "questions.questionknowsid IN (".$search['knowsids'].")";
+				$args[] = array('AND',"find_in_set(questions.questionknowsid ,:questionknowsid)",'questionknowsid',$search['knowsids']);
 			}
 			if($search['stime'])
 			{
-				$args[] = "questions.questioncreatetime >= '".strtotime($search['stime'])."'";
+				$args[] = array('AND',"questions.questioncreatetime >= :questioncreatetime",'questioncreatetime',strtotime($search['stime']));
 			}
 			if($search['etime'])
 			{
-				$args[] = "questions.questioncreatetime <= '".strtotime($search['etime'])."'";
+				$args[] = array('AND',"questions.questioncreatetime <= :questioncreatetime",'questioncreatetime',strtotime($search['etime']));
 			}
 			if($search['questiontype'])
 			{
-				$args[] = "questions.questiontype = '".$search['questiontype']."'";
+				$args[] = array('AND',"questions.questiontype = :questiontype",'questiontype',$search['questiontype']);
 			}
 			if($search['questionlevel'])
 			{
-				$args[] = "questions.questionlevel = '{$search['questionlevel']}'";
+				$args[] = array('AND',"questions.questionlevel = :questionlevel",'questionlevel',$search['questionlevel']);
 			}
 			if($search['questionknowsid'])
 			{
-				$args[] = "quest2knows.qkknowsid = '".$search['questionknowsid']."'";
+				$args[] = array('AND',"quest2knows.qkknowsid = :qkknowsid",'qkknowsid',$search['questionknowsid']);
 			}
 			else
 			{
 				$tmpknows = '0';
 				if($search['questionsectionid'])
 				{
-					$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
+					$knows = $this->section->getKnowsListByArgs(array(array('AND',"knowsstatus = 1"),array('AND',"knowssectionid = :knowssectionid",'knowssectionid',$search['questionsectionid'])));
 					foreach($knows as $p)
 					{
 						if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 					}
-					$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+					$args[] = array('AND',"find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid',$tmpknows);
 				}
 				elseif($search['questionsubjectid'])
 				{
@@ -559,7 +577,7 @@ class app
 					{
 						if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 					}
-					$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+					$args[] = array('AND',"find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid',$tmpknows);
 				}
 				else
 				{
@@ -568,14 +586,14 @@ class app
 					{
 						if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 					}
-					$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+					$args[] = array('AND',"find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid',$tmpknows);
 				}
 			}
 			$questypes = $this->basic->getQuestypeList();
 			$questions = $this->exam->getQuestionsList($page,10,$args);
-			$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
-			$sections = $this->section->getSectionListByArgs("sectionsubjectid = '{$search['questionsubjectid']}'");
-			$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
+			$subjects = $this->basic->getSubjectList(array(array('AND','find_in_set(subjectid,:subjectid)','subjectid',$this->teachsubjects)));
+			$sections = $this->section->getSectionListByArgs(array(array('AND',"sectionsubjectid = :sectionsubjectid",'sectionsubjectid',$search['questionsubjectid'])));
+			$knows = $this->section->getKnowsListByArgs(array(array('AND',"knowsstatus = 1"),array('AND',"knowssectionid = :knowssectionid",'knowssectionid',$search['questionsectionid'])));
 			$this->tpl->assign('subjects',$subjects);
 			$this->tpl->assign('sections',$sections);
 			$this->tpl->assign('knows',$knows);
@@ -676,12 +694,12 @@ class app
 			{
 				$page = $this->ev->get('page');
 				$questionid = $this->ev->get('questionid');
-				$question = $this->exam->getQuestionRowsByArgs("qrid = '{$questionid}'");
-				$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
+				$question = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$questionid)));
+				$subjects = $this->basic->getSubjectList(array(array("AND","find_in_set(subjectid,:subjectid)",'subjectid',$this->teachsubjects)));
 				$questypes = $this->basic->getQuestypeList();
 				foreach($question['qrknowsid'] as $key => $p)
 				{
-					$knows = $this->section->getKnowsByArgs("knowsid = '{$p['knowsid']}'");
+					$knows = $this->section->getKnowsByArgs(array(array("AND","knowsid = :knowsid",'knowsid',$p['knowsid'])));
 					$question['qrknowsid'][$key]['knows'] = $knows['knows'];
 				}
 				$this->tpl->assign('questypes',$questypes);
@@ -722,7 +740,7 @@ class app
 				$questionid = $this->ev->get('questionid');
 				$questypes = $this->basic->getQuestypeList();
 				$question = $this->exam->getQuestionByArgs("questionid = '{$questionid}'");
-				$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
+				$subjects = $this->basic->getSubjectList(array(array("AND","find_in_set(subjectid,:subjectid)",'subjectid',$this->teachsubjects)));
 				$this->tpl->assign('subjects',$subjects);
 				$this->tpl->assign('questionparent',$questionparent);
 				$this->tpl->assign('questypes',$questypes);
@@ -812,7 +830,7 @@ class app
 			}
 			else
 			{
-				$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
+				$subjects = $this->basic->getSubjectList(array(array("AND","find_in_set(subjectid,:subjectid)",'subjectid',$this->teachsubjects)));
 				$this->tpl->assign('subjects',$subjects);
 				$this->tpl->display('questionrows_batadd');
 			}
@@ -836,7 +854,9 @@ class app
 			}
 			else
 			{
-				$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
+				$subjects = $this->basic->getSubjectList(array(array("AND","find_in_set(subjectid,:subjectid)",'subjectid',$this->teachsubjects)));
+				$questypes = $this->basic->getQuestypeList();
+				$this->tpl->assign('questypes',$questypes);
 				$this->tpl->assign('subjects',$subjects);
 				$this->tpl->display('questionrows_add');
 			}
@@ -846,46 +866,46 @@ class app
 			default:
 			$page = $this->ev->get('page');
 			$page = $page > 0?$page:1;
-			$args = array("quest2knows.qkquestionid = questionrows.qrid","questionrows.qrstatus = '1'");
+			$args = array(array("AND","quest2knows.qkquestionid = questionrows.qrid"),array("AND","questionrows.qrstatus = '1'"));
 			if($search['questionid'])
 			{
-				$args[] = "questionrows.qrid = '{$search['questionid']}'";
+				$args[] = array("AND","questionrows.qrid = :qrid",'qrid',$search['questionid']);
 			}
 			if($search['questiontype'])
 			{
-				$args[] = "questionrows.qrtype = '{$search['questiontype']}'";
+				$args[] = array("AND","questionrows.qrtype = :qrtype",'qrtype',$search['questiontype']);
 			}
 			if($search['keyword'])
 			{
-				$args[] = "questionrows.qrquestion LIKE '%".$search['keyword']."%'";
+				$args[] = array("AND","questionrows.qrquestion LIKE :qrquestion",'qrquestion',"%{$search['keyword']}%");
 			}
 			if($search['stime'])
 			{
-				$args[] = "questionrows.qrtime >= '".strtotime($search['stime'])."'";
+				$args[] = array("AND","questionrows.qrtime >= :sqrtime",'sqrtime',strtotime($search['stime']));
 			}
 			if($search['etime'])
 			{
-				$args[] = "questionrows.qrtime <= '".strtotime($search['etime'])."'";
+				$args[] = array("AND","questionrows.qrtime >= :eqrtime",'eqrtime',strtotime($search['etime']));
 			}
 			if($search['qrlevel'])
 			{
-				$args[] = "questionrows.qrlevel = '{$search['qrlevel']}'";
+				$args[] = array("AND","questionrows.qrlevel = :qrlevel",'qrlevel',$search['qrlevel']);
 			}
 			if($search['questionknowsid'])
 			{
-				$args[] = "quest2knows.qkknowsid = '".$search['questionknowsid']."'";
+				$args[] = array("AND","quest2knows.qkknowsid = :qkknowsid",'qkknowsid',$search['questionknowsid']);
 			}
 			else
 			{
 				$tmpknows = '0';
 				if($search['questionsectionid'])
 				{
-					$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
+					$knows = $this->section->getKnowsListByArgs(array(array("AND","knowsstatus = 1"),array("AND","knowssectionid = :knowssectionid",'knowssectionid',$search['questionsectionid'])));
 					foreach($knows as $p)
 					{
 						if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 					}
-					$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+					$args[] = array('AND',"find_in_set(quest2knows.qkknowsid,:qkknowsids)","qkknowsids",$tmpknows);
 				}
 				elseif($search['questionsubjectid'])
 				{
@@ -894,7 +914,7 @@ class app
 					{
 						if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 					}
-					$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+					$args[] = array('AND',"find_in_set(quest2knows.qkknowsid,:qkknowsids)","qkknowsids",$tmpknows);
 				}
 				else
 				{
@@ -903,14 +923,14 @@ class app
 					{
 						if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 					}
-					$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+					$args[] = array('AND',"find_in_set(quest2knows.qkknowsid,:qkknowsids)","qkknowsids",$tmpknows);
 				}
 			}
 			$questypes = $this->basic->getQuestypeList();
 			$questions = $this->exam->getQuestionrowsList($page,10,$args);
-			$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
-			$sections = $this->section->getSectionListByArgs("sectionsubjectid = '{$search['questionsubjectid']}'");
-			$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
+			$subjects = $this->basic->getSubjectList(array(array("AND","find_in_set(subjectid,:subjectid)",'subjectid',$this->teachsubjects)));
+			$sections = $this->section->getSectionListByArgs(array(array("AND","sectionsubjectid = :sectionsubjectid",'sectionsubjectid',$search['questionsubjectid'])));
+			$knows = $this->section->getKnowsListByArgs(array(array("AND","knowsstatus = 1"),array("AND","knowssectionid = :knowssectionid",'knowssectionid',$search['questionsectionid'])));
 			$this->tpl->assign('subjects',$subjects);
 			$this->tpl->assign('sections',$sections);
 			$this->tpl->assign('knows',$knows);
@@ -929,7 +949,7 @@ class app
 			case 'rows':
 			$page = $this->ev->get('page');
 			$page = $page > 0?$page:1;
-			$args = array("questionrows.qrstatus = '0'","questionrows.qrid = quest2knows.qkquestionid","quest2knows.qktype = 1");
+			$args = array(array("AND","questionrows.qrstatus = '0'"),array("AND","questionrows.qrid = quest2knows.qkquestionid"),array("AND","quest2knows.qktype = 1"));
 			$knows = $this->section->getAllKnowsBySubjects($this->teachsubjects);
 			foreach($knows as $p)
 			{
@@ -937,7 +957,7 @@ class app
 			}
 			$tmpknows = trim($tmpknows,', ');
 			if(!$tmpknows)$tmpknows = 0;
-			$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+			$args[] = array('AND',"find_in_set(quest2knows.qkknowsid,:qkknowsids)","qkknowsids",$tmpknows);
 			$questypes = $this->basic->getQuestypeList();
 			$questions = $this->exam->getQuestionrowsList($page,20,$args);
 			$this->tpl->assign('page',$page);
@@ -979,7 +999,7 @@ class app
 			default:
 			$page = $this->ev->get('page');
 			$page = $page > 0?$page:1;
-			$args = array("quest2knows.qkquestionid = questions.questionid","questions.questionstatus = '0'","questions.questionparent = 0","quest2knows.qktype = 0" );
+			$args = array(array("AND","quest2knows.qkquestionid = questions.questionid"),array("AND","questions.questionstatus = '0'"),array("AND","questions.questionparent = 0"),array("AND","quest2knows.qktype = 0") );
 			$knows = $this->section->getAllKnowsBySubjects($this->teachsubjects);
 			foreach($knows as $p)
 			{
@@ -987,7 +1007,7 @@ class app
 			}
 			$tmpknows = trim($tmpknows,', ');
 			if(!$tmpknows)$tmpknows = 0;
-			$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+			$args[] = array("AND","find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid',$tmpknows);
 			$questypes = $this->basic->getQuestypeList();
 			$questions = $this->exam->getQuestionsList($page,20,$args);
 			$this->tpl->assign('page',$page);
@@ -1089,7 +1109,7 @@ class app
 			if($this->ev->get('submitsetting'))
 			{
 				$args = $this->ev->get('args');
-				$args['examsetting'] = $this->ev->addSlashes(serialize($args['examsetting']));
+				$args['examsetting'] = $args['examsetting'];
 				$args['examauthorid'] = $this->_user['userid'];
 				$args['examauthor'] = $this->_user['username'];
 				$args['examtype'] = 1;
@@ -1115,11 +1135,11 @@ class app
 			if($this->ev->get('submitsetting'))
 			{
 				$args = $this->ev->get('args');
-				$args['examsetting'] = $this->ev->addSlashes(serialize($args['examsetting']));
+				$args['examsetting'] = $args['examsetting'];
 				$args['examauthorid'] = $this->_user['userid'];
 				$args['examauthor'] = $this->_user['username'];
 				$args['examtype'] = 2;
-				$args['examquestions'] = $this->ev->addSlashes(serialize($args['examquestions']));
+				$args['examquestions'] = $args['examquestions'];
 				$id = $this->exam->addExamSetting($args);
 				$message = array(
 					'statusCode' => 200,
@@ -1131,7 +1151,7 @@ class app
 			}
 			else
 			{
-				$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
+				$subjects = $this->basic->getSubjectList(array(array("AND","find_in_set(subjectid,:subjectid)",'subjectid',$this->teachsubjects)));
 				$questypes = $this->basic->getQuestypeList();
 				$this->tpl->assign('questypes',$questypes);
 				$this->tpl->assign('subjects',$subjects);
@@ -1145,13 +1165,13 @@ class app
 			$rowsquestionids = trim($this->ev->get('rowsquestionids')," ,");
 			if(!$questionids)$questionids = '0';
 			if(!$rowsquestionids)$rowsquestionids = '0';
-			$questions = $this->exam->getQuestionListByArgs(array("questionstatus = 1","questionid IN ({$questionids})"));
+			$questions = $this->exam->getQuestionListByArgs(array(array('AND',"questionstatus = 1"),array('AND',"find_in_set(questionid,:questionid)",'questionid',$questionids)));
 			$rowsquestions = array();
 			$rowsquestionids = explode(',',$rowsquestionids);
 			foreach($rowsquestionids as $p)
 			{
 				if($p)
-				$rowsquestions[$p] = $this->exam->getQuestionRowsByArgs(array("qrstatus = 1","qrid = '{$p}'"));
+				$rowsquestions[$p] = $this->exam->getQuestionRowsByArgs(array(array('AND',"qrstatus = 1"),array('AND',"qrid = :qrid",'qrid',$p)));
 			}
 			$this->tpl->assign('rowsquestions',$rowsquestions);
 			$this->tpl->assign('questions',$questions);
@@ -1166,46 +1186,46 @@ class app
 			$this->pg->setUrlTarget('modal-body" class="ajax');
 			if(!$search['questionisrows'])
 			{
-				$args = array("quest2knows.qkquestionid = questions.questionid","questions.questionstatus = '1'","questions.questionparent = 0","quest2knows.qktype = 0" );
+				$args = array(array("AND","quest2knows.qkquestionid = questions.questionid"),array("AND","questions.questionstatus = '1'"),array("AND","questions.questionparent = 0"),array("AND","quest2knows.qktype = 0") );
 				if($search['keyword'])
 				{
-					$args[] = "questions.question LIKE '%".$search['keyword']."%'";
+					$args[] = array("AND","questions.question LIKE :question",'question','%'.$search['keyword'].'%');
 				}
 				if($search['knowsids'])
 				{
-					$args[] = "questions.questionknowsid IN (".$search['knowsids'].")";
+					$args[] = array("AND","find_in_set(questions.questionknowsid,:questionknowsid)",'questionknowsid',$search['knowsids']);
 				}
 				if($search['stime'])
 				{
-					$args[] = "questions.questioncreatetime >= '".strtotime($search['stime'])."'";
+					$args[] = array("AND","questions.questioncreatetime >= :questioncreatetime",'questioncreatetime',strtotime($search['stime']));
 				}
 				if($search['etime'])
 				{
-					$args[] = "questions.questioncreatetime <= '".strtotime($search['etime'])."'";
+					$args[] = array("AND","questions.questioncreatetime <= :questioncreatetime",'questioncreatetime',strtotime($search['etime']));
 				}
 				if($search['questiontype'])
 				{
-					$args[] = "questions.questiontype = '".$search['questiontype']."'";
+					$args[] = array("AND","questions.questiontype = :questiontype",'questiontype',$search['questiontype']);
 				}
 				if($search['questionlevel'])
 				{
-					$args[] = "questions.questionlevel = '{$search['questionlevel']}'";
+					$args[] = array("AND","questions.questionlevel = :questionlevel",'questionlevel',$search['questionlevel']);
 				}
 				if($search['questionknowsid'])
 				{
-					$args[] = "quest2knows.qkknowsid = '".$search['questionknowsid']."'";
+					$args[] = array("AND","quest2knows.qkknowsid = :qkknowsid",'qkknowsid',$search['questionknowsid']);
 				}
 				else
 				{
 					$tmpknows = '0';
 					if($search['questionsectionid'])
 					{
-						$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
+						$knows = $this->section->getKnowsListByArgs(array(array("AND","knowsstatus = 1"),array("AND","knowssectionid = :knowssectionid",'knowssectionid',$search['questionsectionid'])));
 						foreach($knows as $p)
 						{
 							if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 						}
-						$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+						$args[] = array("AND","find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid' ,$tmpknows);
 					}
 					elseif($search['questionsubjectid'])
 					{
@@ -1214,7 +1234,7 @@ class app
 						{
 							if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 						}
-						$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+						$args[] = array("AND","find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid',$tmpknows);
 					}
 					else
 					{
@@ -1223,50 +1243,49 @@ class app
 						{
 							if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 						}
-						$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+						$args[] = array("AND","find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid',$tmpknows);
 					}
 				}
-
 				$questions = $this->exam->getQuestionsList($page,10,$args);
 			}
 			else
 			{
-				$args = array("quest2knows.qkquestionid = questionrows.qrid","questionrows.qrstatus = '1'");
+				$args = array(array("AND","quest2knows.qkquestionid = questionrows.qrid"),array("AND","questionrows.qrstatus = '1'"));
 				if($search['keyword'])
 				{
-					$args[] = "questionrows.qrquestion LIKE '%".$search['keyword']."%'";
+					$args[] = array("AND","questionrows.qrquestion LIKE :qrquestion",'qrquestion','%'.$search['keyword'].'%');
 				}
 				if($search['questiontype'])
 				{
-					$args[] = "questionrows.qrtype = '{$search['questiontype']}'";
+					$args[] = array("AND","questionrows.qrtype = :qrtype",'qrtype',$search['questiontype']);
 				}
 				if($search['stime'])
 				{
-					$args[] = "questionrows.qrtime >= '".strtotime($search['stime'])."'";
+					$args[] = array("AND","questionrows.qrtime >= :qrtime",'qrtime',strtotime($search['stime']));
 				}
 				if($search['etime'])
 				{
-					$args[] = "questionrows.qrtime <= '".strtotime($search['etime'])."'";
+					$args[] = array("AND","questionrows.qrtime <= :qrtime",'qrtime',strtotime($search['etime']));
 				}
 				if($search['qrlevel'])
 				{
-					$args[] = "questionrows.qrlevel = '{$search['qrlevel']}'";
+					$args[] = array("AND","questionrows.qrlevel = :qrlevel",'qrlevel',$search['qrlevel']);
 				}
 				if($search['questionknowsid'])
 				{
-					$args[] = "quest2knows.qkknowsid = '".$search['questionknowsid']."'";
+					$args[] = array("AND","quest2knows.qkknowsid = :qkknowsid",'qkknowsid',$search['questionknowsid']);
 				}
 				else
 				{
 					$tmpknows = '0';
 					if($search['questionsectionid'])
 					{
-						$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
+						$knows = $this->section->getKnowsListByArgs(array(array("AND","knowsstatus = 1"),array("AND","knowssectionid = :knowssectionid",'knowssectionid',$search['questionsectionid'])));
 						foreach($knows as $p)
 						{
 							if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 						}
-						$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+						$args[] = array("AND","find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid' ,$tmpknows);
 					}
 					elseif($search['questionsubjectid'])
 					{
@@ -1275,7 +1294,7 @@ class app
 						{
 							if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 						}
-						$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+						$args[] = array("AND","find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid',$tmpknows);
 					}
 					else
 					{
@@ -1284,7 +1303,7 @@ class app
 						{
 							if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
 						}
-						$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+						$args[] = array("AND","find_in_set(quest2knows.qkknowsid,:qkknowsid)",'qkknowsid',$tmpknows);
 					}
 				}
 				$questions = $this->exam->getQuestionrowsList($page,10,$args);
@@ -1308,8 +1327,8 @@ class app
 			{
 				$examid = $this->ev->get('examid');
 				$args = $this->ev->get('args');
-				$args['examsetting'] = $this->ev->addSlashes(serialize($args['examsetting']));
-				$args['examquestions'] = $this->ev->addSlashes(serialize($args['examquestions']));
+				$args['examsetting'] = $args['examsetting'];
+				$args['examquestions'] = $args['examquestions'];
 				$this->exam->modifyExamSetting($examid,$args);
 				$message = array(
 					'statusCode' => 200,
@@ -1344,10 +1363,10 @@ class app
 			default:
 			$page = $this->ev->get('page');
 			$page = $page > 0?$page:1;
-			$args = array("examsubject IN ({$this->teachsubjects})");
+			$args = array(array('AND','find_in_set(examsubject,:examsubject)','examsubject',$this->teachsubjects));
 			if($search)
 			{
-				if($search['examsubject'])$args[] = "examsubject = '{$search['examsubject']}'";
+				if($search['examsubject'])$args[] = array('AND',"examsubject = :examsubject",'examsubject',$search['examsubject']);
 				if($search['examtype'])$args[] = "examtype = '{$search['examtype']}'";
 			}
 			if(!count($args))$args = 1;
@@ -1374,16 +1393,178 @@ class app
 		}
 		$this->tpl->assign('u',$u);
 		$page = $this->ev->get('page');
+		if($page < 1)$page = 1;
 		$this->tpl->assign('page',$page);
 		switch($subaction)
 		{
+			case 'stats':
+			$args = array();
+			$basicid = $this->ev->get('basicid');
+			$type = $this->ev->get('type');
+			$this->tpl->assign('type',$type);
+			$args[] =  array('AND',"ehbasicid = :ehbasicid",'ehbasicid',$basicid);
+			if($search['stime'])
+			{
+				$stime = strtotime($search['stime']);
+				$args[] = array('AND',"ehstarttime >= :stime",'stime',$stime);
+			}
+			if($search['etime'])
+			{
+				$etime = strtotime($search['etime']);
+				$args[] = array('AND',"ehstarttime <= :etime",'etime',$etime);
+			}
+			if($search['sscore'])
+			{
+				$args[] = array('AND',"ehscore >= :sscore",'sscore',$search['sscore']);
+			}
+			if($search['escore'])
+			{
+				$args[] = array('AND',"ehscore <= :escore",'escore',$search['escore']);
+			}
+			if($search['examid'])
+			{
+				$args[] = array('AND',"ehexamid = :ehexamid",'ehexamid',$search['examid']);
+			}
+			$rs = $this->favor->getStatsAllExamHistoryByArgs($args);
+			$number = count($rs);
+			$stats = array();
+			if(!$type)
+			{
+				$os = array('A','B','C','D','E','F','G','H');
+				$questiontype = $this->basic->getQuestypeList();
+				foreach($rs as $p)
+				{
+					foreach($p['ehquestion']['questions'] as $questions)
+					{
+						foreach($questions as $key => $question)
+						{
+							$stats[$question['questionid']]['title'] = $question['question'];
+							$stats[$question['questionid']]['id'] = $question['questionid'];
+							if($p['ehscorelist'][$question['questionid']] > 0)
+							$stats[$question['questionid']]['right'] = intval($stats[$question['questionid']]['right']) + 1;
+							$stats[$question['questionid']]['number'] = intval($stats[$question['questionid']]['number']) + 1;
+							if($p['ehuseranswer'][$question['questionid']] && $questiontype[$question['questiontype']]['questsort'] == 0 && $questiontype[$question['questiontype']]['questchoice'] < 5)
+							{
+								foreach($os as $o)
+								{
+									if(strpos($p['ehuseranswer'][$question['questionid']],$o) !== false)
+									$stats[$question['questionid']][$o] = intval($stats[$question['questionid']][$o]) + 1;
+								}
+							}
+						}
+					}
+					foreach($p['ehquestion']['questionrows'] as $questionrows)
+					{
+						foreach($questionrows as $questionrow)
+						{
+							foreach($questionrow['data'] as $key => $question)
+							{
+								if(!$key)
+								{
+									$stats[$question['questionid']]['title'] = $questionrow['qrquestion'].'<br />'.$question['question'];
+								}
+								$stats[$question['questionid']]['id'] = $question['questionid'];
+								if($p['ehscorelist'][$question['questionid']] > 0)
+								$stats[$question['questionid']]['right'] = intval($stats[$question['questionid']]['right']) + 1;
+								$stats[$question['questionid']]['number'] = intval($stats[$question['questionid']]['number']) + 1;
+								if($p['ehuseranswer'][$question['questionid']] && $questiontype[$question['questiontype']]['questsort'] == 0 && $questiontype[$question['questiontype']]['questchoice'] < 5)
+								{
+									foreach($os as $o)
+									{
+										if(strpos($p['ehuseranswer'][$question['questionid']],$o) !== false)
+										$stats[$question['questionid']][$o] = intval($stats[$question['questionid']][$o]) + 1;
+									}
+								}
+							}
+						}
+					}
+				}
+				ksort($stats);
+				$start = $page - 1;
+				$start = $start >= 0?$start:0;
+				$tmp = array_slice($stats,$start * 20,20);
+				$pages = $this->pg->outPage($this->pg->getPagesNumber(count($stats),20),$page);
+				$this->tpl->assign('stats',array('data' => $tmp,'pages' => $pages));
+				$this->tpl->assign('basicid',$basicid);
+				$this->tpl->display('users_stats');
+			}
+			else
+			{
+				foreach($rs as $p)
+				{
+					foreach($p['ehquestion']['questions'] as $questions)
+					{
+						foreach($questions as $key => $question)
+						{
+							foreach($question['questionknowsid'] as $knows)
+							{
+								$stats[$knows['knowsid']]['knowsid'] = $knows['knowsid'];
+								$stats[$knows['knowsid']]['knows'] = $knows['knows'];
+								$stats[$knows['knowsid']]['number'] = intval($stats[$knows['knowsid']]['number']) + 1;
+								if($p['ehscorelist'][$question['questionid']] > 0)
+								$stats[$knows['knowsid']]['right'] = intval($stats[$knows['knowsid']]['right']) + 1;
+							}
+						}
+					}
+					foreach($p['ehquestion']['questionrows'] as $questionrows)
+					{
+						foreach($questionrows as $questionrow)
+						{
+							foreach($questionrow['data'] as $key => $question)
+							{
+
+								foreach($questionrow['qrknowsid'] as $knows)
+								{
+									$stats[$knows['knowsid']]['knowsid'] = $knows['knowsid'];
+									$stats[$knows['knowsid']]['knows'] = $knows['knows'];
+									$stats[$knows['knowsid']]['number'] = intval($stats[$knows['knowsid']]['number']) + 1;
+									if($p['ehscorelist'][$question['questionid']] > 0)
+									$stats[$knows['knowsid']]['right'] = intval($stats[$knows['knowsid']]['right']) + 1;
+								}
+							}
+						}
+					}
+				}
+				ksort($stats);
+				$start = $page - 1;
+				$start = $start >= 0?$start:0;
+				$tmp = array_slice($stats,$start * 20,20);
+				$pages = $this->pg->outPage($this->pg->getPagesNumber(count($stats),20),$page);
+				$this->tpl->assign('stats',array('data' => $tmp,'pages' => $pages));
+				$this->tpl->assign('basicid',$basicid);
+				$this->tpl->display('users_knowsstats');
+			}
+			break;
+
 			case 'outscore':
 			$args = array();
 			$basicid = $this->ev->get('basicid');
 			if($basicid)
 			{
 				$fname = 'data/score/'.TIME.'-'.$basicid.'-score.csv';
-				$args[] =  "ehbasicid = {$basicid}";
+				$args[] =  array('AND',"ehbasicid = :ehbasicid",'ehbasicid',$basicid);
+				if($search['stime'])
+				{
+					$stime = strtotime($search['stime']);
+					$args[] = array('AND',"ehstarttime >= :stime",'stime',$stime);
+				}
+				if($search['etime'])
+				{
+					$etime = strtotime($search['etime']);
+					$args[] = array('AND',"ehstarttime <= :etime",'etime',$etime);
+				}
+				if($search['sscore'])
+				{
+					$args[] = array('AND',"ehscore >= :sscore",'sscore',$search['sscore']);
+				}
+				if($search['escore'])
+				{
+					$args[] = array('AND',"ehscore <= :escore",'escore',$search['escore']);
+				}
+				if($search['examid'])
+				{
+					$args[] = array('AND',"ehexamid = :ehexamid",'ehexamid',$search['examid']);
+				}
 				$rs = $this->favor->getAllExamHistoryByArgs($args,array('ehusername','ehscore','usertruename'));
 				$r = array();
 				foreach($rs as $p)
@@ -1444,7 +1625,7 @@ class app
 					$sumscore = $sumscore + floatval($p);
 				}
 				$sessionvars['ehscore'] = $sumscore;
-				$args['ehscorelist'] = $this->ev->addSlashes(serialize($sessionvars['ehscorelist']));
+				$args['ehscorelist'] = $sessionvars['ehscorelist'];
 				$allnumber = floatval(count($sessionvars['ehscorelist']));
 				$args['ehscore'] = $sessionvars['ehscore'];
 				$args['ehstatus'] = 1;
@@ -1530,10 +1711,42 @@ class app
 			case 'scorelist':
 			$page = $this->ev->get('page');
 			$basicid = intval($this->ev->get('basicid'));
+			$basic = $this->basic->getBasicById($basicid);
 			$page = $page > 0?$page:1;
-			$exams = $this->favor->getExamHistoryListByArgs($page,10,array("ehstatus = '1'","ehbasicid = '{$basicid}'"));
+			$args = array();
+			$args[] = array('AND',"ehtype = '2'");
+			$args[] = array('AND',"ehstatus = '1'");
+			$args[] = array('AND',"ehbasicid = :ehbasicid",'ehbasicid',$basicid);
+			if($search['stime'])
+			{
+				$stime = strtotime($search['stime']);
+				$args[] = array('AND',"ehstarttime >= :stime",'stime',$stime);
+			}
+			if($search['etime'])
+			{
+				$etime = strtotime($search['etime']);
+				$args[] = array('AND',"ehstarttime <= :etime",'etime',$etime);
+			}
+			if($search['sscore'])
+			{
+				$args[] = array('AND',"ehscore >= :sscore",'sscore',$search['sscore']);
+			}
+			if($search['escore'])
+			{
+				$args[] = array('AND',"ehscore <= :escore",'escore',$search['escore']);
+			}
+			if($search['examid'])
+			{
+				$args[] = array('AND',"ehexamid = :ehexamid",'ehexamid',$search['examid']);
+			}
+			$exams = $this->favor->getExamHistoryListByArgs($page,30,$args);
+			$ids = trim($basic['basicexam']['self'],', ');
+			if(!$ids)$ids = '0';
+			$exampaper = $this->exam->getExamSettingsByArgs(array(array("AND","find_in_set(examid,:examid)",'examid',$ids)));
 			$this->tpl->assign('basicid',$basicid);
+			$this->tpl->assign('basic',$basic);
 			$this->tpl->assign('page',$page);
+			$this->tpl->assign('exampaper',$exampaper);
 			$this->tpl->assign('exams',$exams);
 			$this->tpl->display('users_scorelist');
 			break;
@@ -1542,7 +1755,7 @@ class app
 			$page = $this->ev->get('page');
 			$basicid = intval($this->ev->get('basicid'));
 			$page = $page > 0?$page:1;
-			$exams = $this->favor->getExamHistoryListByArgs($page,10,array("ehstatus = '0'","ehbasicid = '{$basicid}'"));
+			$exams = $this->favor->getExamHistoryListByArgs($page,10,array(array('AND',"ehstatus = '0'"),array('AND',"ehbasicid = :ehbasicid",'ehbasicid',$basicid)));
 			$this->tpl->assign('page',$page);
 			$this->tpl->assign('exams',$exams);
 			$this->tpl->display('users_history');
@@ -1551,15 +1764,15 @@ class app
 			default:
 			$page = $this->ev->get('page');
 			$page = $page > 1?$page:1;
-			$subjects = $this->basic->getSubjectList("subjectid IN ({$this->teachsubjects})");
-			$args = array("basicsubjectid IN ({$this->teachsubjects})");
-			if($search['basicid'])$args[] = "basicid = '{$search['basicid']}'";
+			$subjects = $this->basic->getSubjectList(array(array('AND',"find_in_set(subjectid,:subjectid)",'subjectid',$this->teachsubjects)));
+			$args = array(array('AND',"find_in_set(basicsubjectid,:basicsubjectid)",'basicsubjectid',$this->teachsubjects));
+			if($search['basicid'])$args[] = array('AND',"basicid = :basicid",'basicid',$search['basicid']);
 			else
 			{
-				if($search['keyword'])$args[] = "basic LIKE '%{$search['keyword']}%'";
-				if($search['basicareaid'])$args[] = "basicareaid = '{$search['basicareaid']}'";
-				if($search['basicsubjectid'])$args[] = "basicsubjectid = '{$search['basicsubjectid']}'";
-				if($search['basicapi'])$args[] = "basicapi = '{$search['basicapi']}'";
+				if($search['keyword'])$args[] = array('AND',"basic LIKE :basic",'basic',"%{$search['keyword']}%");
+				if($search['basicareaid'])$args[] = array('AND',"basicareaid = :basicareaid",'basicareaid',$search['basicareaid']);
+				if($search['basicsubjectid'])$args[] = array('AND',"basicsubjectid = :basicsubjectid",'basicsubjectid',$search['basicsubjectid']);
+				if($search['basicapi'])$args[] = array('AND',"basicapi = :basicapi",'basicapi',$search['basicapi']);
 			}
 			$basics = $this->basic->getBasicList($page,10,$args);
 			$areas = $this->area->getAreaList();

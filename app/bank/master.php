@@ -12,7 +12,8 @@ class app
 		$this->session = $this->G->make('session');
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->files = $this->G->make('files');
 		$this->apps = $this->G->make('apps','core');
 		$this->user = $this->G->make('user','user');
@@ -193,8 +194,9 @@ class app
 
 			case 'batremove':
 			$delids = $this->ev->get('delids');
-			foreach($delids as $oid)
+			foreach($delids as $oid => $p)
 			{
+				echo
 				$order = $this->orders->getOrderById($oid);
 				if($order['orderstatus'] == 1 || $order['orderstatus'] == 99)
 				{

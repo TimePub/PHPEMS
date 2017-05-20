@@ -42,14 +42,14 @@
 					  	<span class="help-block">需要填空处请以()表示。</span>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="control-group" id="selecttext"{x2;if:$questypes[$question['questiontype']]['questsort'] || $questypes[$question['questiontype']]['questchoice'] == 5} style="display:none;"{x2;endif}>
 					<label class="control-label">备选项：</label>
 				  	<div class="controls">
 					  	<textarea class="ckeditor" name="args[questionselect]" id="questionselect">{x2;$question['questionselect']}</textarea>
 					  	<span class="help-block">无选择项的请不要填写，如填空题、问答题等主观题。</span>
 					</div>
 				</div>
-				<div class="control-group" id="selectnumber">
+				<div class="control-group" id="selectnumber"{x2;if:$questypes[$question['questiontype']]['questsort'] || $questypes[$question['questiontype']]['questchoice'] == 5} style="display:none;"{x2;endif}>
 					<label for="questionselectnumber" class="control-label">备选项数量：</label>
 				  	<div class="controls">
 					  	<select name="args[questionselectnumber]" id="questionselectnumber">
@@ -88,6 +88,9 @@
 						<div id="answerbox_4" class="answerbox"{x2;if:$questypes[$question['questiontype']]['questchoice'] != 4} style="display:none;"{x2;endif}>
 						  	<label class="radio inline"><input type="radio" name="targs[questionanswer4]" value="A"{x2;if:$question['questionanswer'] == 'A'} checked{x2;endif}>对</label>
 						  	<label class="radio inline"><input type="radio" name="targs[questionanswer4]" value="B"{x2;if:$question['questionanswer'] == 'B'} checked{x2;endif}>错</label>
+						</div>
+						<div id="answerbox_5" class="answerbox"{x2;if:$questypes[$question['questiontype']]['questchoice'] != 5} style="display:none;"{x2;endif}>
+						  	<input type="text" name="targs[questionanswer5]" value="{x2;$question['questionanswer']}" />
 						</div>
 						<div id="answerbox_0"{x2;if:!$questypes[$question['questiontype']]['questsort']} style="display:none;"{x2;endif} class="answerbox">
 					  		<textarea cols="72" rows="7" class="ckeditor" id="questionanswer0" name="targs[questionanswer0]">{x2;$question['questionanswer']}</textarea>

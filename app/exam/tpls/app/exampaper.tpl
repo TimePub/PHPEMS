@@ -40,6 +40,10 @@
 							</div>
 						</div>
 					</li>
+					{x2;if:v:eid % 6 == 0}
+					</ul>
+					<ul class="thumbnails">
+					{x2;endif}
 					{x2;endtree}
 				</ul>
 				<div class="pagination pagination-right">

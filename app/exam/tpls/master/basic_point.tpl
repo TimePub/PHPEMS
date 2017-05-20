@@ -39,6 +39,7 @@
 						<td>{x2;v:know['knows']}</td>
 						<td>
 							<div class="btn-group">
+								<a class="btn ajax" href="index.php?exam-master-basic-output&knowsid={x2;v:know['knowsid']}&page={x2;$page}{x2;$u}" title="导出题库"><em class="icon-download-alt"></em></a>
 								<a class="btn" href="index.php?{x2;$_app}-master-basic-modifypoint&knowsid={x2;v:know['knowsid']}&page={x2;$page}{x2;$u}" title="修改知识点"><em class="icon-edit"></em></a>
 								<a class="btn ajax" href="index.php?{x2;$_app}-master-basic-delpoint&sectionid={x2;v:know['knowssectionid']}&knowsid={x2;v:know['knowsid']}&page={x2;$page}{x2;$u}" title="删除知识点"><em class="icon-remove"></em></a>
 							</div>

@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <title>PHPEMS无纸化模拟考试系统</title>
 <link href="app/core/styles/css/bootstrap.css" rel="stylesheet">
+<link href="app/core/styles/css/bootstrap-responsive.css" rel="stylesheet">
 <link href="app/core/styles/css/plugin.css" rel="stylesheet">
 <link href="app/user/styles/css/theme.css" rel="stylesheet" type="text/css" />
 <link href="app/core/styles/css/datetimepicker.css" rel="stylesheet">
@@ -20,6 +21,10 @@
 <script type="text/javascript" src="app/core/styles/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="app/core/styles/js/ckeditor/ckeditor.js"></script>
 <script type="text/javascript" src="app/core/styles/js/swfu/swfupload.js"></script>
+<!--
+<script type="text/javascript" src="app/core/styles/js/fingerprint/fingerprint.js"></script>
+<script type="text/javascript" src="app/core/styles/js/fingerprint/plugin.js"></script>
+-->
 <script type="text/javascript" src="app/core/styles/js/plugin.js"></script>
 <script type="text/javascript" src="app/core/styles/js/unslider.min.js"></script>
 <script type="text/javascript" src="app/core/styles/js/highcharts.js"></script>

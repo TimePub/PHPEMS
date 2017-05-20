@@ -69,7 +69,7 @@
 					  	<span class="help-block">需要填空处请以()表示。</span>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="control-group" id="selecttext">
 					<label class="control-label">备选项：</label>
 				  	<div class="controls">
 					  	<textarea class="ckeditor" name="args[questionselect]" id="questionselect">{x2;$question['questionselect']}</textarea>
@@ -149,6 +149,9 @@
 						  	<label class="radio inline">
 						  		<input type="radio" name="targs[questionanswer4]" value="B">错
 						  	</label>
+						</div>
+						<div id="answerbox_5" class="answerbox" style="display:none;">
+						  	<input type="text" name="targs[questionanswer5]" value="" />
 						</div>
 						<div id="answerbox_0" style="display:none;" class="answerbox">
 					  		<textarea cols="72" rows="7" class="ckeditor" id="questionanswer0" name="targs[questionanswer0]">{x2;$question['questionanswer']}</textarea>

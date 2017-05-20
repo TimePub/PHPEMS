@@ -42,9 +42,9 @@ text-align:center;}
 #menuNav a,#menuNav .active a{
 color:#828282;
 font-weight:600;
-box-shadow:0px 0px 0px 0px;
+box-shadow:none;
 border-radius: 4px;
-border:0px;
+border:none;
 border-color:#e5e5e5;}
 
 #menuNav a:hover{

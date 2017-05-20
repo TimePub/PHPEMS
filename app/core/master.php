@@ -12,7 +12,8 @@ class app
 		$this->session = $this->G->make('session');
 		$this->tpl = $this->G->make('tpl');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->apps = $this->G->make('apps','core');
 		$this->user = $this->G->make('user','user');
 		$this->_user = $_user = $this->session->getSessionUser();
@@ -89,7 +90,7 @@ class app
 			}
 			$message = array(
 				"statusCode" => 300,
-				"message" => "操作失败，验证码错误！"
+				"message" => "操作失败，验证码错误！".$_user['sessionrandcode']
 			);
 			exit(json_encode($message));
 		}
@@ -120,7 +121,7 @@ class app
 			if($this->ev->get('appconfig'))
 			{
 				$args = $this->ev->get('args');
-				$args['appsetting'] = $this->ev->addSlashes(serialize($args['appsetting']));
+				$args['appsetting'] = $args['appsetting'];
 				$app = $this->apps->getApp($appid);
 				if($app)
 				{

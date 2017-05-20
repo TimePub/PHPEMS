@@ -7,8 +7,9 @@ class area_exam
 	public function __construct(&$G)
 	{
 		$this->G = $G;
+		$this->pdosql = $this->G->make('pdosql');
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->ev = $this->G->make('ev');
 	}
@@ -19,7 +20,7 @@ class area_exam
 	public function getAreaList()
 	{
 		$data = array(false,'area','1',false,'areaid ASC');
-		$sql = $this->sql->makeSelect($data);
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetchAll($sql,'areaid');
 	}
 
@@ -43,8 +44,8 @@ class area_exam
 	//返回值：该地名信息数组
 	public function getAreaByName($area)
 	{
-		$data = array(false,'area',"area = '{$area}'",false,false,false);
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'area',array(array("AND","area = :area",'area',$area)),false,false,false);
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql);
 	}
 
@@ -53,8 +54,8 @@ class area_exam
 	//返回值：该地名信息数组
 	public function getAreaById($areaid)
 	{
-		$data = array(false,'area',"areaid = '{$areaid}'");
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'area',array(array("AND","areaid = :areaid",'areaid',$areaid)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql);
 	}
 
@@ -63,8 +64,8 @@ class area_exam
 	//返回值：true
 	public function modifyArea($areaid,$args)
 	{
-		$data = array('area',$args,"areaid = '{$areaid}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array('area',$args,array(array("AND","areaid = :areaid",'areaid',$areaid)));
+		$sql = $this->pdosql->makeUpdate($data);
 		$this->db->exec($sql);
 		return true;
 	}
@@ -74,11 +75,11 @@ class area_exam
 	//返回值：地名ID
 	public function addArea($args)
 	{
-		$data = array(false,'area',"areaid = '{$args['areacode']}'");
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'area',array(array("AND","areaid = :areaid",'areaid',$args['areacode'])));
+		$sql = $this->pdosql->makeSelect($data);
 		if($this->db->fetch($sql))return false;
 		$data = array('area',$args);
-		$sql = $this->sql->makeInsert($data);
+		$sql = $this->pdosql->makeInsert($data);
 		$this->db->exec($sql);
 		return $this->db->lastInsertId();
 	}
@@ -88,8 +89,8 @@ class area_exam
 	//返回值：受影响的记录数
 	public function delArea($id)
 	{
-		$data = array('area',"areaid = '{$id}'");
-		$sql = $this->sql->makeDelete($data);
+		$data = array('area',array(array("AND","areaid = :areaid",'areaid',$id)));
+		$sql = $this->pdosql->makeDelete($data);
 		$this->db->exec($sql);
 		return $this->db->affectedRows();
 	}

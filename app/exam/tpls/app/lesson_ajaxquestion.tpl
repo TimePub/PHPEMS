@@ -19,7 +19,7 @@
 	                    	{x2;realhtml:$question['questionselect']}
 	                    </div>
 	                    {x2;endif}
-						<div class="media-body well questionanswerbox">
+						<div class="media-body well questionanswerbox" id="answernotice_{x2;$question['questionid']}">
 	                    	{x2;if:$questype['questchoice'] == 1 || $questype['questchoice'] == 4}
 		                        {x2;tree:$selectorder,so,sid}
 		                        {x2;if:v:key == $question['questionselectnumber']}
@@ -28,7 +28,7 @@
 		                        <label class="radio inline"><input type="radio" name="question[{x2;$question['questionid']}]" rel="{x2;$question['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][$question['questionid']]}checked{x2;endif}/>{x2;v:so} </label>
 		                        {x2;endtree}
 	                        {x2;elseif:$questype['questchoice'] == 5}
-			                   	<div class="input-append"><input type="text" class="input-xxlarge" name="question[{x2;$question['questionid']}]" rel="{x2;$question['questionid']}" readonly/><span class="btn add-on" onclick="javascript:answerfenlu('{x2;$question['questionid']}');"><em class="icon-edit"></em></span></div>
+		                        <input type="text" class="input-xlarge" name="question[{x2;$question['questionid']}]" value="{x2;$sessionvars['examsessionuseranswer'][$question['questionid']]}" rel="{x2;$question['questionid']}"/>
 		                    {x2;else}
 		                        {x2;tree:$selectorder,so,sid}
 		                        {x2;if:v:key >= $question['questionselectnumber']}
@@ -59,6 +59,7 @@
 							<h5>答案</h5>
 							{x2;realhtml:$question['questionanswer']}
 						</div>
+						<div id="rightanswer_{x2;$question['questionid']}" class="hide">{x2;realhtml:$question['questionanswer']}</div>
 						<div class="media-body well answerbox hide">
 							<h5>解析</h5>
 							{x2;realhtml:$question['questiondescribe']}
@@ -108,8 +109,8 @@
 			                        <label class="radio inline"><input type="radio" name="question[{x2;v:data['questionid']}]" rel="{x2;v:data['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:data['questionid']]}checked{x2;endif}/>{x2;v:so} </label>
 			                        {x2;endtree}
 		                        {x2;elseif:$questype['questchoice'] == 5}
-			                    	<div class="input-append"><input type="text" class="input-xxlarge" name="question[{x2;v:data['questionid']}]" rel="{x2;v:data['questionid']}" readonly/><span class="btn add-on" onclick="javascript:answerfenlu('{x2;v:data['questionid']}');"><em class="icon-edit"></em></span></div>
-			                    {x2;else}
+		                        	<input type="text" class="input-xlarge" name="question[{x2;v:data['questionid']}]" value="{x2;$sessionvars['examsessionuseranswer'][v:data['questionid']]}" rel="{x2;v:data['questionid']}"/>
+		                        {x2;else}
 			                        {x2;tree:$selectorder,so,sid}
 			                        {x2;if:v:key >= v:data['questionselectnumber']}
 			                        {x2;eval: break;}
@@ -149,6 +150,7 @@
 				            		<a class="btn questionbtn" href="javascript:;" onclick="javascript:$('.paperexamcontent_{x2;v:data['questionid']}').find('.questionbtn').addClass('hide');$('.paperexamcontent_{x2;v:data['questionid']}').find('.answerbox').removeClass('hide');" title="查看答案">查看答案</a>
 				            	</div>
 			            	</div>
+			            	<div id="rightanswer_{x2;v:data['questionid']}" class="hide">{x2;realhtml:v:data['questionanswer']}</div>
 							<div class="media-body well answerbox hide">
 								<h5>答案</h5>
 								{x2;realhtml:v:data['questionanswer']}
@@ -163,3 +165,19 @@
 				</div>
 				{x2;endif}
 			</form>
+			<script type="text/javascript">
+				$("input:radio").click(function(){
+					var _this = $(this);
+					var qid = _this.attr('rel');
+					if(_this.val() == $("#rightanswer_"+qid).html())
+					{
+						_this.parents('.media-body').addClass('alert-success').addClass('alert').html('恭喜您回答正确！');
+					}
+					else
+					{
+						_this.parents('.media-body').addClass('alert-error').addClass('alert').html('回答错误，正确答案为：'+$("#rightanswer_"+qid).html()+'，您选择的答案是：'+_this.val());
+					}
+					$('.questionbtn').addClass('hide');
+					$('.answerbox').removeClass('hide');
+				});
+			</script>

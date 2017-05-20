@@ -14,7 +14,8 @@ class category
 		$this->categories = NULL;
 		$this->tidycategories = NULL;
 		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->pg = $this->G->make('pg');
 		$this->ev = $this->G->make('ev');
 		$this->app = $this->G->app;
@@ -30,17 +31,17 @@ class category
 
 	public function getCategoryById($id)
 	{
-		$data = array(false,'category',"catid = '{$id}'");
-		$sql = $this->sql->makeSelect($data);
+		$data = array(false,'category',array(array('AND',"catid = :catid",'catid',$id)));
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetch($sql,'catmanager');
 	}
 
 	public function getCategoryList($args,$page,$number = 20)
 	{
-		if(is_array($args))
-		$args[] = "catapp = '".$this->app."'";
+		if(!is_array($args))
+		$args = array(array('AND',"catapp = :catapp",'catapp',$this->app));
 		else
-		$args = array($args,"catapp = '".$this->app."'");
+		$args[] = array('AND',"catapp = :catapp",'catapp',$this->app);
 		$data = array(
 			'select' => false,
 			'table' => 'category',
@@ -54,34 +55,27 @@ class category
 
 	public function getCategoriesByArgs($args)
 	{
-		if(is_array($args))
-		$args[] = "catapp = '".$this->app."'";
+		if(!is_array($args))
+		$args = array(array('AND',"catapp = :catapp",'catapp',$this->app));
 		else
-		{
-			$p = $args;
-			$args = array();
-			$args[] = $p;
-			$args[] = "catapp = '".$this->app."'";
-		}
+		$args[] = array('AND',"catapp = :catapp",'catapp',$this->app);
 		$data = array(false,'category',$args,false,"catlite DESC,catid DESC",false);
-		$sql = $this->sql->makeSelect($data);
+		$sql = $this->pdosql->makeSelect($data);
 		return $this->db->fetchAll($sql,'catid','catmanager');
 	}
 
 	public function delCategory($id)
 	{
-		return $this->db->delElement(array('table' => 'category','query' => array("catid = '{$id}'","catapp = '".$this->app."'")));
+		return $this->db->delElement(array('table' => 'category','query' => array(array('AND',"catid = :catid",'catid',$id),array('AND',"catapp = :catapp",'catapp',$this->app))));
 	}
 
 	public function modifyCategory($id,$args)
 	{
 		unset($args['catapp']);
-		if(is_array($args['catmanager']))
-		$args['catmanager'] = $this->ev->addSlashes(serialize($args['catmanager']));
 		$data = array(
 			'table' => 'category',
 			'value' => $args,
-			'query' => "catid = '{$id}'",
+			'query' => array(array('AND',"catid = :catid",'catid',$id)),
 			'orderby' => 'catlite DESC,catid DESC'
 		);
 		return $this->db->updateElement($data);
@@ -91,8 +85,8 @@ class category
 	{
 		if($this->categories === NULL)
 		{
-			$data = array(false,'category',"catapp = '".$this->app."'",false,"catlite DESC,catid DESC",false);
-			$sql = $this->sql->makeSelect($data);
+			$data = array(false,'category',array(array('AND',"catapp = :catapp",'catapp',$this->app)),false,"catlite DESC,catid DESC",false);
+			$sql = $this->pdosql->makeSelect($data);
 			$this->categories = $this->db->fetchAll($sql,'catid','catmanager');
 			$this->tidyCategory();
 		}
@@ -101,7 +95,7 @@ class category
 
 	public function getAllCategoryByApp($app)
 	{
-		$data = array(false,'category',"catapp = '".$app."'",false,"catlite DESC,catid DESC",false);
+		$data = array(false,'category',array(array('AND',"catapp = :catapp",'catapp',$app)),false,"catlite DESC,catid DESC",false);
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetchAll($sql,'catid','catmanager');
 	}

@@ -116,8 +116,8 @@
 						</td>
 						<td>
 							<div class="btn-group">
-								<a class="btn" href="index.php?exam-teach-users-scorelist&page={x2;$page}&basicid={x2;v:basic['basicid']}{x2;$u}" title="成绩统计"><em class="icon-edit"></em></a>
-								<a class="btn" href="index.php?exam-teach-users-exams&page={x2;$page}&basicid={x2;v:basic['basicid']}{x2;$u}" title="试卷批改"><em class="icon-check"></em></a>
+								<a class="btn" href="index.php?exam-teach-users-scorelist&page={x2;$page}&basicid={x2;v:basic['basicid']}{x2;$u}" title="成绩统计">成绩统计</a>
+								<a class="btn" href="index.php?exam-teach-users-exams&page={x2;$page}&basicid={x2;v:basic['basicid']}{x2;$u}" title="主观题批改">主观题批改</a>
 							</div>
 						</td>
 			        </tr>

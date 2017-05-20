@@ -11,25 +11,26 @@ class apps_core
 
 	public function _init()
 	{
-		$this->sql = $this->G->make('sql');
-		$this->db = $this->G->make('db');
+		$this->pdosql = $this->G->make('pdosql');
+		$this->db = $this->G->make('pepdo');
 		$this->ev = $this->G->make('ev');
 		$this->files = $this->G->make('files');
+
 	}
 
 	//根据应用名获取应用信息
 	public function getApp($appid)
 	{
-		$data = array(false,'app',"appid = '{$appid}'");
-		$sql = $this->sql->makeSelect($data);
-		return $this->db->fetch($sql,'appsetting');
+		$data = array(false,'app',array(array("AND","appid = :appid","appid",$appid)));
+		$sql = $this->pdosql->makeSelect($data);
+		return $this->db->fetch($sql,array('appsetting',"appusersetting"));
 	}
 
 	//修改应用信息
 	public function modifyApp($appid,$args)
 	{
-		$data = array('app',$args,"appid = '{$appid}'");
-		$sql = $this->sql->makeUpdate($data);
+		$data = array('app',$args,array(array("AND","appid = :appid","appid",$appid)));
+		$sql = $this->pdosql->makeUpdate($data);
 		return $this->db->exec($sql);
 	}
 
@@ -38,7 +39,7 @@ class apps_core
 	{
 		$args['appid'] = $appid;
 		$data = array('app',$args);
-		$sql = $this->sql->makeInsert($data);
+		$sql = $this->pdosql->makeInsert($data);
 		$this->db->exec($sql);
 		return $this->db->lastInsertId();
 	}
@@ -53,7 +54,7 @@ class apps_core
 	public function getAppList($args = 1)
 	{
 		$data = array(false,'app',$args,false,false,false);
-		$sql = $this->sql->makeSelect($data);
+		$sql = $this->pdosql->makeSelect($data);
 		$r = $this->db->fetchAll($sql,'appid','appsetting');
 		foreach($r as $key => $p)
 		{

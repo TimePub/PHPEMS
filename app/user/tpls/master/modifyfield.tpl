@@ -55,6 +55,7 @@
 									  		<option value="thumb"{x2;if:$field['fieldhtmltype'] == 'thumb'} selected{x2;endif}>缩略图上传(thumb)</option>
 									  		<option value="picture"{x2;if:$field['fieldhtmltype'] == 'picture'} selected{x2;endif}>组图上传(picture)</option>
 									  		<option value="auto"{x2;if:$field['fieldhtmltype'] == 'auto'} selected{x2;endif}>自定义(auto)</option>
+									  		<option value="videotext"{x2;if:$field['fieldhtmltype'] == 'videotext'} selected{x2;endif}>上传(videotext)</option>
 									  	</select>
 								  	</div>
 								</div>

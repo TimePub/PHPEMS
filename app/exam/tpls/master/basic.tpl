@@ -61,6 +61,7 @@
 						  		{x2;endtree}
 					  		</select>
 			        	</td>
+			        	<td></td>
 			        </tr>
 			        <tr>
 			        	<td>
@@ -80,10 +81,20 @@
 						  		{x2;endtree}
 					  		</select>
 			        	</td>
+			        	<td>
+							状态：
+						</td>
+			        	<td>
+			        		<select name="search[basicclosed]" class="input-medium">
+				        		<option value="0">不限</option>
+				        		<option value="1"{x2;if:1 == $search['basicclosed']} selected{x2;endif}>仅关闭</option>
+				        		<option value="-1"{x2;if:-1 == $search['basicclosed']} selected{x2;endif}>仅开启</option>
+					  		</select>
+			        	</td>
 						<td>
 							<button class="btn btn-primary" type="submit">提交</button>
 						</td>
-						<td></td>
+
 					</tr>
 				</table>
 				<div class="input">
@@ -99,6 +110,8 @@
 					        <th>考场名称</th>
 					        <th>考场地区</th>
 					        <th>考试科目</th>
+					        <th>开通人数</th>
+					        <th>状态</th>
 					        <th>操作</th>
 		                </tr>
 		            </thead>
@@ -121,7 +134,14 @@
 								{x2;$subjects[v:basic['basicsubjectid']]['subject']}
 							</td>
 							<td>
+								<span class="autoloaditem" autoload="index.php?exam-master-basic-getbasicmembernumber&basicid={x2;v:basic['basicid']}"></span>
+							</td>
+							<td>
+								{x2;if:v:basic['basicclosed']}关闭{x2;else}开启{x2;endif}
+							</td>
+							<td>
 								<div class="btn-group">
+									<a class="btn" href="index.php?exam-master-basic-offpaper&page={x2;$page}&basicid={x2;v:basic['basicid']}{x2;$u}" title="考试调度"><em class="icon-wrench"></em></a>
 									<a class="btn" href="index.php?exam-master-basic-setexamrange&page={x2;$page}&basicid={x2;v:basic['basicid']}{x2;$u}" title="考试范围"><em class="icon-cog"></em></a>
 									<a class="btn" href="index.php?exam-master-basic-modifybasic&page={x2;$page}&basicid={x2;v:basic['basicid']}{x2;$u}" title="修改"><em class="icon-edit"></em></a>
 									<a class="btn confirm" href="index.php?exam-master-basic-delbasic&basicid={x2;v:basic['basicid']}&page={x2;$page}{x2;$u}" title="删除"><em class="icon-remove"></em></a>
