@@ -29,7 +29,9 @@
 			<table class="table table-hover">
 				<thead>
 					<tr>
+						<!--
 						<th width="80">排序</th>
+						-->
 						<th width="80">ID</th>
 						<th width="80">缩略图</th>
 						<th>分类名称</th>
@@ -39,7 +41,9 @@
 				<tbody>
 					{x2;tree:$categorys['data'],category,cid}
 					<tr>
+						<!--
 						<td><input type="text" name="ids[{x2;v:category['catid']}]" value="{x2;v:category['catlite']}" style="width:24px;padding:2px 5px;"/></td>
+						-->
 						<td>{x2;v:category['catid']}</td>
 						<td><img src="{x2;if:v:category['catimg']}{x2;v:category['catimg']}{x2;else}app/core/styles/images/noupload.gif{x2;endif}" alt="" style="width:24px;"/></td>
 						<td><a onclick="javascript:openmenu(this);" href="javascript:void(0);" class="icon-plus-sign catool" rel="{x2;v:category['catid']}" data="0" app="{x2;$_app}"></a><span>{x2;v:category['catname']}</span></td>

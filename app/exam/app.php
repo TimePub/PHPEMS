@@ -21,7 +21,7 @@ class app
 		{
 			if($this->ev->get('userhash'))
 			exit(json_encode(array(
-				'statusCode' => 300,
+				'statusCode' => 301,
 				"message" => "请您重新登录",
 			    "callbackType" => 'forward',
 			    "forwardUrl" => "index.php?user-app-login"
@@ -290,7 +290,20 @@ class app
 					$qrs = $this->question->getRandQuestionRowsListByKnowid($knowsid,$questid);
 					if($number < $allnumber)
 					{
-						$question =  $this->exam->getQuestionRowsByArgs("qrid = ".$qrs[0]);
+						$i = 0;
+						$prenumber = 0;
+						while($number > $qunumber)
+						{
+							$question =  $this->exam->getQuestionRowsByArgs("qrid = ".$qrs[$i]);
+							if($question['qrnumber'] < 1)break;
+							$i++;
+							$qunumber = $qunumber + $question['qrnumber'];
+						}
+						if($i > 0)
+						{
+							$prequestion =  $this->exam->getQuestionRowsByArgs("qrid = ".$qrs[intval($i-1)]);
+							$prenumer = $prequestion['qrnumber'];
+						}
 					}
 					else
 					{
@@ -306,6 +319,8 @@ class app
 				$questype = $this->basic->getQuestypeById($questid);
 				$this->tpl->assign('question',$question);
 				$this->tpl->assign('questype',$questype);
+				$this->tpl->assign('allnumber',$allnumber);
+				$this->tpl->assign('prenumer',$prenumer);
 				$this->tpl->assign('number',$number);
 				$this->tpl->display('lesson_ajaxquestion');
 				break;
@@ -380,13 +395,25 @@ class app
 		{
 			case 'setCurrentBasic':
 			$basicid = $this->ev->get('basicid');
-			$this->session->setSessionValue(array('sessioncurrent'=>$basicid));
-			$message = array(
-				'statusCode' => 200,
-				"message" => "操作成功",
-			    "callbackType" => 'forward',
-			    "forwardUrl" => "index.php?exam-app-basics"
-			);
+			if($this->data['openbasics'][$basicid])
+			{
+				$this->session->setSessionValue(array('sessioncurrent'=>$basicid));
+				$message = array(
+					'statusCode' => 200,
+					"message" => "操作成功",
+				    "callbackType" => 'forward',
+				    "forwardUrl" => "index.php?exam-app-basics"
+				);
+			}
+			else
+			{
+				$message = array(
+					'statusCode' => 200,
+					"message" => "您尚未开通本考场，系统将引导您开通",
+				    "callbackType" => 'forward',
+				    "forwardUrl" => "index.php?exam-app-basics-detail&basicid=".$basicid
+				);
+			}
 			$this->G->R($message);
 			break;
 

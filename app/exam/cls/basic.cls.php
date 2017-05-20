@@ -19,6 +19,28 @@ class basic_exam
 		$this->ev = $this->G->make('ev');
 	}
 
+	public function getBestBasics()
+	{
+		$t = TIME - 30*24*2400;
+		$data = array("count(*) AS number,ehbasicid",'examhistory',array("ehstarttime >= '{$t}'"),"ehbasicid","number DESC",6);
+		$sql = $this->sql->makeSelect($data);
+		$r = $this->db->fetchAll($sql);
+		$ids = array();
+		$number = array();
+		foreach($r as $p)
+		{
+			$ids[] = $p['ehbasicid'];
+			$number[$p['ehbasicid']] = $p['number'];
+		}
+		$ids = implode(',',$ids);
+		if(!$ids)
+		return false;
+		$rs = array();
+		$rs['basic'] = $this->getBasicsByArgs("basicid IN ({$ids})");
+		$rs['number'] = $number;
+		return $rs;
+	}
+
 	public function getOpenBasicsByUserid($userid)
 	{
 		$data = array(false,array('openbasics','basic'),array("openbasics.obuserid = '{$userid}'","openbasics.obbasicid = basic.basicid","openbasics.obendtime > ".TIME),false,"openbasics.obendtime DESC,obid DESC",false);
@@ -172,9 +194,9 @@ class basic_exam
 		return $this->db->fetch($sql,array('basicknows','basicsection','basicexam'));
 	}
 
-	public function getBasicsByArgs($args)
+	public function getBasicsByArgs($args,$ordeby = false)
 	{
-		$data = array(false,'basic',$args);
+		$data = array(false,'basic',$args,false,$ordeby);
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetchAll($sql,'basicid',array('basicknows','basicsection','basicexam'));
 	}

@@ -27,7 +27,6 @@ class app
 	public function index()
 	{
 		$catids = array();
-		$catids['menu'] = $this->category->getCategoriesByArgs(array("catinmenu = '1'"));
 		$catids['index'] = $this->category->getCategoriesByArgs(array("catindex > 0"));
 		$contents = array();
 		if($catids['index'])
@@ -38,6 +37,16 @@ class app
 				$contents[$p['catid']] = $this->content->getContentList("contentcatid IN ({$catstring})",1,$p['catindex']?$p['catindex']:10);
 			}
 		}
+		$favor = $this->G->make('favor','exam');
+		$basic = $this->G->make('basic','exam');
+		$students = array();
+		$students['td'] = $favor->getBestStudentsToday();
+		$students['tm'] = $favor->getBestStudentsThisMonth();
+		$basics = array();
+		$basics['hot'] = $basic->getBestBasics();
+		$basics['new'] = $basic->getBasicList(1,10);
+		$this->tpl->assign('basics',$basics);
+ 		$this->tpl->assign('students',$students);
 		$this->tpl->assign('contents',$contents);
 		$this->tpl->display('index');
 	}
@@ -52,9 +61,9 @@ class app
 		if($cat['catparent'])$catparent = $this->category->getCategoryById($cat['catparent']);
 		$catbread = $this->category->getCategoryPos($catid);
 		$catstring = $this->category->getChildCategoryString($catid);
-		$catchildren = $this->category->getCategoriesByArgs("catparent = '{$catid}'");
+		$catchildren = $this->category->getCategoriesByArgs(array("catparent = '{$catid}'","catinmenu = '0'"));
 		$contents = $this->content->getContentList("contentcatid IN ({$catstring})",$page);
-		$catbrother = $this->category->getCategoriesByArgs("catparent = '{$cat['catparent']}'");
+		$catbrother = $this->category->getCategoriesByArgs(array("catparent = '{$cat['catparent']}'","catinmenu = '0'"));
 		if($cat['cattpl'])$template = $cat['cattpl'];
 		else $template = 'category_default';
 		$this->tpl->assign('cat',$cat);
@@ -77,7 +86,7 @@ class app
 		{
 			$catbread = $this->category->getCategoryPos($content['contentcatid']);
 			$cat = $this->category->getCategoryById($content['contentcatid']);
-			$catbrother = $this->category->getCategoriesByArgs("catparent = '{$cat['catparent']}'");
+			$catbrother = $this->category->getCategoriesByArgs(array("catparent = '{$cat['catparent']}'","catinmenu = '0'"));
 			if($content['contenttemplate'])$template = $content['contenttemplate'];
 			else $template = 'content_default';
 			$nearContent = $this->content->getNearContentById($contentid,$content['contentcatid']);

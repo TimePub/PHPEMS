@@ -20,7 +20,7 @@ class app
 		$this->user = $this->G->make('user','user');
 		$this->_user = $_user = $this->session->getSessionUser();
 		$group = $this->user->getGroupById($_user['sessiongroupid']);
-		if($group['groupid'] != 1 && $this->ev->url(2) != 'login')
+		if($group['groupid'] != 1)
 		{
 			if($this->ev->get('userhash'))
 			exit(json_encode(array(
@@ -91,7 +91,7 @@ class app
 			{
 				$page = $this->ev->get('page');
 				$delids = $this->ev->get('delids');
-				foreach($delids as $userid)
+				foreach($delids as $userid => $p)
 				$this->user->delUserById($userid);
 				$message = array(
 					'statusCode' => 200,

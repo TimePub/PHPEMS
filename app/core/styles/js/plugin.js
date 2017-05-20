@@ -978,7 +978,14 @@ function initEditor(){
 				['Table','HorizontalRule','SpecialChar']
 			]
 		};
-		CKEDITOR.replace(_this,config);
+		CKEDITOR.replace(_this,config).on("blur", function () {
+	        var _ = this;
+	        var p=[];
+			p.push(_.element.$.attributes.name.value);
+			p.push(_.getData());
+			set.apply(formData,p);
+	        batmark(_.element.$.attributes.rel.value,_.getData());
+	    });
 	}
 	else
 	CKEDITOR.replace(_this);

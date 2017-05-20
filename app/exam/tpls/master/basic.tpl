@@ -90,7 +90,7 @@
 					<input type="hidden" value="1" name="search[argsmodel]" />
 				</div>
 			</form>
-	        <form action="index.php?exam-master-basic-batbasicdel" method="post">
+	        <form action="index.php?exam-master-basic-batdelbasic" method="post">
 		        <table class="table table-hover">
 		            <thead>
 		                <tr>

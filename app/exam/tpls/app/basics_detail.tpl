@@ -68,7 +68,7 @@
 						</form>
 						{x2;else}
 						<p>
-							<input class="btn" value="已开通" type="button"/>
+							<a class="btn ajax" href="index.php?exam-app-index-setCurrentBasic&basicid={x2;$basic['basicid']}">进入考场</a>
 						</p>
 						{x2;endif}
 					</div>

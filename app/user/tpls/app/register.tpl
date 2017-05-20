@@ -1,10 +1,6 @@
 {x2;include:header}
 <body>
-<div class="row-fluid top">
-	<div class="container-fluid">
-		<div class="span12"><h2><img src="app/user/styles/img/theme/logo.png" /> 模拟考试系统</h2></div>
-	</div>
-</div>
+{x2;include:nav}
 <div class="row-fluid">
 	<div class="container-fluid logcontent">
 		<div class="logbox">

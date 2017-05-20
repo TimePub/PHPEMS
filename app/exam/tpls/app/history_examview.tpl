@@ -23,7 +23,7 @@
 				<h3 class="text-center">{x2;$sessionvars['examsession']}</h3>
 				{x2;eval: v:oid = 0}
 				{x2;tree:$questype,quest,qid}
-				{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']]}
+				{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
 				{x2;eval: v:oid++}
 				<div id="panel-type{x2;v:quest['questid']}" class="tab-pane{x2;if:(!$ctype && v:qid == 1) || ($ctype == v:quest['questid'])} active{x2;endif}">
 					<ul class="breadcrumb">

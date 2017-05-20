@@ -13,7 +13,7 @@ class app
 		$this->user = $this->G->make('user','user');
 		$this->_user = $_user = $this->session->getSessionUser();
 		$group = $this->user->getGroupById($_user['sessiongroupid']);
-		if($group['groupmoduleid'] != 1 && $this->ev->url(2) != 'login')
+		if($group['groupmoduleid'] != 1)
 		{
 			if($this->ev->get('userhash'))
 			exit(json_encode(array(
@@ -1753,7 +1753,7 @@ class app
 				{
 					$args = array();
 					if($search['stime'])$args[] = "ehstarttime >= ".strtotime($search['stime']);
-					if($search['etime'])$args[] = "ehendtime <= ".strtotime($search['etime']);
+					if($search['etime'])$args[] = "ehstarttime <= ".strtotime($search['etime']);
 					$this->favor->clearExamHistory($args);
 					$message = array(
 						'statusCode' => 200,

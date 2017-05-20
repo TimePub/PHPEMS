@@ -1,7 +1,11 @@
 body {
 background: none repeat scroll 0 0 #F2F2F2;
 font: 14px "Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
-line-height:2em;}
+line-height:2em;
+color:#828282;}
+
+a{
+color:#828282;}
 
 input, button, select, textarea {
 font-family: "Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -15,11 +19,44 @@ dt{line-height:2.4em;}
 
 dd{margin-left:0px;line-height:2.8em;}
 
-.container-fluid{max-width:1200px;padding:0px 10px;margin:auto;}
+.container-fluid{max-width:1200px;padding:0px;margin:auto;}
+
+.topLine{
+min-height:24px;
+background-color:#f2f2f2!important;
+border-bottom: 1px solid #D9D9D9;
+font-size:12px;}
 
 #userNav{
 font-size:14px;
 margin-top:30px;}
+
+#menuNav{
+margin-top:20px;
+font-size:1.1em;}
+
+#menuNav ul li.mainmenu{
+min-width:100px;
+text-align:center;}
+
+#menuNav a,#menuNav .active a{
+color:#828282;
+font-weight:600;
+box-shadow:0px 0px 0px 0px;
+border-radius: 4px;
+border:0px;
+border-color:#e5e5e5;}
+
+#menuNav a:hover{
+color:#005580;
+background-color:#e5e5e5;}
+
+H5.title{
+font-size:1.2em;
+text-indent:1em;
+line-height:2em;
+border-bottom:1px solid #DDDDDD;
+margin-bottom:15px;}
 
 .signBorder{
 background-color:#F89406!important;}
@@ -54,13 +91,12 @@ margin-right:10px;}
 background: none repeat scroll 0 0 #ECECEC;
 border-bottom: 1px solid #D9D9D9;
 height: 75px;
-padding-top: 25px;
-padding-bottom:10px;}
+padding-top: 5px;
+padding-bottom:15px;}
 
 .logcontent,.examcontent,.footcontent{
 margin: 0 auto;
 margin-top: 60px;
-background: none repeat scroll 0 0 #F9F9F9;
 /*width:980px;*/}
 
 .examcontent{margin-top:20px;}
@@ -68,16 +104,20 @@ background: none repeat scroll 0 0 #F9F9F9;
 .toolcontent{
 position:fixed;bottom:0px;margin-bottom:0px;width:100%;border-top: 1px solid #DADADA;background-color:#F9F9F9}
 
-.footcontent{margin-top:10px;border:0px;}
+.footcontent{
+margin-top:10px;border:0px;
+background: none repeat scroll 0 0 #F9F9F9;}
 
 .logbox,.exambox{
 height: auto;
-min-height: 513px;
 overflow:hidden;
+padding:0px 10px;
+background: none repeat scroll 0 0 #F9F9F9;
+border-radius: 4px;
 /*border:1px solid #dadada;*/}
 
 .logform,.examform{
-padding:25px;
+padding:15px 5px 15px 5px;
 overflow: hidden;}
 
 .logcontrol{
@@ -151,3 +191,42 @@ font-family:"MV Boli";}
 .noborder{border:0px!important;margin-bottom:0px !important;}
 
 .well.media-body,.well .nav-tabs{border:0px!important;margin-bottom:0px !important;}
+
+.banner { position: relative; overflow: auto; }
+
+.banner ul,.banner ol{margin:0px;}
+
+.banner li { list-style: none; }
+
+.banner ul li { float: left; }
+
+.banner .dots {
+bottom: 12px;
+left: 90%;
+position: absolute;
+right: 0;}
+
+.banner .dots li {
+border: 1px solid #F5810A;
+border-radius: 6px;
+cursor: pointer;
+display: inline-block;
+height: 8px;
+margin: 0 4px;
+opacity: 0.4;
+text-indent: -999em;
+background: none repeat scroll 0 0 #FFFFFF;
+width: 8px;
+float:left;}
+
+.banner .dots li.active {
+background: none repeat scroll 0 0 #FEE368;
+opacity: 1;}
+
+.thumbnail{
+position:relative}
+
+.thumbnail .badge{
+position: absolute;
+right: 10px;
+top: 10px;}

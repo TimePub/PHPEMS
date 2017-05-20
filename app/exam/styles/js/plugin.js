@@ -85,6 +85,17 @@ function markQuestion(rel,isTextArea)
 	$('.yesdonumber').html($('#modal-body .badge-info').length);
 }
 
+function batmark(rel,value)
+{
+	if(value && value != '')
+	{
+		if(!$('#sign_'+rel).hasClass("badge-info"))$('#sign_'+rel).addClass("badge-info");
+	}
+	else
+	$('#sign_'+rel).removeClass("badge-info");
+	$('.yesdonumber').html($('#modal-body .badge-info').length);
+}
+
 function _markQuestion(rel)
 {
 	if(!$('#sign_'+rel).hasClass("badge-info"))$('#sign_'+rel).addClass("badge-info");

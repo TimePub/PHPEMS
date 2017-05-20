@@ -6,7 +6,7 @@ class ginkgo
 	public $L = array();
 	public $I = array('app'=>array(),'core'=>array());
 	public $app;
-	public $defaultApp = 'exam';
+	public $defaultApp = 'content';
 
 	public function __construct()
 	{

@@ -36,7 +36,7 @@
 						<td>{x2;v:score['ehusername']}</td>
 						<td>{x2;v:score['ehscore']}</td>
 						<td>{x2;date:v:score['ehstarttime'],'Y-m-d H:i:s'}</td>
-						<td>{x2;v:score['ehtime']}秒</td>
+						<td>{x2;if:v:score['ehtime'] >= 60}{x2;if:v:score['ehtime']%60}{x2;eval: echo intval(v:score['ehtime']/60)+1}{x2;else}{x2;eval: echo intval(v:score['ehtime']/60)}{x2;endif}分钟{x2;else}{x2;v:score['ehtime']}秒{x2;endif}</td>
 					</tr>
 				{x2;endtree}
 				</table>

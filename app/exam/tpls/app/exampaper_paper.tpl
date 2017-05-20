@@ -4,7 +4,7 @@
 <div class="row-fluid">
 	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
-			<form class="examform form-horizontal" id="form1" name="form1" action="index.php?exam-app-exampaper-score">
+			<form class="examform form-horizontal" id="form1" name="form1" action="index.php?exam-app-exampaper-score" method="post">
 				<ul class="breadcrumb">
 					<li>
 						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
@@ -151,7 +151,7 @@
 						<p>共有试题 <span class="allquestionnumber">50</span> 题，已做 <span class="yesdonumber">0</span> 题。您确认要交卷吗？</p>
 					</div>
 					<div class="modal-footer">
-						 <button type="submit" class="btn btn-primary">确定交卷</button>
+						 <button type="button" onclick="javascript:submitPaper();" class="btn btn-primary">确定交卷</button>
 						 <input type="hidden" name="insertscore" value="1"/>
 						 <button aria-hidden="true" class="btn" type="button" data-dismiss="modal">再检查一下</button>
 					</div>
@@ -234,7 +234,7 @@ $(document).ready(function(){
 		setting.lefttime = parseInt(data);
 		countdown(setting);
 	});
-	setInterval(refreshRecord,5000);
+	//setInterval(refreshRecord,5000);
 	setInterval(saveanswer,300000);
 
 	$('.allquestionnumber').html($('.paperexamcontent').length);
@@ -247,36 +247,42 @@ $(document).ready(function(){
 			formData[p]=initData[p];
 		}
 
-		$.each($('#form1 textarea'),function(){
+		var textarea = $('#form1 textarea');
+		$.each(textarea,function(){
 			var _this = $(this);
 			_this.val(initData[_this.attr('name')]);
 			CKEDITOR.instances[_this.attr('id')].setData(initData[_this.attr('name')]);
-			markQuestion(_this.attr('rel'),true);
+			if(initData[_this.attr('name')] && initData[_this.attr('name')] != '')
+			batmark(_this.attr('rel'),initData[_this.attr('name')]);
 		});
 
-		$.each($('#form1 :input[type=text]'),function(){
+		var texts = $('#form1 :input[type=text]');
+		$.each(texts,function(){
 			var _this = $(this);
 			_this.val(initData[_this.attr('name')]);
-			markQuestion(_this.attr('rel'),true);
+			if(initData[_this.attr('name')] && initData[_this.attr('name')] != '')
+			batmark(_this.attr('rel'),initData[_this.attr('name')]);
 		});
 
-		$.each($('#form1 :input[type=radio]'),function(){
+		var radios = $('#form1 :input[type=radio]');
+		$.each(radios,function(){
 			var _= this, v = initData[_.name];
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked = true;
-				markQuestion(_this.attr('rel'));
+				batmark(_this.attr('rel'),initData[_this.attr('name')]);
 			}else{
 				_.checked=false;
 			}
 		});
 
-		$.each($('#form1 :input[type=checkbox]'),function(){
+		var checkboxs=$('#form1 :input[type=checkbox]');
+		$.each(checkboxs,function(){
 			var _=this,v=initData[_.name];
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked=true;
-				markQuestion(_this.attr('rel'));
+				batmark(_this.attr('rel'),initData[_this.attr('name')]);
 			}else{
 				_.checked=false;
 			}

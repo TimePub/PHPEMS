@@ -276,10 +276,9 @@ class app
 
 			//计算主观题分数和显示分数
 			case 'makescore':
-			$questype = $this->basic->getQuestypeList();
-			$sessionvars = $this->exam->getExamSessionBySessionid();
 			if($this->ev->get('makescore'))
-			{
+			{				$questype = $this->basic->getQuestypeList();
+				$sessionvars = $this->exam->getExamSessionBySessionid();
 				$score = $this->ev->get('score');
 				$sumscore = 0;
 				if(is_array($score))
@@ -299,13 +298,10 @@ class app
 				$args['examsessionscore'] = floatval(($sessionvars['examsessionscore']*100)/$allnumber);
 				$args['examsessionstatus'] = 2;
 				$this->exam->modifyExamSession($args);
-				if(!$sessionvars['examsessionissave'])
-				{
-					$this->favor->addExamHistory();
-				}
+				$ehid = $this->favor->addExamHistory();
 				if($this->ev->get('direct'))
 				{
-					header("location:index.php?exam-phone-exercise-makescore");
+					header("location:index.php?exam-phone-exercise-makescore&ehid={$ehid}");
 					exit;
 				}
 				else
@@ -314,17 +310,28 @@ class app
 						'statusCode' => 200,
 						"message" => "操作成功",
 					    "callbackType" => 'forward',
-					    "forwardUrl" => "index.php?exam-phone-exercise-makescore"
+					    "forwardUrl" => "index.php?exam-phone-exercise-makescore&ehid={$ehid}"
 					);
 					$this->G->R($message);
 				}
 			}
 			else
 			{
-				if(!$sessionvars['examsessionissave'])
-				{
-					$this->favor->addExamHistory();
-				}
+				$ehid = $this->ev->get('ehid');
+				$eh = $this->favor->getExamHistoryById($ehid);
+				$sessionvars = array(
+					'examsession' => $eh['ehexam'],
+					'examsessiontype'=> $eh['ehtype'] == 2?1:$eh['ehtype'],
+					'examsessionsetting'=> $eh['ehsetting'],
+					'examsessionbasic'=> $eh['ehbasicid'],
+					'examsessionquestion'=> $eh['ehquestion'],
+					'examsessionuseranswer'=>$eh['ehanswer'],
+					'examsessiontime'=> $eh['ehtime'],
+					'examsessionscorelist'=> $eh['ehscorelist'],
+					'examsessionscore'=>$eh['ehscore'],
+					'examsessionstarttime'=>$eh['ehstarttime']
+				);
+
 				$questype = $this->basic->getQuestypeList();
 				$number = array();
 				$right = array();
@@ -368,6 +375,7 @@ class app
 						}
 					}
 				}
+				$this->tpl->assign('ehid',$ehid);
 				$this->tpl->assign('questype',$questype);
 				$this->tpl->assign('allright',$allright);
 				$this->tpl->assign('allnumber',$allnumber);
@@ -665,6 +673,24 @@ class app
 					$args['knowsid'] .= intval($key).",";
 					$args['knowsid'] = trim($args['knowsid']," ,");
 				}
+				/**
+				arsort($args['number']);
+				$snumber = 0;
+				foreach($args['number'] as $key => $v)
+				{
+					$snumber += $v;
+					if($snumber > 100)
+					{
+						$message = array(
+							'statusCode' => 300,
+							"message" => "强化练习最多一次只能抽取100道题"
+						);
+						$this->G->R($message);
+					}
+				}
+				$dt = key($args['number']);
+				$questionids = $this->question->selectQuestionsByKnows($args['knowsid'],$args['number'],$dt);
+				**/
 				$args['number'] = array($args['questid'] => 10);
 				$questionids = $this->question->selectQuestionsByKnows($args['knowsid'],$args['number'],$args['questid']);
 				$questions = array();
@@ -680,7 +706,7 @@ class app
 						}
 						$ids = trim($ids," ,");
 						if(!$ids)$ids = 0;
-						$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$ids})");
+						$questions[$key] = $this->exam->getQuestionListByIds($ids);
 					}
 				}
 				foreach($questionids['questionrow'] as $key => $p)
@@ -692,7 +718,7 @@ class app
 						{
 							foreach($p as $t)
 							{
-								$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
+								$questionrows[$key][$t] = $this->exam->getQuestionRowsById($t);
 							}
 						}
 					}
@@ -742,6 +768,201 @@ class app
 				$this->tpl->assign('numbers',$numbers);
 				$this->tpl->display('exercise');
 			}
+		}
+	}
+
+	//考试历史记录
+	public function history()
+	{
+		$action = $this->ev->url(3);
+		switch($action)
+		{
+			//删除考试历史记录
+			case 'del':
+			$ehid = $this->ev->get('ehid');
+			$ehtype = $this->ev->get('ehtype');
+			$page = $this->ev->get('page');
+			$this->favor->delExamHistory($ehid,$this->_user['sessionuserid']);
+			$message = array(
+				'statusCode' => 200,
+				"message" => "操作成功",
+			    "callbackType" => 'forward',
+			    "forwardUrl" => "?exam-phone-history&ehtype={$ehtype}&page={$page}"
+			);
+			$this->G->R($message);
+			break;
+
+			//批量删除强化训练历史记录
+			case 'batdelexercise':
+			$exercise = $this->ev->get('exercise');
+			foreach($exercise as $p)
+			$this->favor->delExamHistory($p,$this->_user['sessionuserid']);
+			header("location:index.php?exam-phone-history");
+			exit;
+			break;
+
+			//批量删除模拟考试历史记录
+			case 'batdelexam':
+			$exam = $this->ev->get('exam');
+			foreach($exam as $p)
+			$this->favor->delExamHistory($p,$this->_user['sessionuserid']);
+			header("location:index.php?exam-phone-history");
+			exit;
+			break;
+
+			//查看历史记录列表
+			case 'view':
+			$ehid = $this->ev->get('ehid');
+			$eh = $this->favor->getExamHistoryById($ehid);
+			$questype = $this->basic->getQuestypeList();
+			$sessionvars = array('examsession'=>$eh['ehexam'],'examsessionscore'=>$eh['ehscore'],'examsessionscorelist'=>$eh['ehscorelist'],'examsessionsetting'=>$eh['ehsetting'],'examsessionquestion'=>$eh['ehquestion'],'examsessionuseranswer'=>$eh['ehuseranswer']);
+			$this->tpl->assign('sessionvars',$sessionvars);
+			$this->tpl->assign('questype',$questype);
+			$this->tpl->assign('ehtype',$eh['ehtype']);
+			if($eh['ehtype'] == 2)
+			$this->tpl->display('history_examview');
+			elseif($eh['ehtype'] == 1)
+			$this->tpl->display('history_exampaperview');
+			else
+			$this->tpl->display('history_exerciseview');
+			break;
+
+			//查看历史记录列表
+			case 'wrongs':
+			$ehid = $this->ev->get('ehid');
+			$eh = $this->favor->getExamHistoryById($ehid);
+			$questype = $this->basic->getQuestypeList();
+			$sessionvars = array('examsession'=>$eh['ehexam'],'examsessionscorelist'=>$eh['ehscorelist'],'examsessionsetting'=>$eh['ehsetting'],'examsessionquestion'=>$eh['ehquestion'],'examsessionuseranswer'=>$eh['ehuseranswer']);
+			$this->tpl->assign('sessionvars',$sessionvars);
+			$this->tpl->assign('questype',$questype);
+			if($eh['ehtype'] == 2)
+			$this->tpl->display('history_examwrongs');
+			elseif($eh['ehtype'] == 1)
+			$this->tpl->display('history_exampaperwrongs');
+			else
+			$this->tpl->display('history_exercisewrongs');
+			break;
+
+			//以该记录题目重新出卷
+			case 'redo':
+			$ehid = $this->ev->get('ehid');
+			$eh = $this->favor->getExamHistoryById($ehid);
+			$args = array(
+							'examsession' => $eh['ehexam'].'重做',
+							'examsessiontype'=>$eh['ehtype'] == 2?1:$eh['ehtype'],
+							'examsessionsetting'=>$this->ev->addSlashes(serialize($eh['ehsetting'])),
+							'examsessionbasic'=>$eh['ehbasicid'],
+							'examsessionquestion'=>$this->ev->addSlashes(serialize($eh['ehquestion'])),
+							'examsessionuseranswer'=>'',
+							'examsessiontime'=>$eh['ehtime'],
+							'examsessionscorelist'=>'',
+							'examsessionscore'=>0,
+							'examsessionstarttime'=>TIME,
+							'examsessionissave'=> 0,
+							'examsessionstatus'=> 0
+						);
+			$es = $this->exam->getExamSessionBySessionid();
+			if($es['examsessionid'])
+			{
+				$this->exam->modifyExamSession($args);
+			}
+			else
+			{
+				$this->exam->insertExamSession($args);
+			}
+			if($eh['ehtype'] == 1)
+			$message = array(
+				'statusCode' => 200,
+				"message" => "试题加载成功，即将进入考试页面",
+			    "callbackType" => 'forward',
+			    "forwardUrl" => "index.php?exam-phone-exampaper-paper&act=history&examid={$eh['ehkey']}"
+			);
+			elseif($eh['ehtype'] == 2)
+			$message = array(
+				'statusCode' => 200,
+				"message" => "试题加载成功，即将进入考试页面",
+			    "callbackType" => 'forward',
+			    "forwardUrl" => "index.php?exam-phone-exampaper-paper&act=history&examid={$eh['ehkey']}"
+			);
+			else
+			$message = array(
+				'statusCode' => 200,
+				"message" => "试题加载成功，即将进入考试页面",
+			    "callbackType" => 'forward',
+			    "forwardUrl" => "index.php?exam-phone-exercise-paper&act=history&examid={$eh['ehkey']}"
+			);
+			$this->G->R($message);
+			break;
+
+			//答题记录列表
+			default:
+			$page = $this->ev->get('page');
+			$ehtype = intval($this->ev->get('ehtype'));
+			$page = $page > 0?$page:1;
+			$basicid = $this->data['currentbasic']['basicid'];
+			$exams = $this->favor->getExamHistoryListByArgs($page,10,array("ehuserid = '".$this->_user['sessionuserid']."'","ehbasicid = '{$basicid}'","ehtype = '{$ehtype}'"));
+			foreach($exams['data'] as $key => $p)
+			{
+				$exams['data'][$key]['errornumber'] = 0;
+				$questions = unserialize($p['ehquestion']);
+				$scorelist = unserialize($p['ehscorelist']);
+				$examsetting = unserialize($p['ehsetting']);
+				if(is_array($questions['questions']) && is_array($scorelist))
+				{
+					foreach($questions['questions'] as $nkey => $q)
+					{
+						if(is_array($q))
+						{
+							foreach($q as $qid => $t)
+							{
+								if($p['ehtype'] == 0)
+								{
+									if($scorelist[$qid] != 1)$exams['data'][$key]['errornumber']++;
+								}
+								elseif($p['ehtype'] == 1)
+								{
+									if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+								}
+								else
+								{
+									if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+								}
+							}
+						}
+					}
+					foreach($questions['questionrows'] as $nkey => $qt)
+					{
+						foreach($qt as $qtid => $q)
+						{
+							if(is_array($q))
+							{
+								foreach($q['data'] as $qid => $t)
+								{
+									if($p['ehtype'] == 0)
+									{
+										if($scorelist[$qid] != 1)$exams['data'][$key]['errornumber']++;
+									}
+									elseif($p['ehtype'] == 1)
+									{
+										if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+									}
+									else
+									{
+										if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			$avgscore = floatval($this->favor->getAvgScore(array("ehuserid = '".$this->_user['sessionuserid']."'","ehbasicid = '{$basicid}'","ehtype = '{$ehtype}'")));
+			$this->tpl->assign('ehtype',$ehtype);
+			$this->tpl->assign('page',$page);
+			$this->tpl->assign('exams',$exams);
+			$this->tpl->assign('avgscore',$avgscore);
+			$this->tpl->display('history');
+			break;
 		}
 	}
 

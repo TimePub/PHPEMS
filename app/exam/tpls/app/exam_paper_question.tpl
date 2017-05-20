@@ -8,7 +8,7 @@
 			试题列表
 		</h3>
 	</div>
-	<div class="modal-body" id="modal-body" style="max-height:100%;">
+	<div class="modal-body" id="modal-body" style="max-height:560px;">
 		{x2;eval: v:oid = 0}
 		{x2;eval: v:qmid = 0}
     	{x2;tree:$questype,quest,qid}
@@ -42,7 +42,7 @@
 <div class="row-fluid">
 	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
-			<form class="examform form-horizontal" id="form1" name="form1" action="index.php?exam-app-exam-score">
+			<form class="examform form-horizontal" id="form1" name="form1" method="post" action="index.php?exam-app-exam-score">
 				<ul class="breadcrumb">
 					<li>
 						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
@@ -208,7 +208,7 @@
 						<p>共有试题 <span class="allquestionnumber">50</span> 题，已做 <span class="yesdonumber">0</span> 题。您确认要交卷吗？</p>
 					</div>
 					<div class="modal-footer">
-						 <button type="submit" class="btn btn-primary">确定交卷</button>
+						 <button type="button" onclick="javascript:submitPaper();" class="btn btn-primary">确定交卷</button>
 						 <input type="hidden" name="insertscore" value="1"/>
 						 <button aria-hidden="true" class="btn" type="button" data-dismiss="modal">再检查一下</button>
 					</div>
@@ -287,7 +287,7 @@ $(document).ready(function(){
 		$(".paperexamcontent:first").show();
 	};
 	m();
-	setInterval(refreshRecord,5000);
+	//setInterval(refreshRecord,15000);
 	setInterval(saveanswer,300000);
 
 	$('.allquestionnumber').html($('.paperexamcontent').length);
@@ -305,14 +305,16 @@ $(document).ready(function(){
 			var _this = $(this);
 			_this.val(initData[_this.attr('name')]);
 			CKEDITOR.instances[_this.attr('id')].setData(initData[_this.attr('name')]);
-			markQuestion(_this.attr('rel'),true);
+			if(initData[_this.attr('name')] && initData[_this.attr('name')] != '')
+			batmark(_this.attr('rel'),initData[_this.attr('name')]);
 		});
 
 		var texts = $('#form1 :input[type=text]');
 		$.each(texts,function(){
 			var _this = $(this);
 			_this.val(initData[_this.attr('name')]);
-			markQuestion(_this.attr('rel'),true);
+			if(initData[_this.attr('name')] && initData[_this.attr('name')] != '')
+			batmark(_this.attr('rel'),initData[_this.attr('name')]);
 		});
 
 		var radios = $('#form1 :input[type=radio]');
@@ -321,10 +323,10 @@ $(document).ready(function(){
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked = true;
+				batmark(_this.attr('rel'),initData[_this.attr('name')]);
 			}else{
 				_.checked=false;
 			}
-			markQuestion(_this.attr('rel'));
 		});
 
 		var checkboxs=$('#form1 :input[type=checkbox]');
@@ -333,10 +335,10 @@ $(document).ready(function(){
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked=true;
+				batmark(_this.attr('rel'),initData[_this.attr('name')]);
 			}else{
 				_.checked=false;
 			}
-			markQuestion(_this.attr('rel'));
 		});
 	}
 

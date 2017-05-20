@@ -33,21 +33,22 @@
 					</div>
 					{x2;if:!$cat['catparent']}
 					<div class="control-group">
-						<label for="modulename" class="control-label">显示在导航条</label>
+						<label for="modulename" class="control-label">前台显示</label>
 						<div class="controls">
 							<label class="radio inline">
-				          		<input type="radio" class="input-text" name="args[catinmenu]" value="1"{x2;if:$cat['catinmenu']} checked{x2;endif}/> 显示
+				          		<input type="radio" class="input-text" name="args[catinmenu]" value="1"{x2;if:$category['catinmenu']} checked{x2;endif}/> 不显示
 				          	</label>
 				          	<label class="radio inline">
-				          		<input type="radio" class="input-text" name="args[catinmenu]" value="0"{x2;if:!$cat['catinmenu']} checked{x2;endif}/> 不显示
+				          		<input type="radio" class="input-text" name="args[catinmenu]" value="0"{x2;if:!$category['catinmenu']} checked{x2;endif}/> 显示
 				          	</label>
+				          	<span class="help-block">勾选此项后，分类将显示在内容模块前台的分类列表区域。</span>
 						</div>
 					</div>
 					{x2;endif}
 					<div class="control-group">
 						<label for="modulename" class="control-label">在首页展示内容</label>
 						<div class="controls">
-							<input type="text" name="args[catindex]" value="{x2;if:$cat['catindex']}{x2;$cat['catindex']}{x2;else}0{x2;endif}" datatype="number" needle="needle" msg="您必须填写展示内容条数">
+							<input type="text" name="args[catindex]" value="{x2;if:$cat['catindex']}{x2;$category['catindex']}{x2;else}0{x2;endif}" datatype="number" needle="needle" msg="您必须填写展示内容条数">
 							<span class="help-block">填写展示内容条数，如果不需要在首页展示，请填写0。</span>
 						</div>
 					</div>

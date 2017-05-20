@@ -27,6 +27,22 @@ class favor_exam
 		$this->section = $this->G->make('section','exam');
 	}
 
+	public function getBestStudentsToday()
+	{
+		$t = TIME - 24*3600*7;
+		$data = array("count(*) AS number,ehusername,max(ehscore) as ehscore",'examhistory',array("ehstarttime >= '{$t}'"),"ehuserid","number DESC",10);
+		$sql = $this->sql->makeSelect($data);
+		return $this->db->fetchAll($sql);
+	}
+
+	public function getBestStudentsThisMonth()
+	{
+		$t = TIME - 24*3600*30;
+		$data = array("count(*) AS number,ehusername,max(ehscore) as ehscore",'examhistory',array("ehstarttime >= '{$t}'"),"ehuserid","number DESC",10);
+		$sql = $this->sql->makeSelect($data);
+		return $this->db->fetchAll($sql);
+	}
+
 	//通过用户ID获取收藏试题列表
 	//参数：当前页码，单页显示数量，查询参数（数组或字符串）
 	//返回值：试题列表数组
@@ -176,7 +192,8 @@ class favor_exam
 	//根据用户和科目获取考试记录列表
 	public function getAllExamHistoryByArgs($args = array(),$fields = false)
 	{
-		$data = array($fields,'examhistory',$args,false,"ehscore DESC",false);
+		$args[] = "examhistory.ehuserid = user.userid";
+		$data = array($fields,array('examhistory','user'),$args,false,"ehscore DESC",false);
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetchAll($sql);
 	}

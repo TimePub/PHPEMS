@@ -60,7 +60,7 @@
 						{x2;tree:$question['data'],question,qid}
 						<tr>
 							<td>{x2;v:question['questionid']}</td>
-							<td><input style="width:24px;padding:2px 5px;" type="text" name="sequence[{x2;v:question['questionid']}][]" value="{x2;v:question['questionsequence']}" /></td>
+							<td><input style="width:24px;padding:2px 5px;" type="text" name="sequence[{x2;v:question['questionid']}]" value="{x2;v:question['questionsequence']}" /></td>
 							<td>{x2;$questypes[v:question['questiontype']]['questype']}</td>
 							<td>
 								<a title="查看试题" class="selfmodal" href="javascript:;" url="index.php?exam-master-questions-detail&questionid={x2;v:question['questionid']}" title="查看试题" data-target="#modal">{x2;eval: echo strip_tags(html_entity_decode(v:question['question']))}</a>

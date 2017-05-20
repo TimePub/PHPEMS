@@ -48,6 +48,14 @@ class strings
 		else return true;
 	}
 
+	public function isAllowKey($str)
+	{
+		//$j = "/^[\w|\[|\]|\-|_]+$/i";
+		$j = "/^[\w|\-|_]+$/i";
+		if(preg_match($j,$str))return $str;
+		else return false;
+	}
+
 	public function isPassword($str)
 	{
 		if(strlen($str)>=6)

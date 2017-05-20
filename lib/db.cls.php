@@ -5,6 +5,7 @@ class db
 	private $queryid = 0;
 	private $linkid = 0;
 	public $q = 1;
+	public $debug = 1;
 	public $G;
 
     public function __construct(&$G)
@@ -25,7 +26,7 @@ class db
             $dbcode = str_replace("-","",$dbcode);
             if(!$this->linkid)
             {
-            	$this->linkid = mysql_connect($host, $dbuser, $password) or die('Cannot connect mysql server,check mysql server!');
+            	$this->linkid = mysql_connect($host, $dbuser, $password) or die('Mysql数据库连接失败，请检查数据库用户名和密码是否正确！');
             }
             $version = $this->getVersion();
 
@@ -37,7 +38,7 @@ class db
 					mysql_query("SET sql_mode=''", $this->linkid);
 				}
             }
-			else die('You need the new version of mysql!');
+			else die('Mysql版本过低，请更换5.0以上版本！');
 			mysql_select_db($dbname, $this->linkid);
     }
 
@@ -51,11 +52,11 @@ class db
     //执行select
     public function query($sql)
     {
-    	//echo $sql;
+    	if(!$sql)return false;
     	if(!$this->linkid)$this->connect();
 		$this->q++;
     	$this->queryid = mysql_query($sql);
-		if(mysql_errno($this->linkid))
+		if(mysql_errno($this->linkid) && $this->debug)
 		{
 			exit('ERRO:'.$sql.':'.mysql_error());
 			return false;

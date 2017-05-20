@@ -10,7 +10,7 @@
 						<span class="icon-home"></span> <a href="index.php?exam-phone">考场选择</a> <span class="divider">/</span>
 					</li>
 					<li>
-						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
+						<a href="index.php?exam-phone-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
 					</li>
 					<li class="active">
 						强化训练

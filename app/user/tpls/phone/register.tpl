@@ -2,7 +2,7 @@
 <body>
 <div class="row-fluid top">
 	<div class="container-fluid">
-		<div class="span9 text-center"><h3><img src="app/user/styles/img/theme/logo.png" style="width:36px;margin-top:-3px;"/>  模拟考试系统</h3></div>
+		<div class="span12"><h3><img src="app/user/styles/img/theme/logo.png" style="margin-top:-21px;"/></h3></div>
 	</div>
 </div>
 <div class="row-fluid">

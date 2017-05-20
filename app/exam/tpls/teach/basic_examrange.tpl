@@ -72,6 +72,31 @@
 				</div>
 				{x2;endif}
 				<div class="control-group">
+					<label for="basicexam_auto" class="control-label">考场模式：</label>
+					<div class="controls">
+						<label class="radio inline">
+				          		<input type="radio" class="input-text" name="args[basicexam][model]" value="0"{x2;if:$basic['basicexam']['model'] == 0} checked{x2;endif}/> 全功能模式（练习和正式考试均开放）
+			          	</label>
+			          	<label class="radio inline">
+			          		<input type="radio" class="input-text" name="args[basicexam][model]" value="1"{x2;if:$basic['basicexam']['model'] == 1} checked{x2;endif}/> 练习模式（仅练习功能开放）
+			          	</label>
+			          	<label class="radio inline">
+			          		<input type="radio" class="input-text" name="args[basicexam][model]" value="2"{x2;if:$basic['basicexam']['model'] == 2} checked{x2;endif}/> 考试模式（仅正式考试开放）
+			          	</label>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="basicexam_auto" class="control-label">正式考试试题排序：</label>
+					<div class="controls">
+						<label class="radio inline">
+				          	<input type="radio" class="input-text" name="args[basicexam][changesequence]" value="0"{x2;if:$basic['basicexam']['changesequence'] == 0} checked{x2;endif}/> 不打乱试题排序
+			          	</label>
+			          	<label class="radio inline">
+			          		<input type="radio" class="input-text" name="args[basicexam][changesequence]" value="1"{x2;if:$basic['basicexam']['changesequence'] == 1} checked{x2;endif}/> 打乱试题排序
+			          	</label>
+					</div>
+				</div>
+				<div class="control-group">
 					<label for="basicexam_auto" class="control-label">绑定模拟考试试卷：</label>
 					<div class="controls">
 						<textarea id="basicexam_auto" name="args[basicexam][auto]" needle="needle" msg="您必须填写至少一个试卷">{x2;$basic['basicexam']['auto']}</textarea>
@@ -109,7 +134,7 @@
 					<label class="control-label">正式考试开启时间：</label>
 					<div class="controls">
 						<input name="args[basicexam][opentime][start]" type="text" value="{x2;if:$basic['basicexam']['opentime']['start']}{x2;date:$basic['basicexam']['opentime']['start'],'Y-m-d H:i:s'}{x2;else}0{x2;endif}" needle="needle" msg="您必须输入一个开启时间起点" /> - <input name="args[basicexam][opentime][end]" type="text" value="{x2;if:$basic['basicexam']['opentime']['end']}{x2;date:$basic['basicexam']['opentime']['end'],'Y-m-d H:i:s'}{x2;else}0{x2;endif}" needle="needle" msg="您必须输入一个开启时间终点" />
-						<span class="help-block">开始结束时间均需填写，格式为2014-05-01 08:00:00，不限制开启时间请任意一项填写0</span>
+						<span class="help-block">开始结束时间均需填写，格式为2014-05-01 08:00:00，不限制开启时间请任意一项填写0。如果设置的结束时间减去5分钟比考生交卷时间要早，则系统按照结束时间减去5分钟收卷。</span>
 					</div>
 				</div>
 				<div class="control-group">

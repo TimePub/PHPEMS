@@ -14,9 +14,11 @@
 							<a name="question_{x2;$question['questionid']}"></a>{x2;realhtml:$question['question']}
 						</div>
 						{x2;if:!$questype['questsort']}
+						{x2;if:$questype['questchoice'] != 5}
 						<div class="media-body well">
 	                    	{x2;realhtml:$question['questionselect']}
 	                    </div>
+	                    {x2;endif}
 						<div class="media-body well questionanswerbox">
 	                    	{x2;if:$questype['questchoice'] == 1 || $questype['questchoice'] == 4}
 		                        {x2;tree:$selectorder,so,sid}
@@ -25,7 +27,9 @@
 		                        {x2;endif}
 		                        <label class="radio inline"><input type="radio" name="question[{x2;$question['questionid']}]" rel="{x2;$question['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][$question['questionid']]}checked{x2;endif}/>{x2;v:so} </label>
 		                        {x2;endtree}
-	                        {x2;else}
+	                        {x2;elseif:$questype['questchoice'] == 5}
+			                   	<div class="input-append"><input type="text" class="input-xxlarge" name="question[{x2;$question['questionid']}]" rel="{x2;$question['questionid']}" readonly/><span class="btn add-on" onclick="javascript:answerfenlu('{x2;$question['questionid']}');"><em class="icon-edit"></em></span></div>
+		                    {x2;else}
 		                        {x2;tree:$selectorder,so,sid}
 		                        {x2;if:v:key >= $question['questionselectnumber']}
 		                        {x2;eval: break;}
@@ -90,9 +94,11 @@
 								<a name="qrchild_{x2;v:data['questionid']}"></a>{x2;realhtml:v:data['question']}
 							</div>
 							{x2;if:!$questype['questsort']}
+							{x2;if:$questype['questchoice'] != 5}
 							<div class="media-body well">
 		                    	{x2;realhtml:v:data['questionselect']}
 		                    </div>
+		                    {x2;endif}
 							<div class="media-body well questionanswerbox">
 		                    	{x2;if:$questype['questchoice'] == 1 || $questype['questchoice'] == 4}
 			                        {x2;tree:$selectorder,so,sid}
@@ -101,7 +107,9 @@
 			                        {x2;endif}
 			                        <label class="radio inline"><input type="radio" name="question[{x2;v:data['questionid']}]" rel="{x2;v:data['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:data['questionid']]}checked{x2;endif}/>{x2;v:so} </label>
 			                        {x2;endtree}
-		                        {x2;else}
+		                        {x2;elseif:$questype['questchoice'] == 5}
+			                    	<div class="input-append"><input type="text" class="input-xxlarge" name="question[{x2;v:data['questionid']}]" rel="{x2;v:data['questionid']}" readonly/><span class="btn add-on" onclick="javascript:answerfenlu('{x2;v:data['questionid']}');"><em class="icon-edit"></em></span></div>
+			                    {x2;else}
 			                        {x2;tree:$selectorder,so,sid}
 			                        {x2;if:v:key >= v:data['questionselectnumber']}
 			                        {x2;eval: break;}
@@ -119,18 +127,22 @@
 							<div class="media-body well">
 								<div class="btn-group pull-right hide answerbox">
 				            		{x2;if:$number > 1}
-				            		{x2;if:v:did == 1}
-				            		<a class="btn ajax" target="questionpanel" href="index.php?{x2;$_app}-app-lesson-ajax-questions&number={x2;eval: echo intval($number - 1)}" title="上一题">上一题</a>
-				            		{x2;else}
-				            		<a class="btn" href="#qrchild_{x2;eval: echo v:tmpa[v:did - 1]['questionid']}" title="上一题">上一题</a>
-				            		{x2;endif}
+					            		{x2;if:v:did == 1}
+					            		<a class="btn ajax" target="questionpanel" href="index.php?{x2;$_app}-app-lesson-ajax-questions&number={x2;eval: echo intval($number - $prenumer)}" title="上一题">上一题</a>
+					            		{x2;else}
+					            		<a class="btn" href="#qrchild_{x2;eval: echo v:tmpa[v:did - 1]['questionid']}" title="上一题">上一题</a>
+					            		{x2;endif}
+					            	{x2;else}
+					            		{x2;if:v:did > 1}
+					            		<a class="btn" href="#qrchild_{x2;eval: echo v:tmpa[v:did - 1]['questionid']}" title="上一题">上一题</a>
+					            		{x2;endif}
 				            		{x2;endif}
 				            		{x2;if:v:did < count(v:tmpa)}
 				            		<a class="btn" href="#qrchild_{x2;eval: echo v:tmpa[v:did + 1]['questionid']}" title="下一题">下一题</a>
 				            		{x2;else}
-				            		{x2;if:v:did + $number < $allnumber}
-									<a class="btn ajax" target="questionpanel" href="index.php?{x2;$_app}-app-lesson-ajax-questions&number={x2;eval: echo intval($number + count(v:tmpa) + 1)}" title="下一题">下一题</a>
-									{x2;endif}
+					            		{x2;if:(v:did + $number) < $allnumber}
+										<a class="btn ajax" target="questionpanel" href="index.php?{x2;$_app}-app-lesson-ajax-questions&number={x2;eval: echo intval($number + count(v:tmpa))}" title="下一题">下一题</a>
+										{x2;endif}
 									{x2;endif}
 				            	</div>
 				            	<div class="btn-group pull-right">

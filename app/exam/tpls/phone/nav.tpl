@@ -1,7 +1,7 @@
 <div class="row-fluid top">
 	<div class="container-fluid">
-		<div class="span9"><h3><img src="app/user/styles/img/theme/logo.png" style="width:36px;margin-top:-3px;"/>  模拟考试系统</h3></div>
-		<div class="span3">
+		<div class="span6"><h3><img src="app/user/styles/img/theme/logo.png" style="margin-top:-21px;"/></h3></div>
+		<div class="span6">
 			<ul class="unstyled" id="userNav" style="margin-top:20px;">
 				<li>
 					<div class="btn-group pull-right">

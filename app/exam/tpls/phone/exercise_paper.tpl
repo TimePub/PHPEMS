@@ -11,10 +11,10 @@
 						<span class="icon-home"></span> <a href="index.php?exam-phone">考场选择</a> <span class="divider">/</span>
 					</li>
 					<li>
-						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
+						<a href="index.php?exam-phone-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
 					</li>
 					<li>
-						<a href="index.php?exam-app-exercise">强化训练</a> <span class="divider">/</span>
+						<a href="index.php?exam-phone-exercise">强化训练</a> <span class="divider">/</span>
 					</li>
 					<li class="active">
 						{x2;$sessionvars['examsession']}
@@ -23,7 +23,7 @@
 				<h3 class="text-center">{x2;$sessionvars['examsession']}</h3>
 				{x2;eval: v:oid = 0}
 				{x2;tree:$questype,quest,qid}
-				{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']]}
+				{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
 				{x2;eval: v:oid++}
 				<div id="panel-type{x2;v:quest['questid']}" class="tab-pane{x2;if:(!$ctype && v:qid == 1) || ($ctype == v:quest['questid'])} active{x2;endif}">
 					<ul class="breadcrumb">
@@ -148,7 +148,7 @@
 						<p>您确认要交卷吗？</p>
 					</div>
 					<div class="modal-footer">
-						 <button onclick="javascript:submitPaper();" class="btn btn-primary">确定交卷</button>
+						 <button onclick="javascript:submitPaper();" type="button" class="btn btn-primary">确定交卷</button>
 						 <input type="hidden" name="insertscore" value="1"/>
 						 <button aria-hidden="true" class="btn" data-dismiss="modal">再检查一下</button>
 					</div>
@@ -175,7 +175,7 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
-	$.get('index.php?exam-app-index-ajax-lefttime&rand'+Math.random(),function(data){
+	$.get('index.php?exam-phone-index-ajax-lefttime&rand'+Math.random(),function(data){
 		var setting = {
 			time:{x2;$sessionvars['examsessiontime']},
 			hbox:$("#timer_h"),

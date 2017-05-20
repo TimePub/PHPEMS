@@ -12,6 +12,7 @@ class ev
 	public function __construct(&$G)
     {
     	$this->G = $G;
+    	$this->strings = $this->G->make('strings');
     	if (ini_get('magic_quotes_gpc')) {
 			$get    = $this->stripSlashes($_REQUEST);
 			$post   = $this->stripSlashes($_POST);
@@ -26,7 +27,7 @@ class ev
 		$this->get = $this->initData($get);
 		$this->post = $this->initData($post);
 		$this->url = $this->parseUrl();
-
+		$this->cookie = $this->initData($this->cookie);
     }
 
 	//解析url
@@ -98,6 +99,11 @@ class ev
 		{
 			foreach($data as $key => $value)
 			{
+				if($this->strings->isAllowKey($key) === false)
+				{
+					unset($data[$key]);
+				}
+				else
 				$data[$key] = $this->initData($value);
 			}
 			return $data;
@@ -106,12 +112,12 @@ class ev
 		{
 			if(is_numeric($data))
 			{
-				if($data[0] == 0)return $this->addSlashes(htmlspecialchars($data));
-				if(strlen($data) >= 11)return $this->addSlashes(htmlspecialchars($data));
+				if($data[0] === 0)return $this->addSlashes(htmlspecialchars(str_replace("'","&#39;",$data)));
+				if(strlen($data) >= 11)return $this->addSlashes(htmlspecialchars(str_replace("'","&#39;",$data)));
 				if(strpos($data,'.'))return floatval($data);
 				else return intval($data);
 			}
-			if(is_string($data))return $this->addSlashes(htmlspecialchars($data));
+			if(is_string($data))return $this->addSlashes(htmlspecialchars(str_replace("'","&#39;",$data)));
 			if(is_bool($data))return (bool)$data;
 			return false;
 		}

@@ -294,7 +294,7 @@ class sql
 			$sql .= rtrim($tmp,',');
 		}
 		else $sql .= $this->tablepre.$updaters[0]." AS ".$updaters[0];
-		if(is_array($updaters[1]))
+		if(is_array($updaters[1]) && count($updaters[1]))
 		{
 			$sql .= " SET ";
 			$tmp = NULL;

@@ -33,6 +33,18 @@ class app
 		}
 	}
 
+	public function test()
+	{
+		$this->strings = $this->G->make('strings');
+		$a = "abcdef-_''";
+		if($this->strings->isAllowKey($a))
+		echo 'aaasdsd';
+		$args = $this->ev->get('args');
+		$this->sql = $this->G->make('sql');
+		$sql = $this->sql->makeUpdate(array('user',$args,"userid = 1"));
+		echo $sql;
+	}
+
 	public function index()
 	{
 		header("location:".'index.php?'.$this->G->app.'-app');

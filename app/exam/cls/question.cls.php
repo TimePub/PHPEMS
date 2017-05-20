@@ -415,13 +415,16 @@ class question_exam
 				}
 				while($t)
 				{
-					$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrlevel = '{$nkey}'","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'","questionrows.qrnumber > 0"));
+					$nouserid = implode(',',$questionrow[$key]);
+					$tmpargs = array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrlevel = '{$nkey}'","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'","questionrows.qrnumber > 0");
+					if($nouserid)$tmpargs[] = "questionrows.qrid NOT IN ({$nouserid}) ";
+					$qrs = $this->getRandQuestionRowsList($tmpargs);
 					if(count($qrs))
 					{
 						$qrid = $qrs[array_rand($qrs,1)];
 						$questionrow[$key][] = $qrid;
 						$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
-						$t = intval($t - $qr['qrnumber']?$qr['qrnumber']:1);
+						$t = intval($t - $qr['qrnumber']);
 					}
 					else
 					break;
@@ -431,45 +434,43 @@ class question_exam
 		return array('question'=>$question,'questionrow'=>$questionrow,'setting'=>$exam);
 	}
 
-	//根据知识点获取试题列表
-	public function selectQuestionsByKnows($knowsid,$qt = 0,$defaulttype = 2)
+	public function selectQuestionsByKnows($knowsid,$qt)
 	{
-		if(!$knowsid)$knowsid = '0';
-		if(!$qt)$qt = array(2=>5,3=>4,5=>4,4=>2);
-		$question = array();
-		$questionrow = array();
-		$t = rand(1,2);
-		if($t<3 && $qt[$defaulttype] > 0)
+		$knowsids = $knowsid;
+		foreach($qt as $key => $t)
 		{
-			$qrs = $this->getRandQuestionRowsListByKnowid($knowsid,$defaulttype,$qt[$defaulttype]);
-			if(count($qrs))
+			$par = 0;
+			if(!$par)
 			{
-				$qrid = $qrs[array_rand($qrs,1)];
-				$questionrow[$defaulttype] = $qrid;
-				$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
-				$qt[$defaulttype] = intval($qt[$defaulttype] - $qr['qrnumber']);
-			}
-		}
-		$tn = 0;
-		foreach($qt as $key => $number)
-		{
-			$number = intval($number);
-			if($number)
-			{
-				$question[$key] = array();
-				if($key != $defaulttype)
+				$par++;
+				$trand = rand(1,4);
+				if($trand < 3)
 				{
-					$r = $this->getRandQuestionListByKnowid($knowsid,$key);
-					if(count($r) > $number)
+					$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'"));
+					if(count($qrs))
 					{
-						if($number <= 1)
+						$qrid = $qrs[array_rand($qrs,1)];
+						$questionrow[$key][] = $qrid;
+						$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+						$t = intval($t - $qr['qrnumber']);
+					}
+				}
+			}
+			if($t)
+			{
+				$r = $this->getRandQuestionList(array("quest2knows.qkknowsid IN ({$knowsids})","questions.questiontype = '{$key}'"));
+				if(is_array($r))
+				{
+					if((count($r) >= $t))
+					{
+						if($t <= 1)
 						{
-							$question[$key] = array($r[array_rand($r,1)]);
+							$question[$key][] = $r[array_rand($r,1)];
 						}
 						else
 						{
-							$t = array_rand($r,$number);
-							foreach($t as $tmp)
+							$ts = array_rand($r,$t);
+							foreach($ts as $tmp)
 							{
 								$question[$key][] = $r[$tmp];
 							}
@@ -477,34 +478,27 @@ class question_exam
 					}
 					else
 					{
-						$tn += $number - count($r);
-						$question[$key] = $r;
+						foreach($r as $tmp)
+						$question[$key][] = $tmp;
 					}
 				}
 			}
-		}
-
-		$tnumber = $tn + $qt[$defaulttype];
-		if($tnumber)
-		{
-			$r = $this->getRandQuestionListByKnowid($knowsid,$defaulttype);
-			if(count($r) > $tnumber)
+			while($t)
 			{
-				if($tnumber <= 1)
-				$question[$defaulttype] = array($r[array_rand($r,1)]);
-				else
+				$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'","questionrows.qrnumber > 0"));
+				if(count($qrs))
 				{
-					$t = array_rand($r,$tnumber);
-					foreach($t as $tmp)
-					{
-						$question[$defaulttype][] = $r[$tmp];
-					}
+					$qrid = $qrs[array_rand($qrs,1)];
+					$questionrow[$key][] = $qrid;
+					$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+					$t = intval($t - $qr['qrnumber']);
 				}
+				else
+				break;
 			}
-			else
-			$question[$defaulttype] =  $r;
 		}
-		return array('question'=>$question,'questionrow'=>$questionrow);
+		$r = array('question'=>$question,'questionrow'=>$questionrow);
+		return $r;
 	}
 }
 ?>

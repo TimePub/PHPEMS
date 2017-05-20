@@ -8,7 +8,7 @@
 			试题列表
 		</h3>
 	</div>
-	<div class="modal-body" id="modal-body" style="max-height:100%;">
+	<div class="modal-body" id="modal-body" style="max-height:560px;">
 		{x2;eval: v:oid = 0}
 		{x2;eval: v:qmid = 0}
     	{x2;tree:$questype,quest,qid}
@@ -308,14 +308,16 @@ $(document).ready(function(){
 			var _this = $(this);
 			_this.val(initData[_this.attr('name')]);
 			CKEDITOR.instances[_this.attr('id')].setData(initData[_this.attr('name')]);
-			markQuestion(_this.attr('rel'),true);
+			if(initData[_this.attr('name')] && initData[_this.attr('name')] != '')
+			batmark(_this.attr('rel'),initData[_this.attr('name')]);
 		});
 
 		var texts = $('#form1 :input[type=text]');
 		$.each(texts,function(){
 			var _this = $(this);
 			_this.val(initData[_this.attr('name')]);
-			markQuestion(_this.attr('rel'),true);
+			if(initData[_this.attr('name')] && initData[_this.attr('name')] != '')
+			batmark(_this.attr('rel'),initData[_this.attr('name')]);
 		});
 
 		var radios = $('#form1 :input[type=radio]');
@@ -324,10 +326,10 @@ $(document).ready(function(){
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked = true;
+				batmark(_this.attr('rel'),initData[_this.attr('name')]);
 			}else{
 				_.checked=false;
 			}
-			markQuestion(_this.attr('rel'));
 		});
 
 		var checkboxs=$('#form1 :input[type=checkbox]');
@@ -336,10 +338,10 @@ $(document).ready(function(){
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked=true;
+				batmark(_this.attr('rel'),initData[_this.attr('name')]);
 			}else{
 				_.checked=false;
 			}
-			markQuestion(_this.attr('rel'));
 		});
 	}
 

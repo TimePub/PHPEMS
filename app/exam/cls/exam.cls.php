@@ -612,7 +612,7 @@ class exam_exam
 		$sql = $this->sql->makeSelect($data);
 		$r = $this->db->fetch($sql,array('qrknowsid'));
 		if($r['qrid'])
-		$r['data'] = $this->getQuestionListByArgs(array("questionparent = '{$r['qrid']}'","questionstatus = 1"));
+		$r['data'] = $this->getSimpleQuestionListByArgs(array("questionparent = '{$r['qrid']}'","questionstatus = 1"));
 		return $r;
 	}
 
@@ -622,7 +622,7 @@ class exam_exam
 		$sql = $this->sql->makeSelect($data);
 		$r = $this->db->fetch($sql,array('qrknowsid'));
 		if($r['qrid'])
-		$r['data'] = $this->getQuestionListByArgs(array("questionparent = '{$r['qrid']}'","questionstatus = 1"));
+		$r['data'] = $this->getSimpleQuestionListByArgs(array("questionparent = '{$r['qrid']}'","questionstatus = 1"));
 		return $r;
 	}
 
@@ -632,6 +632,13 @@ class exam_exam
 	public function getQuestionListByArgs($args,$fields = false)
 	{
 		$data = array($fields,array('questions','quest2knows'),$args,false,array("questionsequence ASC","questionid ASC"),false);
+		$sql = $this->sql->makeSelect($data);
+		return $this->db->fetchAll($sql,'questionid',array('questionhtml','questionknowsid'));
+	}
+
+	public function getSimpleQuestionListByArgs($args,$fields = false)
+	{
+		$data = array($fields,'questions',$args,false,array("questionsequence ASC","questionid ASC"),false);
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetchAll($sql,'questionid',array('questionhtml','questionknowsid'));
 	}

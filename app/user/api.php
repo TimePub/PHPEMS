@@ -35,7 +35,7 @@ class app
 				{
 					$orderobj->modifyOrderById($orderid,array('orderstatus' => 2));
 					$user = $this->user->getUserById($order['orderuserid']);
-					$args['usercoin'] = $args['usercoin']+$order['orderprice']*10;
+					$args['usercoin'] = $user['usercoin']+$order['orderprice']*10;
 					$this->user->modifyUserInfo($args,$order['orderuserid']);
 					$this->tpl->assign('status',1);
 					$this->tpl->display('payfor_status');
@@ -67,7 +67,7 @@ class app
 			if($this->ev->get('trade_status') == 'TRADE_FINISHED' ||$this->ev->get('trade_status') == 'TRADE_SUCCESS')
 			{
 				$user = $this->user->getUserById($order['orderuserid']);
-				$args['usercoin'] = $args['usercoin']+$order['orderprice']*10;
+				$args['usercoin'] = $user['usercoin']+$order['orderprice']*10;
 				$this->user->modifyUserInfo($args,$order['orderuserid']);
 				$orderobj->modifyOrderById($orderid,array('orderstatus' => 2));
 				exit('sucess');

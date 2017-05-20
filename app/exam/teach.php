@@ -1384,11 +1384,11 @@ class app
 			{
 				$fname = 'data/score/'.TIME.'-'.$basicid.'-score.csv';
 				$args[] =  "ehbasicid = {$basicid}";
-				$rs = $this->favor->getAllExamHistoryByArgs($args,array('ehusername','ehscore'));
+				$rs = $this->favor->getAllExamHistoryByArgs($args,array('ehusername','ehscore','usertruename'));
 				$r = array();
 				foreach($rs as $p)
 				{
-					$r[] = array('ehusername' => iconv("UTF-8","GBK",$p['ehusername']),'ehscore' => $p['ehscore']);
+					$r[] = array('ehusername' => iconv("UTF-8","GBK",$p['ehusername']),'usertruename' => iconv("UTF-8","GBK",$p['usertruename']),'ehscore' => $p['ehscore']);
 				}
 				if($this->files->outCsv($fname,$r))
 				$message = array(
