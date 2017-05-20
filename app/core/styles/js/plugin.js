@@ -345,6 +345,121 @@ jQuery.extend({
 				this.debug(ex);
 			}
 		}
+	},
+	upfile : {
+		"fileQueueError" : function (file, errorCode, message)
+		{
+			try{
+				var msg = '';
+				switch (errorCode) {
+				case SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED:
+					msg = "您只能选择一个文件";
+				break;
+				case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
+					msg = "文件超出限制大小！";
+				break;
+				case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
+					msg = "空文件，请重新上传！";
+				break;
+				case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
+					msg = "不支持的文件类型！";
+				break;
+				default:
+					msg = "未知错误！";
+				}
+				$('#'+this.customSettings.upload_target).attr('src','app/core/styles/images/none.gif');
+				$('#'+this.customSettings.upload_msg).html(msg);
+
+			}
+			catch (ex)
+			{
+				this.debug(ex);
+			}
+		},
+		"fileDialogStart" : function()
+		{
+			$('#'+this.customSettings.upload_msg).html('请选择要上传的文件，只能选择一个');
+		},
+		"fileDialogComplete" : function (numFilesSelected, numFilesQueued)
+		{
+			try
+			{
+				if (numFilesQueued == 1)
+				{
+					this.startUpload();
+				}
+				else if(numFilesQueued > 1)
+				{
+					swfuexec.cancelQueue(this);
+				}
+			}
+			catch (ex)
+			{
+				this.debug(ex);
+			}
+		},
+		"uploadProgress" : function (file, bytesLoaded)
+		{
+			try
+			{
+				var percent = parseInt(bytesLoaded*100/file.size);
+				if(percent < 100)
+				{
+					$('#'+this.customSettings.upload_msg).html(percent.toString()+'%');
+				}
+				else
+				{
+					$('#'+this.customSettings.upload_msg).html('0.00%');
+				}
+			}
+			catch (ex)
+			{
+				this.debug(ex);
+			}
+		},
+		"uploadSuccess" : function (file, serverData)
+		{
+			try
+			{
+				var data = null;
+				try{
+					data = $.parseJSON(serverData);
+				}
+				catch(e)
+				{}
+				finally{
+					if(data){
+						$('#'+this.customSettings.upload_value).val(data.thumb);
+						$('#'+this.customSettings.upload_msg).html('100%');
+					}
+				}
+			}
+			catch (ex)
+			{
+				this.debug(ex);
+			}
+		},
+		"uploadComplete" : function (file)
+		{
+			try
+			{
+				$('#'+this.customSettings.upload_msg).html('&nbsp;');
+			} catch (ex) {
+				this.debug(ex);
+			}
+		},
+		"uploadError" : function (file, errorCode, message)
+		{
+			try
+			{
+				$('#'+this.customSettings.upload_msg).html(message);
+			}
+			catch (ex)
+			{
+				alert(ex);
+				this.debug(ex);
+			}
+		}
 	}
 });
 
@@ -593,12 +708,18 @@ function flashupload(){
 		var exectype = $.swfuexec;
 		if($(this).attr('exectype') == 'thumb')
 		exectype = $.thumbexec;
+		else if($(this).attr('exectype') == 'upfile')
+		exectype = $.upfile;
 		var swfsetting = {};
 		swfsetting.flash_url = "app/core/styles/js/swfu/swfupload.swf";
 		swfsetting.upload_url = "index.php?document-api-swfupload";
+		if($(this).attr('filesize'))swfsetting.file_types = $(this).attr('filesize');
+		else
 		swfsetting.file_size_limit = "2 MB";
+		if($(this).attr('uptypes'))swfsetting.file_types = $(this).attr('uptypes');
+		else
 		swfsetting.file_types = "*.jpg;*.gif;*.png;*.bmp";
-		swfsetting.file_types_description = "图片附件";
+		swfsetting.file_types_description = "上传附件";
 		swfsetting.file_upload_limit =  0;
 		swfsetting.file_queue_limit =  0;
 		swfsetting.button_width =  "16";

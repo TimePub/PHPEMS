@@ -1,4 +1,3 @@
-
 <?php
 
 class app
@@ -28,7 +27,10 @@ class app
 			    "forwardUrl" => "index.php?user-app-login"
 			)));
 			else
-			header("location:index.php?user-app-login");
+			{
+				header("location:index.php?user-app-login");
+				exit;
+			}
 		}
 		$this->user = $this->G->make('user','user');
 		$this->exam = $this->G->make('exam','exam');
@@ -44,8 +46,8 @@ class app
 		$openbasics = trim($this->sessionvars['examsessionopenbasics']," ,");
 		$this->data['openbasics'] = $this->basic->getBasicsByApi($openbasics);
 		if(!$this->data['openbasics'])$this->data['openbasics'] = $this->basic->getOpenBasicsByUserid($this->_user['sessionuserid']);
-		if(!$this->data['openbasics'])$this->data['openbasics'] = $this->basic->getBasicsByArgs("basicdemo = '1'");
-		if(!$this->_user['sessioncurrent'])
+		//if(!$this->data['openbasics'])$this->data['openbasics'] = $this->basic->getBasicsByArgs("basicdemo = '1'");
+		if(!$this->_user['sessioncurrent'] || !$this->data['openbasics'][$this->_user['sessioncurrent']])
 		{
 			$this->data['currentbasic'] = current($this->data['openbasics']);
 			$this->_user['sessioncurrent'] = $this->data['currentbasic']['basicid'];
@@ -62,6 +64,144 @@ class app
 		$this->tpl->assign('globalsections',$this->section->getSectionListByArgs("sectionsubjectid = '{$this->data['currentbasic']['basicsubjectid']}'"));
 		$this->tpl->assign('globalknows',$this->section->getAllKnowsBySubject($this->data['currentbasic']['basicsubjectid']));
 		$this->tpl->assign('_user',$this->user->getUserById($this->_user['sessionuserid']));
+		$this->tpl->assign('userhash',$this->ev->get('userhash'));
+	}
+
+	public function basics()
+	{
+		$action = $this->ev->url(3);
+		$page = $this->ev->get('page');
+		switch($action)
+		{
+			case 'openit':
+			$basicid = $this->ev->get('basicid');
+			$basic = $this->basic->getBasicById($basicid);
+			if(!$basic)
+			{
+				$message = array(
+					'statusCode' => 300,
+					"message" => "操作失败，此考场不存在"
+				);
+				exit(json_encode($message));
+			}
+			$userid = $this->_user['sessionuserid'];
+			if($this->basic->getOpenBasicByUseridAndBasicid($userid,$basicid))
+			{
+				$message = array(
+					'statusCode' => 300,
+					"message" => "您已经开通了本考场"
+				);
+			}
+			if($basic['basicdemo'])
+			{
+				$time = 365*24*3600;
+			}
+			else
+			{
+				$opentype = intval($this->ev->get('opentype'));
+				$price = 0;
+				if(trim($basic['basicprice']))
+				{
+					$price = array();
+					$basic['basicprice'] = explode("\n",$basic['basicprice']);
+					foreach($basic['basicprice'] as $p)
+					{
+						if($p)
+						{
+							$p = explode(":",$p);
+							$price[] = array('time'=>intval($p[0]),'price'=>intval($p[1]));
+						}
+					}
+				}
+				if(!$price[$opentype])$t = $price[0];
+				else
+				$t = $price[$opentype];
+				$time = $t['time']*24*3600;
+				$score = $t['price'];
+				$user = $this->user->getUserById($this->_user['sessionuserid']);
+				if($user['usercoin'] < $score)
+				{
+					$message = array(
+						'statusCode' => 300,
+						"message" => "操作失败，您的积分不够"
+					);
+					exit(json_encode($message));
+				}
+				else
+				{
+					$args = array("usercoin" => $user['usercoin'] - $score);
+					$this->user->modifyUserInfo($args,$this->_user['sessionuserid']);
+				}
+			}
+			$args = array('obuserid'=>$userid,'obbasicid'=>$basicid,'obendtime'=>TIME + $time);
+			$this->basic->openBasic($args);
+			$message = array(
+				'statusCode' => 200,
+				"message" => "操作成功",
+				"callbackType" => "forward",
+			    "forwardUrl" => "index.php?exam-app-basics"
+			);
+			exit(json_encode($message));
+			break;
+
+			case 'detail':
+			$this->basic->delOpenPassBasic($this->_user['sessionuserid']);
+			$this->area = $this->G->make('area','exam');
+			$basicid = $this->ev->get('basicid');
+			$basic = $this->basic->getBasicById($basicid);
+			$areas = $this->area->getAreaList();
+			$price = 0;
+			if(trim($basic['basicprice']))
+			{
+				$price = array();
+				$basic['basicprice'] = explode("\n",$basic['basicprice']);
+				foreach($basic['basicprice'] as $p)
+				{
+					if($p)
+					{
+						$p = explode(":",$p);
+						$price[] = array('time'=>$p[0],'price'=>$p[1]);
+					}
+				}
+				$this->tpl->assign('price',$price);
+			}
+			$isopen = $this->basic->getOpenBasicByUseridAndBasicid($this->_user['sessionuserid'],$basicid);
+			$this->tpl->assign('isopen',$isopen);
+			$this->tpl->assign('areas',$areas);
+			$this->tpl->assign('basic',$basic);
+			$this->tpl->display('basics_detail');
+			break;
+
+			case 'open':
+			$this->area = $this->G->make('area','exam');
+			$search = $this->ev->get('search');
+			$page = $page > 1?$page:1;
+			$subjects = $this->basic->getSubjectList();
+			if(!$search)
+			$args = 1;
+			else
+			{
+				$args = array();
+				if($search['basicdemo'])$args[] = "basicdemo = '{$search['basicdemo']}'";
+				if($search['keyword'])$args[] = "basic LIKE '%{$search['keyword']}%'";
+				if($search['basicareaid'])$args[] = "basicareaid = '{$search['basicareaid']}'";
+				if($search['basicsubjectid'])$args[] = "basicsubjectid = '{$search['basicsubjectid']}'";
+				if($search['basicapi'])$args[] = "basicapi = '{$search['basicapi']}'";
+			}
+			$basics = $this->basic->getBasicList($page,20,$args);
+			$areas = $this->area->getAreaList();
+			$this->tpl->assign('search',$search);
+			$this->tpl->assign('areas',$areas);
+			$this->tpl->assign('subjects',$subjects);
+			$this->tpl->assign('basics',$basics);
+			$this->tpl->display('basics_open');
+			break;
+
+			default:
+			$this->tpl->assign('basics',$this->data['openbasics']);
+			$this->tpl->display('basics');
+			break;
+		}
 	}
 
 	//首页
@@ -149,6 +289,7 @@ class app
 			break;
 
 			default:
+			if(!$this->data['openbasics'])exit(header("location:index.php?exam-app-basics-open"));
 			$this->tpl->display('index');
 		}
 	}
@@ -192,6 +333,7 @@ class app
 	{
 		$this->session->clearSessionUser();
 		header("location:index.php?exam-app-login");
+		exit;
 	}
 
 	//强化训练
@@ -205,6 +347,7 @@ class app
 			$args = array('examsessionkey' => 0);
 			$this->exam->modifyExamSession($args);
 			header("location:index.php?exam-app-exercise");
+			exit;
 			break;
 
 			case 'ajax':
@@ -277,6 +420,7 @@ class app
 				header("location:?exam-app-exampaper-view");
 				else
 				header("location:index.php?exam-app-exam-view");
+				exit;
 			}
 			$this->tpl->assign('questype',$this->basic->getQuestypeList());
 			$this->tpl->assign('sessionvars',$sessionvars);
@@ -315,7 +459,10 @@ class app
 					$this->favor->addExamHistory();
 				}
 				if($this->ev->get('direct'))
-				header("location:index.php?exam-app-exercise-makescore");
+				{
+					header("location:index.php?exam-app-exercise-makescore");
+					exit;
+				}
 				else
 				{
 					$message = array(
@@ -538,6 +685,7 @@ class app
 				if($sessionvars['examsessionstatus'] == 2)
 				{
 					header("location:?exam-app-exercise-makescore");
+					exit;
 				}
 				else
 				{
@@ -555,10 +703,12 @@ class app
 			if($sessionvars['examsessionstatus'] == 2)
 			{
 				header("location:?exam-app-exercise-makescore&makescore=1&direct=1");
+				exit;
 			}
 			elseif($sessionvars['examsessionstatus'] == 1)
 			{
 				header("location:index.php?exam-app-exercise-score");
+				exit;
 			}
 			else
 			{
@@ -762,6 +912,7 @@ class app
 			$args = array('examsessionkey' => 0);
 			$this->exam->modifyExamSession($args);
 			header("location:index.php?exam-app-exampaper");
+			exit;
 			break;
 
 			case 'sign':
@@ -818,6 +969,7 @@ class app
 				header("location:index.php?exam-app-exam-view");
 				else
 				header("location:index.php?exam-app-exercise-view");
+				exit;
 			}
 			$this->tpl->assign('questype',$this->basic->getQuestypeList());
 			$this->tpl->assign('sessionvars',$sessionvars);
@@ -856,7 +1008,10 @@ class app
 					$this->favor->addExamHistory();
 				}
 				if($this->ev->get('direct'))
-				header("location:index.php?exam-app-exampaper-makescore");
+				{
+					header("location:index.php?exam-app-exampaper-makescore");
+					exit;
+				}
 				else
 				{
 					$message = array(
@@ -1087,6 +1242,7 @@ class app
 				if($sessionvars['examsessionstatus'] == 2)
 				{
 					header("location:?exam-app-exampaper-makescore");
+					exit;
 				}
 				else
 				{
@@ -1105,10 +1261,12 @@ class app
 			if($sessionvars['examsessionstatus'] == 2)
 			{
 				header("location:index.php?exam-app-exampaper-makescore");
+				exit;
 			}
 			elseif($sessionvars['examsessionstatus'] == 1)
 			{
 				header("location:index.php?exam-app-exampaper-score");
+				exit;
 			}
 			else
 			{
@@ -1124,7 +1282,11 @@ class app
 			case 'selectquestions':
 			$sessionvars = $this->exam->getExamSessionBySessionid();
 			$examid = $this->ev->get('examid');
-			if(!$examid)header("location:?exam-app-exampaper");
+			if(!$examid)
+			{
+				header("location:?exam-app-exampaper");
+				exit;
+			}
 			else
 			{
 				$questionids = $this->question->selectQuestions($examid,$this->data['currentbasic']);
@@ -1177,6 +1339,7 @@ class app
 				else
 				$this->exam->insertExamSession($sargs);
 				header("location:?exam-app-exampaper-paper");
+				exit;
 			}
 			break;
 
@@ -1201,6 +1364,7 @@ class app
 			$args = array('examsessionkey' => 0);
 			$this->exam->modifyExamSession($args);
 			header("location:index.phpindex.php?exam-app-exam");
+			exit;
 			break;
 
 			case 'ajax':
@@ -1249,6 +1413,7 @@ class app
 				header("location:index.php?exam-app-exampaper-view");
 				else
 				header("location:index.php?exam-app-exercise-view");
+				exit;
 			}
 			$this->tpl->assign('questype',$this->basic->getQuestypeList());
 			$this->tpl->assign('sessionvars',$sessionvars);
@@ -1287,7 +1452,10 @@ class app
 					$this->favor->addExamHistory();
 				}
 				if($this->ev->get('direct'))
-				header("location:?exam-app-exam-makescore");
+				{
+					header("location:?exam-app-exam-makescore");
+					exit;
+				}
 				else
 				{
 					$message = array(
@@ -1520,6 +1688,7 @@ class app
 				if($sessionvars['examsessionstatus'] == 2)
 				{
 					header("location:index.php?exam-app-exam-makescore");
+					exit;
 				}
 				else
 				{
@@ -1537,10 +1706,12 @@ class app
 			if($sessionvars['examsessionstatus'] == 2)
 			{
 				header("location:index.php?exam-app-exam-makescore");
+				exit;
 			}
 			elseif($sessionvars['examsessionstatus'] == 1)
 			{
 				header("location:index.php?exam-app-exam-score");
+				exit;
 			}
 			else
 			{
@@ -1604,6 +1775,7 @@ class app
 			else
 			$this->exam->insertExamSession($args);
 			header("location:?exam-app-exam-paper");
+			exit;
 			break;
 
 			//显示考试须知等信息
@@ -1855,6 +2027,7 @@ class app
 			foreach($exercise as $p)
 			$this->favor->delExamHistory($p,$this->_user['sessionuserid']);
 			header("location:?exam-app-history");
+			exit;
 			break;
 
 			//批量删除模拟考试历史记录
@@ -1863,6 +2036,7 @@ class app
 			foreach($exam as $p)
 			$this->favor->delExamHistory($p,$this->_user['sessionuserid']);
 			header("location:?exam-app-history");
+			exit;
 			break;
 
 			//查看历史记录列表
@@ -1930,6 +2104,7 @@ class app
 			header("location:?exam-app-exam-paper&act=history&examid={$eh['ehkey']}");
 			else
 			header("location:?exam-app-exercise-paper&act=history&knowsid={$eh['ehkey']}");
+			exit;
 			break;
 
 			//答题记录列表
@@ -2010,6 +2185,7 @@ class app
 				$this->answer->delAsksById($id);
 			}
 			header("location:?exam-app-answer");
+			exit;
 			break;
 
 			//显示提问的所有追问列表
@@ -2019,7 +2195,11 @@ class app
 			if(!$askid)
 			{
 				$questionid = $this->ev->get('questionid');
-				if(!$questionid)header("location:?exam-app-answer");
+				if(!$questionid)
+				{
+					header("location:?exam-app-answer");
+					exit;
+				}
 				else
 				$ask = $this->answer->getAskByArgs(array("askuserid = '{$this->_user['sessionuserid']}'","askquestionid = '{$questionid}'"));
 				if(!$ask)$ask = array('askquestionid' => $questionid);
@@ -2048,7 +2228,11 @@ class app
 			case 'addanswer':
 			$questionid = $this->ev->get('questionid');
 			$args = $this->ev->get('args');
-			if(!$questionid)header("location:index.php?exam-app-answer");
+			if(!$questionid)
+			{
+				header("location:index.php?exam-app-answer");
+				exit;
+			}
 			else
 			{
 				$ask = $this->answer->getAskByArgs(array("askuserid = '{$this->_user['sessionuserid']}'","askquestionid = '{$questionid}'"));
@@ -2064,6 +2248,7 @@ class app
 				$args['answerasktime'] = TIME;
 				$this->answer->insertAnswer($args);
 				header('location:?exam-app-answer-ask&askid='.$ask['askid']);
+				exit;
 			}
 			break;
 

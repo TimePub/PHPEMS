@@ -254,6 +254,50 @@ class exam_exam
 		return $r;
 	}
 
+	//批量导入试题
+	//参数：批量试题内容字符串，知识点ID
+	//返回值：true
+	public function importQuestionBat($uploadfile,$questionparent = 0)
+	{
+		$handle = fopen($uploadfile,"r");
+		while ($data = fgetcsv($handle))
+		{
+			$args = array();
+			$question = $data;
+			if(count($question) >= 6)
+			{
+				$args['questiontype'] = intval($question[0]);
+				$args['question'] = iconv("GBK","UTF-8",trim($question[1]," \n\t"));
+				$args['questionselect'] = iconv("GBK","UTF-8",trim($question[2]," \n\t"));
+				$args['questionselectnumber'] = trim($question[3]," \n\t");
+				$args['questionanswer'] = iconv("GBK","UTF-8",trim($question[4]," \n\t"));
+				$args['questiondescribe'] = iconv("GBK","UTF-8",trim($question[5]," \n\t"));
+				$questionknowsid = trim($question[6]," \n\t");
+				if($questionknowsid)
+				{
+					$questionknowsid = explode(',',$questionknowsid);
+					$tmpkid = '0';
+					foreach($questionknowsid as $knowsid)
+					{
+						$knowsid = intval($knowsid);
+						if($knowsid)$tmpkid .= ",".$knowsid;
+					}
+					$knows = $this->section->getKnowsListByArgs("knowsid IN ({$tmpkid})");
+					$args['questionknowsid'] = '';
+					foreach($knows as $p)
+					{
+						$args['questionknowsid'] .= $p['knowsid'].':'.$p['knows']."\n";
+					}
+				}
+				if($questionparent)$args['questionparent'] = $questionparent;
+				$args['questionlevel'] = intval(trim($question[7]," \n\t"));
+				$args['questioncreatetime'] = TIME;
+				$this->addQuestions($args);
+			}
+		}
+		return true;
+	}
+
 	//批量增加试题
 	//参数：批量试题内容字符串，知识点ID
 	//返回值：true

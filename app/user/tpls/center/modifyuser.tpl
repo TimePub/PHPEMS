@@ -22,7 +22,7 @@
 				</ul>
 				<div class="tab-content">
 					<div id="panel-344373" class="tab-pane active">
-						<form action="index.php?user-app-privatement" method="post" class="form-horizontal">
+						<form action="index.php?user-center-privatement" method="post" class="form-horizontal">
 							<fieldset>
 								<legend>{x2;$user['username']}</legend>
 								{x2;tree:$forms,form,fid}
@@ -47,7 +47,7 @@
 						</form>
 					</div>
 					<div id="panel-788885" class="tab-pane">
-						<form action="index.php?user-app-privatement" method="post" class="form-horizontal">
+						<form action="index.php?user-center-privatement" method="post" class="form-horizontal">
 							<fieldset>
 								<legend>{x2;$user['username']}</legend>
 								<div class="control-group">

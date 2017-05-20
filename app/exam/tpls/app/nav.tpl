@@ -3,7 +3,7 @@
 		{x2;if:$_user['teacher_subjects']}<a href="index.php?exam-teach">教师管理</a>&nbsp;|&nbsp;{x2;endif}
 		<a href="javascript:;">加入收藏</a>
 	</div>
-	您好，<span class="blue">{x2;$_user['username']}</span><a href="?exam-api-logout">[退出]</a>
+	您好，<span class="blue">{x2;$_user['username']}</span><a href="index.php?user-app">[个人中心]</a><a href="index.php?user-app-logout">[退出]</a>
 </div>
 <!--头部-->
 <div id="head">

@@ -30,7 +30,10 @@ class app
 			    "forwardUrl" => "index.php?core-master-login"
 			)));
 			else
-			header("location:index.php?core-master-login");
+			{
+				header("location:index.php?core-master-login");
+				exit;
+			}
 		}
 		$localapps = $this->apps->getLocalAppList();
 		$apps = $this->apps->getAppList();

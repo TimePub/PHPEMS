@@ -21,7 +21,7 @@
                 <li><b>全真模拟：</b>全面模拟机考流程，给考生最贴近实际的机考体验。</li>
                 <li><b>名师题库：</b>顶级名师团队精心编写，题型全面，覆盖各类考点。</li>
                 <li><b>全新体验：</b>全新UI设计和交互体验，锻炼考生操作能力和速度。</li>
-                <li id="begin_exam"><a href="?exam-app-exampaper"><img src="app/exam/styles/image/btn_begin_exam.jpg" /></a></li>
+                <li id="begin_exam"><a href="index.php?exam-app-exampaper"><img src="app/exam/styles/image/btn_begin_exam.jpg" /></a> <a href="index.php?exam-app-basics-open"><img src="app/exam/styles/image/btn_open_basic.jpg" /></a></li>
             </ul>
     	</div>
     	<div class="bor_bottom"></div>

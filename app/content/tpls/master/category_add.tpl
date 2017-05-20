@@ -31,6 +31,26 @@
 							<span class="help-block">请输入分类名称</span>
 						</div>
 					</div>
+					{x2;if:!$parent}
+					<div class="control-group">
+						<label for="modulename" class="control-label">显示在导航条</label>
+						<div class="controls">
+							<label class="radio inline">
+				          		<input type="radio" class="input-text" name="args[catinmenu]" value="1"/> 显示
+				          	</label>
+				          	<label class="radio inline">
+				          		<input type="radio" class="input-text" name="args[catinmenu]" value="0" checked/> 不显示
+				          	</label>
+						</div>
+					</div>
+					{x2;endif}
+					<div class="control-group">
+						<label for="modulename" class="control-label">在首页展示内容</label>
+						<div class="controls">
+							<input type="text" name="args[catindex]" value="0" datatype="number" needle="needle" msg="您必须填写展示内容条数">
+							<span class="help-block">填写展示内容条数，如果不需要在首页展示，请填写0。</span>
+						</div>
+					</div>
 					<div class="control-group">
 						<label for="modulecode" class="control-label">分类排序</label>
 						<div class="controls">
@@ -59,14 +79,14 @@
 						<label for="moduledescribe" class="control-label">发布用户</label>
 						<div class="controls">
 							<input type="text" name="args[catmanager][pubusers]" value="{x2;$category['catmanager']['pubusers']}">
-							<span class="help-block">填写用户ID，用英文逗号隔开</span>
+							<span class="help-block">填写允许发布内容的用户ID，用英文逗号隔开</span>
 						</div>
 					</div>
 					<div class="control-group">
 						<label for="moduledescribe" class="control-label">发布角色</label>
 						<div class="controls">
 							<input type="text" name="args[catmanager][pubgroups]" value="{x2;$category['catmanager']['pubgroups']}">
-							<span class="help-block">填写角色ID，用英文逗号隔开</span>
+							<span class="help-block">填写允许发布内容的角色（用户组）ID，用英文逗号隔开</span>
 						</div>
 					</div>
 					<div class="control-group">

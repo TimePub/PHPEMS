@@ -23,7 +23,10 @@ class app
 			    "forwardUrl" => "index.php?core-master-login"
 			)));
 			else
-			header("location:?core-master-login");
+			{
+				header("location:?core-master-login");
+				exit;
+			}
 		}
 		//生产一个对象
 		$this->tpl = $this->G->make('tpl');
@@ -173,7 +176,11 @@ class app
 			$page = $page > 0?$page:1;
 			$sectionid = $this->ev->get('sectionid');
 			$section = $this->section->getSectionByArgs("sectionid = '{$sectionid}'");
-			if(!$section['sectionid'])header('location:index.php?exam-master-subject');
+			if(!$section['sectionid'])
+			{
+				header('location:index.php?exam-master-subject');
+				exit;
+			}
 			else
 			{
 				$subjects = $this->basic->getSubjectList();
@@ -219,7 +226,11 @@ class app
 				$page = $page > 0?$page:1;
 				$sectionid = $this->ev->get('sectionid');
 				$section = $this->section->getSectionByArgs("sectionid = '{$sectionid}'");
-				if(!$section['sectionid'])header('location:index.php?exam-master-subject');
+				if(!$section['sectionid'])
+				{
+					header('location:index.php?exam-master-subject');
+					exit;
+				}
 				else
 				{
 					$subjects = $this->basic->getSubjectList();
@@ -777,6 +788,24 @@ class app
 			    "forwardUrl" => "index.php?exam-master-questions{$u}"
 			);
 			exit(json_encode($message));
+			break;
+
+			case 'filebataddquestion':
+			if($this->ev->get('insertquestion'))
+			{
+				$page = $this->ev->get('page');
+				$uploadfile = $this->ev->get('uploadfile');
+				$this->exam->importQuestionBat($uploadfile);
+				$message = array(
+					'statusCode' => 200,
+					"message" => "操作成功",
+					"callbackType" => "forward",
+				    "forwardUrl" => "index.php?exam-master-questions&page={$page}{$u}"
+				);
+				exit(json_encode($message));
+			}
+			else
+			$this->tpl->display('question_filebatadd');
 			break;
 
 			//添加问题
@@ -2002,7 +2031,7 @@ class app
 			}
 			else
 			{
-				$this->basic->openBasic(array('obuserid'=>$userid,'obbasicid'=>$basicid));
+				$this->basic->openBasic(array('obuserid'=>$userid,'obbasicid'=>$basicid,'obendtime' => TIME + 30*24*3600));
 				$message = array(
 					'statusCode' => 200,
 					"message" => "操作成功",

@@ -8,7 +8,10 @@ define('CS','xn9dylsl012002');
 define('HE','utf-8');
 define('PN',10);
 define('TIME',time());
-define('WP','http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']));
+if(dirname($_SERVER['SCRIPT_NAME']))
+define('WP','http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']).'/');
+else
+define('WP','http://'.$_SERVER['SERVER_NAME']);
 
 define('DB','pechina');//MYSQL数据库名
 define('DH','localhost');//MYSQL主机名，不用改

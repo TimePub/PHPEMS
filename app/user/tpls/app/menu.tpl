@@ -1,1 +1,0 @@
-<ul class="nav nav-tabs nav-stacked">	<li{x2;if:$method == 'index'} class="active"{x2;endif}>		<a href="index.php?user-app">首页</a>	</li>	<li{x2;if:$method == 'privatement'} class="active"{x2;endif}>		<a href="index.php?user-app-privatement">隐私管理</a>	</li></ul>

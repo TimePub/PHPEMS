@@ -12,120 +12,34 @@ class app
 		$this->sql = $this->G->make('sql');
 		$this->db = $this->G->make('db');
 		$this->pg = $this->G->make('pg');
-		$this->html = $this->G->make('html');
 		$this->module = $this->G->make('module');
 		$this->session = $this->G->make('session');
 		$this->user = $this->G->make('user','user');
+		$groups = $this->user->getUserGroups();
+		$this->tpl->assign('groups',$groups);
+		$this->tpl->assign('userhash',$this->ev->get('userhash'));
 		$this->_user = $_user = $this->session->getSessionUser();
-		if(!$_user['sessionuserid'] && !in_array($this->ev->url(2),array('login','register')))
+		if($_user['sessionuserid'] && $this->ev->url(2)!= 'logout')
 		{
 			if($this->ev->get('userhash'))
 			exit(json_encode(array(
-				'statusCode' => 300,
-				"message" => "请您重新登录",
+				'statusCode' => 200,
+				"message" => "您已经登录",
 			    "callbackType" => 'forward',
-			    "forwardUrl" => "index.php?user-app-login"
+			    "forwardUrl" => "index.php?user-center"
 			)));
 			else
-			header("location:index.php");
+			{
+				header("location:index.php?user-center");
+				exit;
+			}
 		}
-		$groups = $this->user->getUserGroups();
-		$this->tpl->assign('groups',$groups);
-		$this->tpl->assign('_user',$this->user->getUserById($_user['sessionuserid']));
-		$this->tpl->assign('userhash',$this->ev->get('userhash'));
 	}
 
 	public function index()
 	{
-		$this->privatement();
+		$this->login();
 	}
-
-	public function privatement()
-	{
-		$page = $this->ev->get('page');
-		$search = $this->ev->get('search');
-		$u = '';
-		if($search)
-		{
-			$this->tpl->assign('search',$search);
-			foreach($search as $key => $arg)
-			{
-				$u .= "&search[{$key}]={$arg}";
-			}
-		}
-		if($this->ev->get('modifyuserinfo'))
-		{
-			$args = $this->ev->get('args');
-			$userid = $this->_user['sessionuserid'];
-			$id = $this->user->modifyUserInfo($args,$userid);
-			$message = array(
-				'statusCode' => 200,
-				"message" => "操作成功",
-			    "navTabId" => "",
-			    "rel" => "",
-			    "callbackType" => 'forward',
-			    "forwardUrl" => "index.php?user-app-privatement&page={$page}{$u}"
-			);
-			exit(json_encode($message));
-		}
-		elseif($this->ev->get('modifyuserpassword'))
-		{
-			$args = $this->ev->get('args');
-			$oldpassword = $this->ev->get('oldpassword');
-			$userid = $this->_user['sessionuserid'];
-			$user = $this->user->getUserById($userid);
-			if(md5($oldpassword) != $user['userpassword'])
-			{
-				$message = array(
-					'statusCode' => 300,
-					"message" => "操作失败，原密码验证失败",
-				    "navTabId" => "",
-				    "rel" => ""
-				);
-				exit(json_encode($message));
-			}
-			if($args['password'] == $args['password2'] && $userid)
-			{
-				$id = $this->user->modifyUserPassword($args,$userid);
-				$message = array(
-					'statusCode' => 200,
-					"message" => "操作成功",
-				    "navTabId" => "",
-				    "rel" => "",
-				    "callbackType" => 'forward',
-				    "forwardUrl" => "index.php?user-app-privatement&page={$page}{$u}"
-				);
-				exit(json_encode($message));
-			}
-			else
-			{
-				$message = array(
-					'statusCode' => 300,
-					"message" => "操作失败",
-				    "navTabId" => "",
-				    "rel" => ""
-				);
-				exit(json_encode($message));
-			}
-		}
-		else
-		{
-			$userid = $this->_user['sessionuserid'];
-			$user = $this->user->getUserById($userid);
-			$group = $this->user->getGroupById($user['usergroupid']);
-			$fields = $this->module->getMoudleFields($group['groupmoduleid'],array('iscurrentuser'=> $userid == $this->_user['sessionuserid'],'group' => $group));
-			$forms = $this->html->buildHtml($fields,$user);
-			$actors = $this->user->getGroupsByModuleid($group['groupmoduleid']);
-			$this->tpl->assign('moduleid',$group['groupmoduleid']);
-			$this->tpl->assign('fields',$fields);
-			$this->tpl->assign('forms',$forms);
-			$this->tpl->assign('actors',$actors);
-			$this->tpl->assign('user',$user);
-			$this->tpl->assign('page',$page);
-			$this->tpl->display('modifyuser');
-		}
-	}
-
 
 	public function login()
 	{
@@ -188,7 +102,7 @@ class app
 			$fob = array('admin','管理员','站长');
 			$args = $this->ev->get('args');
 			$defaultgroup = $this->user->getDefaultGroup();
-			if(!$defaultgroup['groupid'])
+			if(!$defaultgroup['groupid'] || !trim($args['username']))
 			{
 				$message = array(
 					'statusCode' => 300,
@@ -252,6 +166,7 @@ class app
 	{
 		$this->session->clearSessionUser();
 		header("location:index.php");
+		exit;
 	}
 }
 

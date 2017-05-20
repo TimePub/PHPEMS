@@ -33,7 +33,7 @@
 				</div>
 				{x2;endif}
 				<div class="pagination pagination-right">
-					<ul>{x2;$categorys['pages']}</ul>
+					<ul>{x2;$contents['pages']}</ul>
 				</div>
 			</div>
 			<div class="span3">

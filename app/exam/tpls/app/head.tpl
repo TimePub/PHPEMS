@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>模拟考试系统</title>
-<link href="app/core/styles/css/bootstrap-combined.min.css" rel="stylesheet">
+<link href="app/core/styles/css/bootstrap.css" rel="stylesheet">
 <link href="app/core/styles/css/layoutit.css" rel="stylesheet">
 <link href="app/exam/styles/css/plugin.css" rel="stylesheet">
 <!–[if lt IE9]>

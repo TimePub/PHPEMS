@@ -26,6 +26,19 @@ class app
 
 	public function index()
 	{
+		$catids = array();
+		$catids['menu'] = $this->category->getCategoriesByArgs(array("catinmenu = '1'"));
+		$catids['index'] = $this->category->getCategoriesByArgs(array("catindex > 0"));
+		$contents = array();
+		if($catids['index'])
+		{
+			foreach($catids['index'] as $p)
+			{
+				$catstring = $this->category->getChildCategoryString($p['catid']);
+				$contents[$p['catid']] = $this->content->getContentList("contentcatid IN ({$catstring})",1,$p['catindex']?$p['catindex']:10);
+			}
+		}
+		$this->tpl->assign('contents',$contents);
 		$this->tpl->display('index');
 	}
 

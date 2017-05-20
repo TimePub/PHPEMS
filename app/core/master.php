@@ -27,7 +27,10 @@ class app
 			    "forwardUrl" => "index.php?core-master-login"
 			)));
 			else
-			header("location:index.php?core-master-login");
+			{
+				header("location:index.php?core-master-login");
+				exit;
+			}
 		}
 		$this->tpl->assign('_user',$this->user->getUserById($_user['sessionuserid']));
 		$this->tpl->assign('action',$this->ev->url(2)?$this->ev->url(2):'user');

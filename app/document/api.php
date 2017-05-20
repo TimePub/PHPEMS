@@ -26,7 +26,10 @@ class app
 			    "forwardUrl" => "?core-master-login"
 			)));
 			else
-			header("location:?core-master-login");
+			{
+				header("location:index.php?core-master-login");
+				exit;
+			}
 		}
 	}
 

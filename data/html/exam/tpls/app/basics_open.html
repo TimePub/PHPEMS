@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>模拟考试系统</title>
+<link href="app/core/styles/css/bootstrap.css" rel="stylesheet">
+<link href="app/core/styles/css/layoutit.css" rel="stylesheet">
+<link href="app/exam/styles/css/plugin.css" rel="stylesheet">
+<!–[if lt IE9]>
+<script src="app/core/styles/js/html5.js"></script>
+<![endif]–>
+<!-- Le styles -->
+<link href="app/core/styles/css/datepicker.css" rel="stylesheet">
+<script type="text/javascript" src="app/core/styles/js/jquery.min.js"></script>
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="app/core/styles/js/html5shiv.js"></script>
+<script type="text/javascript" src="app/core/styles/js/jquery-1.9.1.min.js"></script>
+<![endif]-->
+<link media="all" rel="stylesheet" href="app/exam/styles/assets/css/item.css" type="text/css">
+<link rel="stylesheet" href="app/exam/styles/assets/js/mathquill/mathquill.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="app/exam/styles/assets/css/site.css">
+<link href="app/core/styles/css/jquery-ui.css" rel="stylesheet" />
+<link media="all" rel="stylesheet" href="app/exam/styles/assets/css/calculator.css" type="text/css" />
+<link href="app/exam/styles/css/global.css" rel="stylesheet" type="text/css" />
+<link href="app/exam/styles/css/style.css" rel="stylesheet" type="text/css" />
+<link href="app/exam/styles/css/exam_paper.css" rel="stylesheet" type="text/css" />
+<script src="app/exam/styles/js/SpryCollapsiblePanel.js" type="text/javascript"></script>
+<script src="app/exam/styles/js/lib.js"></script>
+<script src="app/exam/styles/js/index.js"></script>
+<script src="app/exam/styles/js/lesson_nav.js" type="text/javascript"></script>
+<script src="app/exam/styles/js/plugin.js"></script>
+<script src="files/public/js/jquery.countdown.js"></script>
+<script src="files/public/js/artDialog.js?skin=default"></script>
+<script type="text/javascript" src="app/exam/styles/js/mathquill.min.js"></script>
+<script type="text/javascript" src="app/core/styles/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="app/core/styles/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="app/core/styles/js/jquery-ui.js"></script>
+<script type="text/javascript" src="app/core/styles/js/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="app/core/styles/js/swfu/swfupload.js"></script>
+<script type="text/javascript" src="app/core/styles/js/plugin.js"></script>
+</head><body>
+<!--导航-->
+<div id="nav">
+	<div class="float_r">
+				<a href="javascript:;">加入收藏</a>
+	</div>
+	您好，<span class="blue">peadmin</span><a href="index.php?user-app">[个人中心]</a><a href="index.php?user-app-logout">[退出]</a>
+</div>
+<!--头部-->
+<div id="head">
+	<div id="banner">
+		<h1 style="line-height:100px;color:#FFFFFF;">无纸化模拟考试系统</h1>
+	</div>
+</div>
+<!--主体--><div id="main">
+	<!--主体左侧-->
+		<!--主体左侧-->
+	<div id="main_left" class="main_left">
+    	<div id="lesson_nav_top"></div>
+    	<div id="lesson_nav_mid">
+        	<!--科目导航-->
+			<ul id="lesson_menu" class="menu">
+              <li>
+                <div class="menu-hd"><span id="lesson-current"><a rel="reload" class="collapsible" href="#zl_2">江西近代史</a></span></div>
+                <div id="zl_2" class="menu-bd" style="display:none">
+                  <dl>
+                  	                  	<dd><a title="江西近代史" href="#zl_2" onclick="javascript:$.get('index.php?exam-app-index-setCurrentBasic&basicid=2&'+Math.random(),function(data){window.location.reload();});">江西近代史</a></dd>
+                  	                  	                  	<dd><a title="河南近代史" href="#zl_1" onclick="javascript:$.get('index.php?exam-app-index-setCurrentBasic&basicid=1&'+Math.random(),function(data){window.location.reload();});">河南近代史</a></dd>
+                  	                  	                  </dl>
+                </div>
+              </li>
+    		</ul>
+            <ol class="menu_con">
+      			<li class="on"><a href="?exam-app-basics">我的考场</a></li>
+      			<li><a href="?exam-app-exercise">强化训练</a></li>
+                <li><a href="?exam-app-exampaper">随机考试</a></li>
+                <li><a href="?exam-app-exam">正式考试</a></li>
+                <li><a href="?exam-app-record">我的错题</a></li>
+                <li><a href="?exam-app-favor">我的收藏</a></li>
+                <li><a href="?exam-app-history">答题记录</a></li>
+         	</ol>
+          <!--科目导航 结束-->
+        </div>
+    	<div id="lesson_nav_bottom"></div>
+    </div>
+	<!--主体左侧 结束-->	<!--主体左侧 结束-->
+	<!--主体右侧 -->
+	<div id="right_760" class="right_760">
+    	<div id="bread"><a href="?exam-app"><img src="app/exam/styles/image/home_btn.jpg" class="float_r"/></a><div id="place"><a href="index.php?exam">模拟考试系统</a></div></div>    	<div class="bor_top"></div>
+    	<div class="bor_mid">
+    		<div id="hide_left"><a href="javascript:pr()"></a></div>
+            <div id="notice">
+            	<h2 class="page_title"><img src="app/exam/styles/image/exam_notice_basic.jpg" alt="开通考场" /></h2>
+            </div>
+            <div class="container-fluid" id="datacontent">
+				<div class="row-fluid">
+					<form action="index.php?exam-app-basics-open" method="post">
+						<table class="table">
+							<thead>
+				                <tr>
+							        <th colspan="5">搜索</th>
+				                </tr>
+				            </thead>
+							<tr>
+								<td>
+									是否免费：
+								</td>
+								<td>
+									<select name="search[basicdemo]" class="input-medium">
+										<option value="0">不限</option>
+										<option value="1">免费</option>
+									</select>
+								</td>
+								<td>
+									关键字：
+								</td>
+								<td>
+									<input class="input-medium" name="search[keyword]" type="text" value=""/>
+								</td>
+								<td></td>
+							</tr>
+					        <tr>
+								<td>
+									地区：
+								</td>
+					        	<td>
+					        		<select name="search[basicareaid]" class="input-medium">
+						        		<option value="0">选择地区</option>
+								  										  		<option value="1">全国统考</option>
+								  										  		<option value="3">河南</option>
+								  										  		<option value="4">北京</option>
+								  										  		<option value="5">陕西</option>
+								  										  		<option value="6">河北</option>
+								  										  		<option value="7">天津</option>
+								  										  		<option value="8">山东</option>
+								  										  		<option value="9">江苏</option>
+								  										  		<option value="10">湖北</option>
+								  										  		<option value="11">辽宁</option>
+								  										  		<option value="12">贵州</option>
+								  										  		<option value="13">北京春雪</option>
+								  										  		<option value="14">云南</option>
+								  										  		<option value="15">四川</option>
+								  										  		<option value="16">安徽</option>
+								  										  		<option value="17">深圳</option>
+								  										  		<option value="18">吉林</option>
+								  										  		<option value="19">广东</option>
+								  										  		<option value="20">新疆</option>
+								  										  		<option value="21">广西</option>
+								  										  		<option value="22">福建</option>
+								  										  		<option value="23">湖南</option>
+								  										  		<option value="24">上海</option>
+								  										  		<option value="25">重庆</option>
+								  										  		<option value="26">江西</option>
+								  										  		<option value="27">浙江</option>
+								  										  		<option value="28">山西</option>
+								  									  		</select>
+					        	</td>
+								<td>
+									科目：
+								</td>
+								<td>
+					        		<select name="search[basicsubjectid]" class="input-medium">
+						        		<option value="0">选择科目</option>
+								  										  		<option value="1">近代史</option>
+								  										  		<option value="2">其他科目</option>
+								  									  		</select>
+					        	</td>
+								<td>
+									<button class="btn btn-primary" type="submit">提交</button>
+								</td>
+							</tr>
+						</table>
+						<div class="input">
+							<input type="hidden" value="1" name="search[argsmodel]" />
+						</div>
+					</form>
+					<div class="span12">
+			            <ul class="thumbnails">
+														<li class="span4" style="margin:0.25em;">
+								<div class="thumbnail">
+									<a class="thumbnail" href="index.php?exam-app-basics-detail&basicid=4" title="福建近代史"><img alt="300x200" src="app/exam/styles/image/paper.png" style="width:160px;"/></a>
+									<div class="caption">
+										<div class="text-center">
+											<h6>福建近代史</h6>
+											<p>
+																																			<a class="btn btn-primary" href="index.php?exam-app-basics-detail&basicid=4" title="福建近代史">去开通</a>
+																																		</p>
+										</div>
+									</div>
+								</div>
+							</li>
+														<li class="span4" style="margin:0.25em;">
+								<div class="thumbnail">
+									<a class="thumbnail" href="index.php?exam-app-basics-detail&basicid=3" title="上海近代史"><img alt="300x200" src="app/exam/styles/image/paper.png" style="width:160px;"/></a>
+									<div class="caption">
+										<div class="text-center">
+											<h6>上海近代史</h6>
+											<p>
+																																			<a class="btn btn-primary" href="index.php?exam-app-basics-detail&basicid=3" title="上海近代史">去开通</a>
+																																		</p>
+										</div>
+									</div>
+								</div>
+							</li>
+														<li class="span4" style="margin:0.25em;">
+								<div class="thumbnail">
+									<a class="thumbnail" href="index.php?exam-app-basics-detail&basicid=2" title="江西近代史"><img alt="300x200" src="app/exam/styles/image/paper.png" style="width:160px;"/></a>
+									<div class="caption">
+										<div class="text-center">
+											<h6>江西近代史</h6>
+											<p>
+																						<a class="btn" href="javascript:;" title="江西近代史">已开通</a>
+																						</p>
+										</div>
+									</div>
+								</div>
+							</li>
+														<li class="span4" style="margin:0.25em;">
+								<div class="thumbnail">
+									<a class="thumbnail" href="index.php?exam-app-basics-detail&basicid=1" title="河南近代史"><img alt="300x200" src="app/exam/styles/image/paper.png" style="width:160px;"/></a>
+									<div class="caption">
+										<div class="text-center">
+											<h6>河南近代史</h6>
+											<p>
+																						<a class="btn" href="javascript:;" title="河南近代史">已开通</a>
+																						</p>
+										</div>
+									</div>
+								</div>
+							</li>
+													</ul>
+					</div>
+				</div>
+				<div class="pagination pagination-right">
+					<ul></ul>
+		        </div>
+			</div>
+    	</div>
+    	<div class="bor_bottom"></div>
+    </div>
+	<!--主体右侧 结束-->
+	<!--尾部-->
+		<!--尾部-->
+    <div id="footer">Copyright <span class="copyright">&copy;</span> 2013 无纸化模拟考试系统 <script src="http://s20.cnzz.com/stat.php?id=5243664&web_id=5243664&show=pic2" language="JavaScript"></script></div>
+	<!--尾部 结束-->
+</div>    <!--尾部 结束-->
+</div>
+</body>
+</html>

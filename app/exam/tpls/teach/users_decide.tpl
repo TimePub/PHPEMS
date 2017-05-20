@@ -44,7 +44,7 @@
 				</tr>
 				<tr>
 					<td>考生答案：</td>
-					<td>{x2;realhtml:v:question['questiondescribe']}&nbsp;我的答案</td>
+					<td>{x2;realhtml:$sessionvars['ehuseranswer'][v:question['questionid']]}</td>
 				</tr>
 				<tr>
 					<td colspan="2">【请根据参考答案给出分值】<input style="width:80px;" type="text" needle="needle" msg="您必须给出一个分数" name="score[{x2;v:question['questionid']}]" value=""> <span class="ml_10 red font_12">提示：本题共{x2;$sessionvars['ehsetting']['examsetting']['questype'][v:quest['questid']]['score']}分，可输入0.5的倍数。</span></td>
@@ -80,7 +80,7 @@
 							</tr>
 							<tr>
 								<td>考生答案：</td>
-								<td>{x2;realhtml:v:question['questiondescribe']}&nbsp;</td>
+								<td>{x2;realhtml:$sessionvars['ehuseranswer'][v:data['questionid']]}&nbsp;</td>
 							</tr>
 							<tr>
 								<td colspan="2">【请根据参考答案给出分值】<input style="width:80px;" needle="needle" msg="您必须给出一个分数" type="text" name="score[{x2;v:question['questionid']}]" value=""><span class="ml_10 red font_12">提示：本题共{x2;$sessionvars['ehsetting']['examsetting']['questype'][v:question['questid']]['score']}分，可输入0.5的倍数。</span></td>

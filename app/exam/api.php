@@ -4,7 +4,7 @@ class app
 {
 	public $G;
 	//联系密钥
-	private $sc = 'testSys&dongao';
+	private $sc = 'exam@phpems.net';
 
 	public function __construct(&$G)
 	{
@@ -28,13 +28,9 @@ class app
 	public function login()
 	{
 		$sign = $this->ev->get('sign');
-		$sign2 = $this->ev->get('sign2');
-		$curId = $this->ev->get('curId');
-		$userid = $this->ev->get('userId');
-		$username = $this->ev->get('userName');
-		$examid = $this->ev->get('examSysId');
-		$allExamSysIds = $this->ev->get('allExamSysIds');
-		if(!$allExamSysIds)$allExamSysIds = $examid;
+		$userid = $this->ev->get('userid');
+		$username = $this->ev->get('username');
+		$useremail = $this->ev->get('useremail');
 		$ts = $this->ev->get('ts');
 		$rand =rand(1,6);
 		if($rand == 5)
@@ -42,17 +38,23 @@ class app
 			$this->session->clearOutTimeUser();
 			$this->exam->clearOutTimeExamSession();
 		}
-		//if($sign == md5($userid.$examid.$this->sc.$ts) && $sign2 == md5($this->sc.$allExamSysIds))
-		if($sign == md5($userid.$examid.$this->sc.$ts))
+		if($sign == md5($userid.$username.$useremail.$this->sc.$ts))
 		{
-			$current = $this->G->make('basic','exam')->getBasicByExamid($curId);
-			if(is_array($current))$subject = current($current);
-			$this->session->setSessionUser(array('sessionuserid'=>$userid,'sessionpassword'=>md5(rand(100,999)),'sessioncurrent'=>$subject['subjectid'],'sessionpars' => $examid,'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>0,'sessionlogintime'=>TIME,'sessionusername'=>$username));
+			$user = $this->G->make('user','user');
+			$u = $user->getUserByUserName($username);
+			if(!$u)
+			{
+				$defaultgroup = $this->user->getDefaultGroup();
+				$pass = md5(rand(1000,9999));
+				$id = $this->user->insertUser(array('username' => $username,'usergroupid' => $defaultgroup['groupid'],'userpassword' => md5($pass),'useremail' => $useremail));
+				$this->session->setSessionUser(array('sessionuserid'=>$id,'sessionpassword'=>md5($pass),'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>8,'sessionlogintime'=>TIME,'sessionusername'=>$username));
+			}
+			else
+			$this->session->setSessionUser(array('sessionuserid'=>$userid,'sessionpassword'=>$user['userpassword'],'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>$user['usergroupid'],'sessionlogintime'=>TIME,'sessionusername'=>$username));
 			header("location:".'index.php?'.$this->G->app.'-app');
 		}
 		else
-		//header("location:".'http://member.dongao.com/login.html');
-		header("location:".'?exam');
+		header("location:".'index.php?exam');
 		exit(0);
 	}
 

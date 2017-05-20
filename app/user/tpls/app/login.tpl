@@ -1,69 +1,51 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="title" content="无纸化模拟考试系统">
-<meta name="description" content="无纸化模拟考试系统">
-<meta name="keywords" content="无纸化模拟考试系统">
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<title>无纸化模拟考试系统</title>
-<!–[if lt IE9]>
-<script src="app/core/styles/js/html5.js"></script>
-<![endif]–>
-<!-- Le styles -->
-<link href="app/core/styles/css/bootstrap-combined.min.css" rel="stylesheet">
-<link href="app/core/styles/css/layoutit.css" rel="stylesheet">
-<link href="app/core/styles/css/plugin.css" rel="stylesheet">
-<link href="app/core/styles/css/datepicker.css" rel="stylesheet">
-<script type="text/javascript" src="app/core/styles/js/jquery.min.js"></script>
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-<script src="app/core/styles/js/html5shiv.js"></script>
-<script type="text/javascript" src="app/core/styles/js/jquery-1.9.1.min.js"></script>
-<![endif]-->
-<script type="text/javascript" src="app/core/styles/js/jquery-ui.js"></script>
-<script type="text/javascript" src="app/core/styles/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="app/core/styles/js/bootstrap.min.js"></script>
-
-<script type="text/javascript" src="app/core/styles/js/ckeditor/ckeditor.js"></script>
-<script type="text/javascript" src="app/core/styles/js/swfu/swfupload.js"></script>
-<script type="text/javascript" src="app/core/styles/js/plugin.js"></script>
-</head>
+{x2;include:header}
 <body>
-<div class="container" style="margin-top:4em;">
-	<div class="row">
-		<div style="margin:auto;width:600px;">
-			<div class="greyrow borderbox">
-				<form class="form-horizontal" method="post" action="index.php?user-app-login">
-					<fieldset>
-						<legend><img src="app/core/styles/images/private.png" style="margin:auto 1em;"/>用户登录</legend>
-						<div class="blocker" id="aas">&nbsp;</div>
-						<div class="control-group">
-							<label class="control-label" for="inputEmail">用户名</label>
-							<div class="controls">
-								<input id="inputEmail" type="text" name="args[username]"/>
-							</div>
-						</div>
-						<div class="control-group">
-							<label class="control-label" for="inputPassword">密码</label>
-							<div class="controls">
-								<input id="inputPassword" type="password" name="args[userpassword]"/>
-							</div>
-						</div>
-						<div class="control-group">
-							<label class="control-label" for="randCode"><a href="index.php?user-app-register">注册用户</a></label>
-							<div class="controls">
-								<input type="hidden" value="1" name="userlogin"/>
-								<button class="btn" type="submit">登陆</button>
-							</div>
-						</div>
-					</fieldset>
-				</form>
-			</div>
+<div class="row-fluid top">
+	<div class="container">
+		<div class="span1"><h1><img src="app/user/styles/img/theme/logo.png" /></h1></div>
+		<div class="span6"><h2>模拟考试系统</h2></div>
+		<div class="span5">
 		</div>
 	</div>
 </div>
+<div class="row-fluid">
+	<div class="container logcontent">
+		<div class="logbox">
+			<form class="form-horizontal logform" method="post" action="index.php?user-app-login">
+				<fieldset>
+					<legend>用户登录</legend>
+					<div class="logcontrol">
+						<div class="control-group">
+							<label class="control-label" for="inputEmail">用户名：</label>
+							<div class="controls">
+								<input class="input-xlarge" type="text" name="args[username]" datatype="userName" needle="needle" msg="请你输入用户名" value="guest"/><span>请输入您的用户名</span>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="inputPassword">密码：</label>
+							<div class="controls">
+								<input class="input-xlarge" type="password" name="args[userpassword]" datatype="password" needle="needle" msg="请你输入密码" value="123456"/><span>密码长度6位以上，数字、字母或其他字符</span>
+							</div>
+						</div>
+						<div class="control-group">
+							<div class="controls">
+								<input type="hidden" value="1" name="userlogin"/>
+								<button class="btn btn-info logbtn" type="submit">登录</button>
+								<button onclick="javascript:window.location='index.php?user-app-register';" type="button" class="btn logbtn">注册</button>
+							</div>
+						</div>
+						<div class="control-group">
+							<div class="controls">
+								<p>请输入正确的用户名和密码登录　如果您还没有帐号，请在此<a href="index.php?user-app-register">注册</a></p>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+		<div class="logbotm"></div>
+	</div>
+</div>
+{x2;include:foot}
 </body>
 </html>

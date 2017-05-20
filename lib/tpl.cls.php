@@ -36,11 +36,11 @@ class tpl
     	if(is_array($vars))
     	{
     		foreach($vars as $key => $cnt)
-    		$this->tpl_var[$target][$key] = &$vars[$key];
+    		$this->tpl_var[$target][$key] = $vars[$key];
     	}
     	else
     	{
-    		$this->tpl_var[$target] = &$vars;
+    		$this->tpl_var[$target] = $vars;
     	}
     }
 

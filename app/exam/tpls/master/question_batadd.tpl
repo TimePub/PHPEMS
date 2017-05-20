@@ -23,6 +23,7 @@
 				</li>
 			</ul>
 			<form action="index.php?exam-master-questions-bataddquestion" method="post" class="form-horizontal">
+				<legend>批量格式录入</legend>
 				<div class="control-group">
 					<label for="content" class="control-label">试题文本：</label>
 					<div class="controls">

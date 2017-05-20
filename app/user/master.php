@@ -30,7 +30,10 @@ class app
 			    "forwardUrl" => "index.php?core-master-login"
 			)));
 			else
-			header("location:index.php?core-master-login");
+			{
+				header("location:index.php?core-master-login");
+				exit;
+			}
 		}
 		$localapps = $this->apps->getLocalAppList();
 		$apps = $this->apps->getAppList();
@@ -163,6 +166,66 @@ class app
 				$this->tpl->assign('user',$user);
 				$this->tpl->assign('page',$page);
 				$this->tpl->display('modifyuser');
+			}
+			break;
+
+			case 'batadd':
+			if($this->ev->post('insertUser'))
+			{
+				$uploadfile = $this->ev->get('uploadfile');
+				if(!file_exists($uploadfile))
+				{
+					$message = array(
+						'statusCode' => 300,
+						"message" => "上传文件不存在"
+					);
+					exit(json_encode($message));
+				}
+				else
+				{
+					$handle = fopen($uploadfile,"r");
+					$defaultgroup = $this->user->getDefaultGroup();
+					$strings = $this->G->make('strings');
+					while ($data = fgetcsv($handle,200))
+					{
+					    if($data[0] && $data[1] && $data[2])
+					    {
+						    $args = array();
+						    $args['username'] = iconv("GBK","UTF-8",$data[0]);
+						    if($strings->isUserName($args['username']))
+						    {
+							    $u = $this->user->getUserByUserName($args['username']);
+							    if(!$u)
+							    {
+								    $args['useremail'] = $data[1];
+								    if($strings->isEmail($args['useremail']))
+								    {
+									    $u = $this->user->getUserByEmail($args['useremail']);
+									    if(!$u)
+									    {
+									    	if(!$data[2])$data[2] = '111111';
+									    	$args['userpassword'] = md5($data[2]);
+									    	$args['usergroupid'] = $defaultgroup['groupid'];
+									    	$this->user->insertUser($args);
+									    }
+								    }
+							    }
+						    }
+					    }
+					}
+					fclose($handle);
+					$message = array(
+						'statusCode' => 200,
+						"message" => "操作成功",
+					    "callbackType" => "forward",
+					    "forwardUrl" => "index.php?user-master-user"
+					);
+					exit(json_encode($message));
+				}
+			}
+			else
+			{
+				$this->tpl->display('batadduser');
 			}
 			break;
 

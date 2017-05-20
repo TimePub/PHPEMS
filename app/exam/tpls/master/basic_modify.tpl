@@ -72,7 +72,7 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label">做为演示考场</label>
+					<label class="control-label">做为免费考场</label>
 					<div class="controls">
 						<label class="radio inline">
 							<input name="args[basicdemo]" type="radio" value="1" {x2;if:$basic['basicdemo']}checked{x2;endif}/>是
@@ -80,7 +80,14 @@
 						<label class="radio inline">
 							<input name="args[basicdemo]" type="radio" value="0" {x2;if:!$basic['basicdemo']}checked{x2;endif}/>否
 						</label>
-						<span class="help-block">演示考场为用户未开通考场时演示使用</span>
+						<span class="help-block">免费考场用户开通考场时不扣除积分</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="basicprice" class="control-label">价格设置</label>
+					<div class="controls">
+						<textarea class="input-xlarge" rows="4" name="args[basicprice]" id="basicprice">{x2;$basic['basicprice']}</textarea>
+					  	<span class="help-block">请按照“时长:开通所需积分”格式填写，每行一个，时长以天为单位，免费考场此设置无效。</span>
 					</div>
 				</div>
 				<div class="control-group">

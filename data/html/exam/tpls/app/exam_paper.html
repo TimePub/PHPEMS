@@ -1,0 +1,1232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>模拟考试系统</title>
+<link href="app/core/styles/css/bootstrap-combined.min.css" rel="stylesheet">
+<link href="app/core/styles/css/layoutit.css" rel="stylesheet">
+<link href="app/exam/styles/css/plugin.css" rel="stylesheet">
+<!–[if lt IE9]>
+<script src="app/core/styles/js/html5.js"></script>
+<![endif]–>
+<!-- Le styles -->
+<link href="app/core/styles/css/datepicker.css" rel="stylesheet">
+<script type="text/javascript" src="app/core/styles/js/jquery.min.js"></script>
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="app/core/styles/js/html5shiv.js"></script>
+<script type="text/javascript" src="app/core/styles/js/jquery-1.9.1.min.js"></script>
+<![endif]-->
+<link media="all" rel="stylesheet" href="app/exam/styles/assets/css/item.css" type="text/css">
+<link rel="stylesheet" href="app/exam/styles/assets/js/mathquill/mathquill.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="app/exam/styles/assets/css/site.css">
+<link href="app/core/styles/css/jquery-ui.css" rel="stylesheet" />
+<link media="all" rel="stylesheet" href="app/exam/styles/assets/css/calculator.css" type="text/css" />
+<link href="app/exam/styles/css/global.css" rel="stylesheet" type="text/css" />
+<link href="app/exam/styles/css/style.css" rel="stylesheet" type="text/css" />
+<link href="app/exam/styles/css/exam_paper.css" rel="stylesheet" type="text/css" />
+<script src="app/exam/styles/js/SpryCollapsiblePanel.js" type="text/javascript"></script>
+<script src="app/exam/styles/js/lib.js"></script>
+<script src="app/exam/styles/js/index.js"></script>
+<script src="app/exam/styles/js/lesson_nav.js" type="text/javascript"></script>
+<script src="app/exam/styles/js/plugin.js"></script>
+<script src="files/public/js/jquery.countdown.js"></script>
+<script src="files/public/js/artDialog.js?skin=default"></script>
+<script type="text/javascript" src="app/exam/styles/js/mathquill.min.js"></script>
+<script type="text/javascript" src="app/core/styles/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="app/core/styles/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="app/core/styles/js/jquery-ui.js"></script>
+<script type="text/javascript" src="app/core/styles/js/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="app/core/styles/js/swfu/swfupload.js"></script>
+<script type="text/javascript" src="app/core/styles/js/plugin.js"></script>
+</head><body onbeforeunload="javascript:saveanswer(false);">
+<div id="nav">
+	<div class="float_r">
+				<a href="javascript:;">加入收藏</a>
+	</div>
+	您好，<span class="blue">peadmin</span><a href="?exam-api-logout">[退出]</a>
+</div>
+<!--头部-->
+<div id="head">
+	<div id="banner">
+		<h1 style="line-height:100px;color:#FFFFFF;">无纸化模拟考试系统</h1>
+	</div>
+</div>
+<!--主体--><div id="main">
+	<!--主体左侧-->
+			<!--主体左侧-->
+	<div id="main_left" class="main_left0">
+    	<div id="lesson_nav_top"></div>
+    	<div id="lesson_nav_mid">
+        	<!--科目导航-->
+			<ul id="lesson_menu" class="menu">
+              <li>
+                <div class="menu-hd"><span id="lesson-current"><a rel="reload" class="collapsible" href="#zl_1">河南近代史试题</a></span></div>
+                <div id="zl_1" class="menu-bd" style="display:none">
+                  <dl>
+                  	                  	<dd><a title="河南近代史试题" href="#zl_1" onclick="javascript:$.get('?exam-app-index-setCurrentBasic&basicid=1&'+Math.random(),function(data){window.location.reload();});">河南近代史试题</a></dd>
+                  	                  </dl>
+                </div>
+              </li>
+    		</ul>
+            <ol class="menu_con">
+      			<li><a href="?exam-app-exercise">强化训练</a></li>
+                <li><a href="?exam-app-exampaper">随机考试</a></li>
+                <li class="on"><a href="?exam-app-exam">正式考试</a></li>
+                <li><a href="?exam-app-record">我的错题</a></li>
+                <li><a href="?exam-app-favor">我的收藏</a></li>
+                <li><a href="?exam-app-history">答题记录</a></li>
+         	</ol>
+          <!--科目导航 结束-->
+        </div>
+    	<div id="lesson_nav_bottom"></div>
+    </div>
+	<!--主体左侧 结束-->	<!--主体左侧 结束-->
+	<!--主体右侧 -->
+	<div id="right_760" class="right_970">
+    	<div id="bread"><a href="?exam-app"><img src="app/exam/styles/image/home_btn.jpg" class="float_r"/></a><div id="place"><a href="index.php?exam">模拟考试系统</a></div></div>    	<div class="bor_top"></div>
+    	<div class="bor_mid">
+    		<div id="hide_left"><a href="javascript:pr()"></a></div>
+            <div id="exam_paper">
+            <form action="?exam-app-exam-score" id="form1" name="form1" method="post">
+            <!-- float start-->
+            <div id="float" class="float_div1">
+            	<h2 class="page_title" style="line-height:0.5em;">
+                	<ul id="func_list">
+               	  	    <li id="show_menu" class="menu">
+               	  	      <div class="menu-hd"><span id="show-current"><a class="collapsible" href="#show_sz">显示设置</a></span></div>
+               	  	      <div id="show_sz" class="menu-bd" style="display:none;">
+               	  	        <dl>
+               	  	          <dd><a href="#show_dt" onClick="javascript:initquestion();">单题显示</a></dd>
+               	  	          <dd><a href="#show_tx" onClick="javascript:inittype();">题型显示</a></dd>
+               	  	          <dd><a href="#show_zj" onClick="javascript:initpaper();">整卷显示</a></dd>
+           	  	            </dl>
+           	  	          </div>
+       	  	      	  	</li>
+                  	</ul><img src="app/exam/styles/image/simulation_tit.jpg" alt="模拟考试" />
+                    <span id="time_top">考试剩余时间：<b><span id="timer_h">00</span>：<span id="timer_m">00</span>：<span id="timer_s">00</span></b></span>
+                    <!--分数-->
+                    <div id="fenshu" style="display:none;">
+                        <div class="n6"></div>
+                        <div class="n4"></div>
+                        <div class="ndot"></div>
+                    </div>
+                    <!--分数 结束-->
+                  </h2>
+				</div>
+				<!-- float end-->
+       	    	<h1 style="font-size:18px;">手动组卷示例</h1>
+                <h5>总分：<span class="orange">100</span>分 合格分数线：<span class="orange">60</span>分 考试时间：<span class="orange">60</span>分钟 来源：</h5>
+                                                                                <span class="questypearea" id="qtarea_1">
+                <h4 class="qu_type">一、单选题（）</h4>
+                                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_190">
+                	<h3><span class="float_l">1、</span>党必须按照总揽全局、（）的原则，在同级各种组织中发挥领导核心作用。</h3>
+                    <div>
+                    	<p>A、统筹兼顾</p><p>B、协调各方</p><p>C、执政为民</p><p>D、宣传教育</p>                    </div>
+                    <span class="examquestionform" name="formquestion_190" id="formquestion_190" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('190');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[190]" rel="190" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[190]" rel="190" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[190]" rel="190" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[190]" rel="190" value="D" checked/></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_191">
+                	<h3><span class="float_l">2、</span>党必须集中精力领导经济建设，组织、协调各方面的力量，同心协力，围绕（）开展工作，促进经济社会全面发展。</h3>
+                    <div>
+                    	<p>A、思想建设</p><p>B、政治建设</p><p>C、经济建设</p><p>D、文化建设</p>                    </div>
+                    <span class="examquestionform" name="formquestion_191" id="formquestion_191" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('191');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[191]" rel="191" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[191]" rel="191" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[191]" rel="191" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[191]" rel="191" value="D" checked/></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_192">
+                	<h3><span class="float_l">3、</span>党必须在宪法和（）的范围内活动。</h3>
+                    <div>
+                    	<p>A、党章</p><p>B、党规</p><p>C、法律</p><p>D、法规</p>                    </div>
+                    <span class="examquestionform" name="formquestion_192" id="formquestion_192" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('192');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[192]" rel="192" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[192]" rel="192" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[192]" rel="192" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[192]" rel="192" value="D" checked/></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_193">
+                	<h3><span class="float_l">4、</span>构建社会主义和谐社会的重点是（）。</h3>
+                    <div>
+                    	<p>A、民主法治</p><p>B、公平正义</p><p>C、保障和改善民生</p><p>D、人与自然和谐相处</p>                    </div>
+                    <span class="examquestionform" name="formquestion_193" id="formquestion_193" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('193');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[193]" rel="193" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[193]" rel="193" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[193]" rel="193" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[193]" rel="193" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_194">
+                	<h3><span class="float_l">5、</span>党章规定，可以申请入党的年龄为年满（）。</h3>
+                    <div>
+                    	<p>A、14岁</p><p>B、16岁</p><p>C、18岁</p><p>D、20岁</p>                    </div>
+                    <span class="examquestionform" name="formquestion_194" id="formquestion_194" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('194');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[194]" rel="194" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[194]" rel="194" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[194]" rel="194" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[194]" rel="194" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_210">
+                	<h3><span class="float_l">6、</span>预备党员预备期满，党组织认为需要继续考察和教育的，可以延长预备期，但不能超过（）。</h3>
+                    <div>
+                    	<p>A、半年</p><p>B、1年</p><p>C、一年半</p><p>D、2年</p>                    </div>
+                    <span class="examquestionform" name="formquestion_210" id="formquestion_210" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('210');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[210]" rel="210" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[210]" rel="210" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[210]" rel="210" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[210]" rel="210" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_211">
+                	<h3><span class="float_l">7、</span>预备党员预备期满后，党组织经过考察认为其不履行党员义务，不具备党员条件的，应当（）。</h3>
+                    <div>
+                    	<p>A、留党察看</p><p>B、延长预备期</p><p>C、取消预备党员资格</p><p>D、给予党纪处分</p>                    </div>
+                    <span class="examquestionform" name="formquestion_211" id="formquestion_211" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('211');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[211]" rel="211" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[211]" rel="211" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[211]" rel="211" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[211]" rel="211" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_212">
+                	<h3><span class="float_l">8、</span>预备党员转为正式党员，或延长预备期，或取消预备党员资格，都应当经（）讨论通过和上级党组织批准。</h3>
+                    <div>
+                    	<p>A、支部大会</p><p>B、支部委员会</p><p>C、上级支部委员会</p><p>D、党小组</p>                    </div>
+                    <span class="examquestionform" name="formquestion_212" id="formquestion_212" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('212');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[212]" rel="212" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[212]" rel="212" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[212]" rel="212" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[212]" rel="212" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_215">
+                	<h3><span class="float_l">9、</span>预备党员的权利，除没有（）、选举权和被选举权以外，同正式党员一样。</h3>
+                    <div>
+                    	<p>A、申诉权</p><p>B、控告权</p><p>C、表决权</p><p>D、参与权</p>                    </div>
+                    <span class="examquestionform" name="formquestion_215" id="formquestion_215" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('215');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[215]" rel="215" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[215]" rel="215" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[215]" rel="215" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[215]" rel="215" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_216">
+                	<h3><span class="float_l">10、</span>党员要求退党，应当经支部大会讨论后宣布（），并报上级党组织备案。</h3>
+                    <div>
+                    	<p>A、开除</p><p>B、除名</p><p>C、给予党纪处分</p><p>D、给予通报批评</p>                    </div>
+                    <span class="examquestionform" name="formquestion_216" id="formquestion_216" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('216');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[216]" rel="216" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[216]" rel="216" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[216]" rel="216" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[216]" rel="216" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_220">
+                	<h3><span class="float_l">11、</span>民主集中制是（）。</h3>
+                    <div>
+                    	<p>A、民主基础上的集中</p><p>B、集中基础上的民主</p><p>C、集中指导下的民主</p><p>D、民主基础上的集中和集中指导下的民主相结合</p>                    </div>
+                    <span class="examquestionform" name="formquestion_220" id="formquestion_220" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('220');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[220]" rel="220" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[220]" rel="220" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[220]" rel="220" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[220]" rel="220" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_221">
+                	<h3><span class="float_l">12、</span>党的各级委员会实行（）的制度。</h3>
+                    <div>
+                    	<p>A、支部书记负责</p><p>B、集体领导</p><p>C、个人分工负责</p><p>D、集体领导和个人分工负责相结合</p>                    </div>
+                    <span class="examquestionform" name="formquestion_221" id="formquestion_221" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('221');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[221]" rel="221" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[221]" rel="221" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[221]" rel="221" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[221]" rel="221" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_222">
+                	<h3><span class="float_l">13、</span>党的各级委员会向（）负责并报告工作。</h3>
+                    <div>
+                    	<p>A、同级党委书记办公会</p><p>B、同级党的代表大会</p><p>C、同级党委常委</p><p>D、党的地方领导机关</p>                    </div>
+                    <span class="examquestionform" name="formquestion_222" id="formquestion_222" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('222');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[222]" rel="222" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[222]" rel="222" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[222]" rel="222" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[222]" rel="222" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_223">
+                	<h3><span class="float_l">14、</span>党的总支部委员会和支部委员会设（）。</h3>
+                    <div>
+                    	<p>A、纪律检查组组长</p><p>B、纪律检查员</p><p>C、纪律检查委员会</p><p>D、纪律检查委员</p>                    </div>
+                    <span class="examquestionform" name="formquestion_223" id="formquestion_223" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('223');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[223]" rel="223" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[223]" rel="223" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[223]" rel="223" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[223]" rel="223" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_224">
+                	<h3><span class="float_l">15、</span>党的上下级组织之间要（）、互相支持和互相监督。</h3>
+                    <div>
+                    	<p>A、互通有无</p><p>B、互相经验</p><p>C、互通情报</p><p>D、精诚合作</p>                    </div>
+                    <span class="examquestionform" name="formquestion_224" id="formquestion_224" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('224');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[224]" rel="224" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[224]" rel="224" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[224]" rel="224" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[224]" rel="224" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_225">
+                	<h3><span class="float_l">16、</span>在选举产生党的各级代表大会的代表和委员会委员时，下列表述中，正确的是（）。</h3>
+                    <div>
+                    	<p>A、只能采取差额选举的办法</p><p>B、必须先采取差额选举办法进行预选，产生候选人名单，然后进行正式选举</p><p>C、党组织可以不经过选举人酝酿讨论而确定候选人名单</p><p>D、可以直接采用候选人数多于应选人数的差额选举办法进行正式选举；也可以先采用差额选举办法进行预选，产生候选人名单，然后进行正式选举</p>                    </div>
+                    <span class="examquestionform" name="formquestion_225" id="formquestion_225" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('225');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[225]" rel="225" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[225]" rel="225" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[225]" rel="225" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[225]" rel="225" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_226">
+                	<h3><span class="float_l">17、</span>在选举党的各级代表大会的代表和委员会委员时，应当采用（）的方式进行选举。</h3>
+                    <div>
+                    	<p>A、举手表决</p><p>B、口头表决</p><p>C、记名投票</p><p>D、无记名投票</p>                    </div>
+                    <span class="examquestionform" name="formquestion_226" id="formquestion_226" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('226');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[226]" rel="226" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[226]" rel="226" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[226]" rel="226" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[226]" rel="226" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_227">
+                	<h3><span class="float_l">18、</span>党组织讨论决定问题，必须执行（）的原则。（B）</h3>
+                    <div>
+                    	<p>A、个人服从组织</p><p>B、少数服从多数</p><p>C、下级服从上级</p><p>D、党员服从党组织</p>                    </div>
+                    <span class="examquestionform" name="formquestion_227" id="formquestion_227" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('227');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[227]" rel="227" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[227]" rel="227" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[227]" rel="227" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[227]" rel="227" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_228">
+                	<h3><span class="float_l">19、</span>党的全国代表大会每（）举行一次，由中央委员会召集。</h3>
+                    <div>
+                    	<p>A、1年</p><p>B、2年</p><p>C、4年</p><p>D、5年</p>                    </div>
+                    <span class="examquestionform" name="formquestion_228" id="formquestion_228" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('228');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[228]" rel="228" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[228]" rel="228" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[228]" rel="228" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[228]" rel="228" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_229">
+                	<h3><span class="float_l">20、</span>各级纪律检查委员会要经常对党员进行（）的教育。</h3>
+                    <div>
+                    	<p>A、爱国主义</p><p>B、遵守纪律</p><p>C、道德品质</p><p>D、思想政治</p>                    </div>
+                    <span class="examquestionform" name="formquestion_229" id="formquestion_229" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('229');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[229]" rel="229" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[229]" rel="229" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">C <input type="radio" name="question[229]" rel="229" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">D <input type="radio" name="question[229]" rel="229" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <ul id="qu_type_next" class="clear" name="qtbar" style="margin:10px auto;display:none">
+					<li><a href="javascript:;" onClick="javascript:prevtype();">上一题型</a></li>
+                	<li><a href="javascript:;" onClick="javascript:nexttype();">下一题型</a></li>
+                </ul>
+            	</span>
+                                                                                <span class="questypearea" id="qtarea_2">
+                <h4 class="qu_type">二、多选题（）</h4>
+                                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_357">
+                	<h3><span class="float_l">1、</span>中国共产党代表（）的发展要求，代表中国先进文化的前进方向，代表中国最广大人民的（）。（）</h3>
+                    <div>
+                    	<p>A、小康社会建设</p><p>B、中国先进生产力</p><p>C、根本意志</p><p>D、根本利益</p>                    </div>
+                    <span class="examquestionform" name="formquestion_357" id="formquestion_357" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('357');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="checkbox inline">A <input type="checkbox" name="question[357][]" rel="357" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">B <input type="checkbox" name="question[357][]" rel="357" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">C <input type="checkbox" name="question[357][]" rel="357" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">D <input type="checkbox" name="question[357][]" rel="357" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_359">
+                	<h3><span class="float_l">2、</span>改革开放以来我们取得一切成绩和进步的根本原因，归结起来就是：（），（），（）。（）</h3>
+                    <div>
+                    	<p>A、开辟了中国特色社会主义道路</p><p>B、形成了中国特色社会主义理论体系</p><p>C、确立了中国特色社会主义目标</p><p>D、确立了中国特色社会主义制度</p>                    </div>
+                    <span class="examquestionform" name="formquestion_359" id="formquestion_359" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('359');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="checkbox inline">A <input type="checkbox" name="question[359][]" rel="359" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">B <input type="checkbox" name="question[359][]" rel="359" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">C <input type="checkbox" name="question[359][]" rel="359" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">D <input type="checkbox" name="question[359][]" rel="359" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_361">
+                	<h3><span class="float_l">3、</span>“三个代表”重要思想反映了当代世界和中国的发展变化对（）的新要求，是加强和改进党的建设、推进我国社会主义（）和发展的强大（）武器。（）</h3>
+                    <div>
+                    	<p>A、党的工作</p><p>B、党和国家工作</p><p>C、自我完善</p><p>D、理论</p>                    </div>
+                    <span class="examquestionform" name="formquestion_361" id="formquestion_361" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('361');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="checkbox inline">A <input type="checkbox" name="question[361][]" rel="361" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">B <input type="checkbox" name="question[361][]" rel="361" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">C <input type="checkbox" name="question[361][]" rel="361" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">D <input type="checkbox" name="question[361][]" rel="361" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_378">
+                	<h3><span class="float_l">4、</span>党选拔干部坚持（）、（），反对任人唯亲。（）</h3>
+                    <div>
+                    	<p>A、五湖四海</p><p>B、德才兼备</p><p>C、政绩突出</p><p>D、任人唯贤</p>                    </div>
+                    <span class="examquestionform" name="formquestion_378" id="formquestion_378" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('378');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="checkbox inline">A <input type="checkbox" name="question[378][]" rel="378" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">B <input type="checkbox" name="question[378][]" rel="378" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">C <input type="checkbox" name="question[378][]" rel="378" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">D <input type="checkbox" name="question[378][]" rel="378" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_396">
+                	<h3><span class="float_l">5、</span>禁止党员领导干部脱离实际，弄虚作假，损害群众利益和党群干群关系，不准有以下哪些行为：（）。</h3>
+                    <div>
+                    	<p>A、搞劳民伤财的“形象工程”和沽名钓誉的“政绩工程”；</p><p>B、虚报工作业绩；</p><p>C、在社会保障、政策扶持、救灾救济款物分配等事项中优亲厚友、显失公平；</p><p>D、获取荣誉、职称、学历学位等利益。</p>                    </div>
+                    <span class="examquestionform" name="formquestion_396" id="formquestion_396" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('396');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="checkbox inline">A <input type="checkbox" name="question[396][]" rel="396" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">B <input type="checkbox" name="question[396][]" rel="396" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">C <input type="checkbox" name="question[396][]" rel="396" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">D <input type="checkbox" name="question[396][]" rel="396" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_399">
+                	<h3><span class="float_l">6、</span>《廉政准则》规定，党员领导干部不准在（）中搞拉票等非组织活动。（）</h3>
+                    <div>
+                    	<p>A、民主推荐</p><p>B、民主测评</p><p>C、组织考察</p><p>D、选举</p>                    </div>
+                    <span class="examquestionform" name="formquestion_399" id="formquestion_399" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('399');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="checkbox inline">A <input type="checkbox" name="question[399][]" rel="399" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">B <input type="checkbox" name="question[399][]" rel="399" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">C <input type="checkbox" name="question[399][]" rel="399" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">D <input type="checkbox" name="question[399][]" rel="399" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_401">
+                	<h3><span class="float_l">7、</span>反腐倡廉建设必须坚持（）的方针。（）</h3>
+                    <div>
+                    	<p>A、标本兼治</p><p>B、综合治理</p><p>C、惩防并举</p><p>D、注重预防</p>                    </div>
+                    <span class="examquestionform" name="formquestion_401" id="formquestion_401" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('401');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="checkbox inline">A <input type="checkbox" name="question[401][]" rel="401" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">B <input type="checkbox" name="question[401][]" rel="401" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">C <input type="checkbox" name="question[401][]" rel="401" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">D <input type="checkbox" name="question[401][]" rel="401" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_403">
+                	<h3><span class="float_l">8、</span><p>《廉政准则》规定，党员领导干部不准干预和插手农村集体资金、资产和资源的（）等事项。（） -----</p>
+
+<p>&nbsp;</p></h3>
+                    <div>
+                    	<p>A、使用</p>
+
+<p>B、分配</p>
+
+<p>C、承包</p>
+
+<p>D、租赁</p>                    </div>
+                    <span class="examquestionform" name="formquestion_403" id="formquestion_403" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('403');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="checkbox inline">A <input type="checkbox" name="question[403][]" rel="403" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">B <input type="checkbox" name="question[403][]" rel="403" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">C <input type="checkbox" name="question[403][]" rel="403" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">D <input type="checkbox" name="question[403][]" rel="403" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_404">
+                	<h3><span class="float_l">9、</span>《廉政准则》适用于（）。（）</h3>
+                    <div>
+                    	<p>A、党的机关、人大机关、行政机关、政协机关、审判机关、检察机关中县(处)级以上党员领导干部；</p><p>B、人民团体、事业单位中相当于县(处)级以上党员领导干部；</p><p>C、国有和国有控股企业(含国有和国有控股金融企业)及其分支机构领导人员中的党员参照执行；</p><p>D、县(市、区、旗)直属机关、审判机关、检察机关的科级党员负责人，乡镇(街道)党员负责人，基层站所的党员负责人参照执行。</p>                    </div>
+                    <span class="examquestionform" name="formquestion_404" id="formquestion_404" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('404');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="checkbox inline">A <input type="checkbox" name="question[404][]" rel="404" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">B <input type="checkbox" name="question[404][]" rel="404" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">C <input type="checkbox" name="question[404][]" rel="404" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">D <input type="checkbox" name="question[404][]" rel="404" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_405">
+                	<h3><span class="float_l">10、</span>下列那种行为一定违反了《廉政准则》中关于禁止违反规定选拔任用干部的规定？（）</h3>
+                    <div>
+                    	<p>A、向当事人通告民主测评的情况及结果；</p><p>B、在工作调动时突击提拔干部；</p><p>C、给原任职地区干部选拔工作提出自己的建议和意见；</p><p>D、在干部选拔任用工作中封官许愿。</p>                    </div>
+                    <span class="examquestionform" name="formquestion_405" id="formquestion_405" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('405');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="checkbox inline">A <input type="checkbox" name="question[405][]" rel="405" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">B <input type="checkbox" name="question[405][]" rel="405" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">C <input type="checkbox" name="question[405][]" rel="405" value="C" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="checkbox inline">D <input type="checkbox" name="question[405][]" rel="405" value="D" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <ul id="qu_type_next" class="clear" name="qtbar" style="margin:10px auto;display:none">
+					<li><a href="javascript:;" onClick="javascript:prevtype();">上一题型</a></li>
+                	<li><a href="javascript:;" onClick="javascript:nexttype();">下一题型</a></li>
+                </ul>
+            	</span>
+                                                                                <span class="questypearea" id="qtarea_3">
+                <h4 class="qu_type">三、判断题（）</h4>
+                                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_686">
+                	<h3><span class="float_l">1、</span>违反党章和国家法律的组织或个人必须受到党的纪律的追究。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_686" id="formquestion_686" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('686');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[686]" rel="686" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[686]" rel="686" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_688">
+                	<h3><span class="float_l">2、</span>党的干部是党的事业的骨干，是人民的领导。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_688" id="formquestion_688" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('688');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[688]" rel="688" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[688]" rel="688" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_689">
+                	<h3><span class="float_l">3、</span>党组织对党员作出处分决定，处分决定所依据的事实材料和处分决定必须同本人见面。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_689" id="formquestion_689" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('689');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[689]" rel="689" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[689]" rel="689" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_690">
+                	<h3><span class="float_l">4、</span>非公有制经济组织中党的基层组织，贯彻党的方针政策，引导和监督企业遵守国家的法律法规和党章党规。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_690" id="formquestion_690" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('690');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[690]" rel="690" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[690]" rel="690" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_692">
+                	<h3><span class="float_l">5、</span>党的地方各级委员会全体会议，选举同级党的委员会。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_692" id="formquestion_692" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('692');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[692]" rel="692" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[692]" rel="692" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_696">
+                	<h3><span class="float_l">6、</span>预备党员必须面向党旗进行入党宣誓。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_696" id="formquestion_696" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('696');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[696]" rel="696" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[696]" rel="696" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_697">
+                	<h3><span class="float_l">7、</span>任何组织和个人不得以任何方式强迫选举人选举或不选举某个人。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_697" id="formquestion_697" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('697');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[697]" rel="697" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[697]" rel="697" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_699">
+                	<h3><span class="float_l">8、</span>党员的党龄，从成为预备党员之日算起。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_699" id="formquestion_699" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('699');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[699]" rel="699" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[699]" rel="699" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_700">
+                	<h3><span class="float_l">9、</span>党组织对预备党员应当认真教育和考察。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_700" id="formquestion_700" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('700');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[700]" rel="700" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[700]" rel="700" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_702">
+                	<h3><span class="float_l">10、</span>预备党员在转为正式党员之前，可以不遵守党的纪律，不执行党的决定。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_702" id="formquestion_702" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('702');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[702]" rel="702" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[702]" rel="702" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_711">
+                	<h3><span class="float_l">11、</span>禁止党员领导干部大办婚丧喜庆事宜，造成不良影响，或者借机敛财。其中，用私款操办的不受禁止。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_711" id="formquestion_711" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('711');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[711]" rel="711" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[711]" rel="711" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_712">
+                	<h3><span class="float_l">12、</span>党员领导干部不准借用公款、公物或者将公款、公物借给他人。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_712" id="formquestion_712" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('712');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[712]" rel="712" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[712]" rel="712" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_713">
+                	<h3><span class="float_l">13、</span>党员领导干部不准挪用或者拆借社会保障基金、住房公积金等公共资金或者其他财政资金。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_713" id="formquestion_713" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('713');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[713]" rel="713" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[713]" rel="713" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_714">
+                	<h3><span class="float_l">14、</span>党员领导干部离职或者退休二年后,可以接受原任职务管辖的地区和业务范围内的民营企业、外商投资企业和中介机构的聘任。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_714" id="formquestion_714" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('714');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[714]" rel="714" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[714]" rel="714" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_715">
+                	<h3><span class="float_l">15、</span>党员领导干部不准利用知悉的内幕信息谋取利益。</h3>
+                    <div>
+                    	<p>A、对B、错</p>                    </div>
+                    <span class="examquestionform" name="formquestion_715" id="formquestion_715" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('715');">收藏</a>】</span>
+						<div class="option_single" id="radio">
+                        			                        		                        		                        <label class="radio inline">A <input type="radio" name="question[715]" rel="715" value="A" /></label>&nbsp;&nbsp;
+		                        		                        		                        <label class="radio inline">B <input type="radio" name="question[715]" rel="715" value="B" /></label>&nbsp;&nbsp;
+		                        		                        		                        	                        
+                        </div>
+                        <div class="clear"></div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <ul id="qu_type_next" class="clear" name="qtbar" style="margin:10px auto;display:none">
+					<li><a href="javascript:;" onClick="javascript:prevtype();">上一题型</a></li>
+                	<li><a href="javascript:;" onClick="javascript:nexttype();">下一题型</a></li>
+                </ul>
+            	</span>
+                                                                                <span class="questypearea" id="qtarea_4">
+                <h4 class="qu_type">四、问答题（）</h4>
+                                                                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_771">
+                	<h3><span class="float_l">1、</span><p>这是一个问答题</p></h3>
+                    <div>
+                    	                    </div>
+                    <span class="examquestionform" name="formquestion_771" id="formquestion_771" rel="nodo">
+                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
+                                                <span class="font_12 float_r cz">【<a href="javascript:favorquestion('771');">收藏</a>】</span>
+                              <p class=" float_l">本题答案：</p>
+                        <div id="editor" class="clear">
+                        	                        						    	<textarea class="jckeditor" etype="simple" id="editor771" name="question[771]" style="width:100%; height:150px;" rel="_-"></textarea>                        </div>
+                                            </div>
+                    </span>
+                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
+						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
+	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
+                	</ul>
+                </div>
+                                                <ul id="qu_type_next" class="clear" name="qtbar" style="margin:10px auto;display:none">
+					<li><a href="javascript:;" onClick="javascript:prevtype();">上一题型</a></li>
+                	<li><a href="javascript:;" onClick="javascript:nexttype();">下一题型</a></li>
+                </ul>
+            	</span>
+                                                <div id="amount">全卷已做 <b class="orange" id="yesdonumber">3</b> 题 / 共<b class="orange" id="allquestionnumber">0</b>题 剩余 <b class="orange" id="nodonumber">0</b> 题未作答</div>
+                <div id="btn_exam_paper"><input type="hidden" name="insertscore" value="1"/><input type="button" value="" onClick="javascript:subpaper();"/></div>
+          	</form>
+          	</div>
+    	</div>
+    	<div class="bor_bottom"></div>
+    </div>
+	<!--主体右侧 结束-->
+	<!--尾部-->
+    	<!--尾部-->
+    <div id="footer">Copyright <span class="copyright">&copy;</span> 2013 无纸化模拟考试系统 <script src="http://s20.cnzz.com/stat.php?id=5243664&web_id=5243664&show=pic2" language="JavaScript"></script></div>
+	<!--尾部 结束-->
+</div>	<!--尾部 结束-->
+    <!--返回顶部-->
+    <div id="roll">
+      <div id="roll_top"></div>
+    </div>
+    <!--返回顶部 结束-->
+    <!--自动保存提示-->
+    <div id="save_prompt">
+    	<h4>自动保存提示</h4>
+        <p>系统将每隔<b class="red">5分钟</b>自动保存试卷及答案，答题过程中请勿刷新页面。<br />【<a href="index.php?exam-app-exam-sign">查看试题列表</a>】<br />上次保存时间：<span id="lastsavetime">21:22:01</span></p>
+    </div>
+    <!--自动保存提示 结束-->
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+		$.get('index.php?exam-app-index-ajax-lefttime&rand'+Math.random(),function(data){
+			var setting = {
+				time:60,
+				hbox:$("#timer_h"),
+				mbox:$("#timer_m"),
+				sbox:$("#timer_s"),
+				finish:function(){$('#form1').submit();}
+			}
+			setting.lefttime = parseInt(data);
+			countdown(setting);
+		});
+		$('#roll').hide();
+		$('#allquestionnumber').html($('.examquestionform').length);
+		$('#nodonumber').html($('#allquestionnumber').html() - $('#yesdonumber').html());
+		common();
+		$(":input").bind('blur',recordanswer);
+		setInterval(saveanswer,300000);
+		$(window).scroll(function() {
+			if($(window).scrollTop() >= 100){
+				$('#roll').fadeIn(400);
+		    }
+		    else
+		    {
+		    $('#roll').fadeOut(200);
+		    }
+		 });
+		 $('#roll_top').click(function(){$('html,body').animate({scrollTop: '0px'}, 800);});
+		 recordanswer();
+	});
+function recordanswer(){
+	var yesdonumber = 0;
+    $(".qu_option").each(function(){
+    	var _i = $("input",this);
+    	for(i=0;i< _i.length;i++)
+    	{
+    		if($(_i.get(i)).attr('checked'))
+    		{
+    			yesdonumber++;
+    			return ;
+    		}
+    	}
+    	var _m = $("textarea",this);
+    	if(_m.length == 1)
+    	{
+    		if(_m.val() && _m.val() != '')yesdonumber++;
+    	}
+    	else
+    	{
+    		_m.each(function(){if($(this).val() && $(this).val() != '')yesdonumber++;})
+    	}
+    });
+    $('#yesdonumber').html(yesdonumber);
+    $('#nodonumber').html(parseInt($('#allquestionnumber').html()) - parseInt($('#yesdonumber').html()));
+}
+var subpaper = function()
+{
+	art.dialog({lock:true,resize:false,width:320,height:150,title:'交卷提醒',ok:function(){$('#form1').submit();},okval:'交卷',cancel:true,cancelval:'取消',content:'您确认要交卷吗？'});
+}
+function saveanswer(){
+	var params = $(':input').serialize();
+     $.ajax({
+       url:'?exam-app-exam-ajax-saveUserAnswer',
+       async:false,
+       type:'post',
+       dataType:'json',
+       data:params
+     });
+}
+</script>
+<script type="text/javascript" src="app/exam/styles/js/paperview.js"></script>
+</body>
+</html>

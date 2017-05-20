@@ -23,6 +23,7 @@
 					<ul class="dropdown-menu">
 						<li><a href="index.php?{x2;$_app}-master-questions-addquestion&page={x2;$page}{x2;$u}">单题添加</a></li>
 						<li><a href="index.php?{x2;$_app}-master-questions-bataddquestion&page={x2;$page}{x2;$u}">批量添加</a></li>
+						<li><a href="index.php?{x2;$_app}-master-questions-filebataddquestion&page={x2;$page}{x2;$u}">CSV导入</a></li>
 					</ul>
 				</li>
 			</ul>

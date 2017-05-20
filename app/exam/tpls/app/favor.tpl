@@ -81,8 +81,10 @@
 	                </div>
 	                {x2;endtree}
                 {x2;endif}
-      			<div class="pages" style="margin-top:10px;text-align:center">{x2;$favors['pages']}</div>
-          </div>
+                <div class="pagination pagination-right">
+		            <ul>{x2;$favors['pages']}</ul>
+		        </div>
+      		</div>
     	</div>
     	<div class="bor_bottom"></div>
     </div>

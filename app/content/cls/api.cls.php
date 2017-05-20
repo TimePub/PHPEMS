@@ -27,7 +27,7 @@ class api_content
 	{
 		$catids = $this->category->getChildCategoryString($args['catid']);
 		if($args['query'])
-		$query = explode("\n",str_replace("\r",'',$args['query']));
+		$query = explode("\n",str_replace("\r",'',html_entity_decode($this->ev->stripSlashes($args['query']))));
 		else $query = array();
 		$query[] = "contentcatid IN ({$catids})";
 		$r = $this->content->getContentList($query,1,$args['number']);
@@ -72,7 +72,7 @@ class api_content
 			else
 			{
 				$tables = array_filter(explode(',',$block['blockcontent']['dbtable']));
-				$args = array_filter(explode("\n",str_replace("\r","",$block['blockcontent']['query'])));
+				$args = array_filter(explode("\n",str_replace("\r","",html_entity_decode($this->ev->stripSlashes($block['blockcontent']['query'])))));
 				$data = array(false,$tables,$args,false,$block['blockcontent']['order'],$block['blockcontent']['limit']);
 				$sql = $this->sql->makeSelect($data);
 			}

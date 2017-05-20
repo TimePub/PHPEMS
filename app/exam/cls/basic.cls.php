@@ -21,7 +21,7 @@ class basic_exam
 
 	public function getOpenBasicsByUserid($userid)
 	{
-		$data = array(false,array('openbasics','basic'),array("openbasics.obuserid = '{$userid}'","openbasics.obbasicid = basic.basicid"),false,"openbasics.obendtime DESC,obid DESC",false);
+		$data = array(false,array('openbasics','basic'),array("openbasics.obuserid = '{$userid}'","openbasics.obbasicid = basic.basicid","openbasics.obendtime > ".TIME),false,"openbasics.obendtime DESC,obid DESC",false);
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetchAll($sql,'obbasicid',array('basicknows','basicsection','basicexam'));
 	}
@@ -37,6 +37,13 @@ class basic_exam
 	public function delOpenBasic($obid)
 	{
 		$data = array('openbasics',"obid = '{$obid}'");
+		$sql = $this->sql->makeDelete($data);
+		return $this->db->exec($sql);
+	}
+
+	public function delOpenPassBasic($userid)
+	{
+		$data = array('openbasics',array("obuserid = '{$userid}'","obendtime <= ".TIME));
 		$sql = $this->sql->makeDelete($data);
 		return $this->db->exec($sql);
 	}

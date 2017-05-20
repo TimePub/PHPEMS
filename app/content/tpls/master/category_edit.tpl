@@ -31,6 +31,26 @@
 							<span class="help-block">请输入分类名称</span>
 						</div>
 					</div>
+					{x2;if:!$cat['catparent']}
+					<div class="control-group">
+						<label for="modulename" class="control-label">显示在导航条</label>
+						<div class="controls">
+							<label class="radio inline">
+				          		<input type="radio" class="input-text" name="args[catinmenu]" value="1"{x2;if:$cat['catinmenu']} checked{x2;endif}/> 显示
+				          	</label>
+				          	<label class="radio inline">
+				          		<input type="radio" class="input-text" name="args[catinmenu]" value="0"{x2;if:!$cat['catinmenu']} checked{x2;endif}/> 不显示
+				          	</label>
+						</div>
+					</div>
+					{x2;endif}
+					<div class="control-group">
+						<label for="modulename" class="control-label">在首页展示内容</label>
+						<div class="controls">
+							<input type="text" name="args[catindex]" value="{x2;if:$cat['catindex']}{x2;$cat['catindex']}{x2;else}0{x2;endif}" datatype="number" needle="needle" msg="您必须填写展示内容条数">
+							<span class="help-block">填写展示内容条数，如果不需要在首页展示，请填写0。</span>
+						</div>
+					</div>
 					<div class="control-group">
 						<label for="modulecode" class="control-label">分类排序</label>
 						<div class="controls">

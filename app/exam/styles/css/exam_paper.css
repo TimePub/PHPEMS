@@ -128,16 +128,16 @@
 #exam_refer ul{ padding:20px; font-weight:normal;}
 #exam_refer #btn_conf,#exam_refer #btn_canc{ width:57px; height:25px; background:url(../image/tit_bg.jpg) -890px -120px no-repeat; border:none; cursor:pointer; margin:0 5px; color:#fff;}
 #exam_refer #btn_canc{ background:url(../image/tit_bg.jpg) -890px -145px no-repeat; color:#868585;}
-/*��������*/
+
 .float_div1{}
 .float_div2{position:fixed;_position:absolute;top:0;z-index:300;}
-/*����Ŀ¼*/
+
 #tixingmulu{ line-height:24px;}
 #tixingmulu p{ margin-left:30px;}
 #tixingmulu tr td{ border-bottom:#d9d9d9 1px solid; padding:20px;}
 #tixingmulu h3{ background:#efefef; padding:10px; margin-bottom:20px; font-size:14px;}
 #tixingmulu .enter_btn{ display:inline-block;  width:114px; height:36px; background:url(../image/btn_login.jpg) -141px -36px;}
-/*����*/
+
 #data_area{ border:#e7ba6f 1px solid;}
 #data_area .hd{ border-bottom:#e7ba6f 1px solid; padding:6px 10px;}
 #data_area .hd a{ text-decoration:none;}
@@ -161,7 +161,7 @@
 .icon_input{ display:inline-block; width:16px; height:16px; background:url(../image/icon.gif) -182px -352px; margin:0 4px 0 14px;}
 .icon_calculator{ display:inline-block; width:20px; height:20px; background:url(../image/icon.gif) -20px -350px; margin:0 4px 0 14px;}
 
-/*�ʱ�*/
+
 /*.lvbiao{ width:758px; background:#f7f7f7; border:#62b9c2 2px solid; color:#444; padding:16px;}*/
 .lvbiao{ width:758px; background:#f7f7f7; color:#444; padding:16px;}
 .lvbiao h4{ font-size:14px;}
