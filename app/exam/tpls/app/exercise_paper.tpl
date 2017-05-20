@@ -1,6 +1,5 @@
 {x2;include:head}
 <body onbeforeunload="javascript:saveanswer(false);">
-<style>label.inline{width:24px;}</style>
 <!--导航-->
 {x2;include:nav}
 <div id="main">
@@ -36,7 +35,7 @@
                 </div>
 				<!-- float end-->
        	    	<h1>{x2;$sessionvars['examsession']}</h1>
-                <h5>总分：<span class="orange">100</span>分 合格分数线：<span class="orange">60</span>分 考试时间：<span class="orange">{x2;$sessionvars['examsessiontime']}</span>分钟</h5>
+                <h5>总分：<span class="orange">100</span>分 合格分数线：<span class="orange">60</span>分 考试时间：<span class="orange">{x2;$sessionvars['examsessiontime']}</span>分钟 来源：东奥会计在线</h5>
                 {x2;eval: v:oid = 0}
                 {x2;tree:$questype,quest,qid}
                 {x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}

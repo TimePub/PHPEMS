@@ -31,6 +31,13 @@
 					</div>
 				</div>
 				<div class="control-group">
+					<label for="knowsid" class="control-label">知识点ID</label>
+					<div class="controls">
+						<input type="text" name="knowsid" id="knowsid" value="0"/>
+						<span class="help-block">如果您的知识点ID和CSV文件中的知识点ID不同，请在此填写您希望加入的知识点ID，否则请填写0</span>
+					</div>
+				</div>
+				<div class="control-group">
 					<label for="lesson_video" class="control-label">待导入文件</label>
 					<div class="controls">
 						<span class="input-append">

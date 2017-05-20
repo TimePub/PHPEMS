@@ -4,15 +4,11 @@
 <!--导航-->
 {x2;include:nav}
 <div id="main">
-	<!--主体左侧-->
-	{x2;include:left}
-	<!--主体左侧 结束-->
 	<!--主体右侧 -->
-	<div id="right_760" class="right_760">
+	<div id="right_970" class="right_970">
     	{x2;include:bread}
     	<div class="bor_top"></div>
     	<div class="bor_mid">
-    		<div id="hide_left"><a href="javascript:pr()"></a></div>
             <div id="notice">
             	<h2 class="page_title"><img src="app/exam/styles/image/exam_notice_basic.jpg" alt="开通考场" /></h2>
             </div>
@@ -20,7 +16,7 @@
 {x2;endif}
 				<div class="row-fluid">
 					<div class="span6">
-						<div class="thumbnail"><img alt="300x200" src="app/exam/styles/image/paper.png" /></div>
+						<div class="thumbnail"><img alt="300x200" src="{x2;if:$basic['basicthumb']}{x2;$basic['basicthumb']}{x2;else}app/exam/styles/image/paper.png{x2;endif}" /></div>
 					</div>
 					<div class="span6">
 						<div class="caption">
@@ -28,7 +24,7 @@
 							<p>&nbsp;</p>
 							<p>科目：{x2;$subjects[$basic['basicsubjectid']]['subject']}</p>
 							<p>地区：{x2;$areas[$basic['basicareaid']]['area']}</p>
-							<p>您现有积分：{x2;$_user['usercoin']} （<a href="index.php?user-center-payfor">充值</a>）</p>
+							<p>您现有积分：{x2;$_user['usercoin']} （<a href="index.php?user-center-payfor">支付宝充值</a> / <a href="#myModal" role="button" data-toggle="modal">代金券充值</a>）</p>
 							{x2;if:$isopen}<p>到期时间：{x2;date:$isopen['obendtime'],'Y-m-d'}</p>{x2;endif}
 						</div>
 						<div>&nbsp;</div>
@@ -79,6 +75,26 @@
 	{x2;include:foot}
     <!--尾部 结束-->
 </div>
+<form aria-hidden="true" id="myModal" method="post" class="modal hide fade" role="dialog" aria-labelledby="#myModalLabel" action="index.php?exam-app-basics-coupon">
+	<div class="modal-header">
+		<button aria-hidden="true" class="close" type="button" data-dismiss="modal">×</button>
+		<h3 id="myModalLabel">
+			代金券充值
+		</h3>
+	</div>
+	<div class="modal-body" id="modal-body">
+		<div class="control-group">
+			<label class="control-label" for="content">代金券号码：</label>
+	  		<div class="controls">
+	  			<input type="text" name="couponsn" value="" needle="needle" msg="请输入16位代金券号码"/>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		 <input name="coupon" type="hidden" value="1">
+		 <button class="btn" type="submit">充值</button>
+	</div>
+</form>
 </body>
 </html>
 {x2;endif}

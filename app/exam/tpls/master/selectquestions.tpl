@@ -99,8 +99,8 @@
 				<div class="pagination pagination-right">
 	            	<ul>{x2;$questions['pages']}</ul>
 		        </div>
-    	<script type="text/javascript">
-    		jQuery(function($) {
-				markSelectedQuestions('ids[]','iselectquestions_{x2;$search['questiontype']}');
-    		});
-    	</script>
+		    	<script type="text/javascript">
+		    		jQuery(function($) {
+						markSelectedQuestions('ids[]','iselectquestions_{x2;$search['questiontype']}');
+		    		});
+		    	</script>

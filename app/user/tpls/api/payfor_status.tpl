@@ -16,8 +16,12 @@
 					<legend>订单号：{x2;$order['ordersn']}</legend>
 					<div class="logcontrol">
 						<p class="text-center">
-							{x2;if:$status}
+							{x2;if:$status == 1}
 							<a class="btn btn-success" href="index.php?user-center-payfor-orderdetail&ordersn={x2;$order['ordersn']}">付款成功，查看订单详情</a>
+							{x2;elseif:$status == 2}
+							<a class="btn btn-info" href="index.php?user-center-payfor">付款成功，等待卖家发货</a>
+							{x2;elseif:$status == 3}
+							<a class="btn btn-info" href="index.php?user-center-payfor">付款成功，等待买家收货</a>
 							{x2;else}
 							<a class="btn btn-danger" href="index.php?item-app-order-lists">付款失败</a>
 							<a class="btn" href="index.php?user-center-payfor">查看充值记录</a>

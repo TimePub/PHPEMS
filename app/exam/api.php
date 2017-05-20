@@ -17,11 +17,22 @@ class app
 		$this->html = $this->G->make('html');
 		$this->session = $this->G->make('session');
 		$this->exam = $this->G->make('exam','exam');
+		$this->user = $this->G->make('user','user');
 	}
 
 	public function index()
 	{
 		header("location:".'index.php?'.$this->G->app.'-app');
+	}
+
+	public function test()
+	{
+		$userid = 110;
+		$username = 'phpemsnewtester';
+		$email = '2787686388@qq.com';
+		$ts = TIME;
+		echo '<a href="index.php?exam-api-login&userid='.$userid.'&username='.$username.'&useremail='.$email.'&ts='.$ts.'&sign='.md5($userid.$username.$email.$this->sc.$ts).'">直接登录</a>';
+		exit;
 	}
 
 	//通过接口进行登录
@@ -50,7 +61,10 @@ class app
 				$this->session->setSessionUser(array('sessionuserid'=>$id,'sessionpassword'=>md5($pass),'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>8,'sessionlogintime'=>TIME,'sessionusername'=>$username));
 			}
 			else
-			$this->session->setSessionUser(array('sessionuserid'=>$userid,'sessionpassword'=>$user['userpassword'],'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>$user['usergroupid'],'sessionlogintime'=>TIME,'sessionusername'=>$username));
+			{
+				$args = array('sessionuserid'=>$u['userid'],'sessionpassword'=>$u['userpassword'],'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>$u['usergroupid'],'sessionlogintime'=>TIME,'sessionusername'=>$u['username']);
+				$this->session->setSessionUser($args);
+			}
 			header("location:".'index.php?'.$this->G->app.'-app');
 		}
 		else

@@ -213,6 +213,21 @@ class files
 		return $writeable;
 	}
 
+	public function outCsv($fname,$r)
+	{
+		if($this->dirWriteAble(dirname($fname)))
+		{
+			$fp = fopen($fname, 'w');
+			foreach ($r as $line) {
+			    fputcsv($fp, $line);
+			}
+			fclose($fp);
+			return $fname;
+		}
+		else
+		return false;
+	}
+
 	//生成缩略图
 	public function thumb($source,$target,$width,$height,$isresize = 1,$isstream = false)
     {

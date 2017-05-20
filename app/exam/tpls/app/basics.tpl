@@ -1,51 +1,32 @@
-{x2;if:!$userhash}
 {x2;include:head}
 <body>
 <!--导航-->
 {x2;include:nav}
 <div id="main">
-	<!--主体左侧-->
 	{x2;include:left}
-	<!--主体左侧 结束-->
 	<!--主体右侧 -->
-	<div id="right_760" class="right_760">
+	<div class="right_760">
     	{x2;include:bread}
     	<div class="bor_top"></div>
     	<div class="bor_mid">
-    		<div id="hide_left"><a href="javascript:pr()"></a></div>
-            <div id="notice">
-            	<h2 class="page_title"><img src="app/exam/styles/image/exam_opened_basic.jpg" alt="开通考场" /><a class="btn" href="index.php?exam-app-basics-open" style="margin-left:18px;" title="添加新考场"><em class="icon-plus"></em></a></h2>
+            <div id="clue">
+            	<div id="clue_bor_top"></div>
+            	<div id="clue_content">
+                	<h3>友情提示</h3>
+                    <p>今天是<span class="orange">{x2;date:TIME,'Y'}</span>年<span class="orange">{x2;date:TIME,'m'}</span>月<span class="orange">{x2;date:TIME,'d'}</span>日 <span class="orange">星期{x2;eval: v:wk = date('w')}{x2;if:v:wk}{x2;$ols[v:wk]}{x2;else}日{x2;endif}</span><br />请您合理安排工作学习时间，祝您考试顺利。</p>
+                </div>
+            	<div id="clue_bor_bottom"></div>
             </div>
-            <div class="container-fluid" id="datacontent">
-{x2;endif}
-				<div class="row-fluid">
-					<div class="span12">
-			            <ul class="thumbnails">
-							{x2;tree:$basics,basic,bid}
-							<li class="span4" style="margin:0.25em;">
-								<div class="thumbnail">
-									<img alt="300x200" src="app/exam/styles/image/paper.png" style="width:160px;"/>
-									<div class="caption">
-										<p class="text-center">
-											<a class="btn{x2;if:$data['currentbasic']['basicid'] != v:basic['basicid']} btn-primary{x2;endif}" href="javascript:;" onclick="javascript:$.get('?{x2;$_app}-app-index-setCurrentBasic&basicid={x2;v:basic['basicid']}&'+Math.random(),function(data){window.location.reload();});" title="{x2;v:basic['basic']}">{x2;substring:v:basic['basic'],28}</a>
-										</p>
-									</div>
-								</div>
-							</li>
-							{x2;endtree}
-						</ul>
-					</div>
-				</div>
-{x2;if:!$userhash}
-			</div>
+            <ul id="intro">
+                <li><b>全真模拟：</b>全面模拟机考流程，给考生最贴近实际的机考体验。</li>
+                <li><b>名师题库：</b>顶级名师团队精心编写，题型全面，覆盖各类考点。</li>
+                <li><b>全新体验：</b>全新UI设计和交互体验，锻炼考生操作能力和速度。</li>
+                <li id="begin_exam"><a href="index.php?exam-app-exampaper"><img src="app/exam/styles/image/btn_begin_exam.jpg" /></a></li>
+            </ul>
     	</div>
     	<div class="bor_bottom"></div>
     </div>
 	<!--主体右侧 结束-->
-	<!--尾部-->
-	{x2;include:foot}
-    <!--尾部 结束-->
-</div>
+{x2;include:foot}
 </body>
 </html>
-{x2;endif}

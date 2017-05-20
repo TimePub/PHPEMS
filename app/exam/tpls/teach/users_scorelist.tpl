@@ -12,11 +12,14 @@
 			<ul class="breadcrumb">
 				<li><a href="index.php?{x2;$_app}-teach">{x2;$apps[$_app]['appname']}</a> <span class="divider">/</span></li>
 				<li><a href="index.php?{x2;$_app}-teach-users">课程成绩</a> <span class="divider">/</span></li>
-				<li class="active">教师评卷</li>
+				<li class="active">成绩统计</li>
 			</ul>
 			<ul class="nav nav-tabs">
 				<li class="active">
-					<a href="#">教师评卷</a>
+					<a href="#">成绩统计</a>
+				</li>
+				<li class="pull-right">
+					<a class="ajax" href="index.php?{x2;$_app}-teach-users-outscore&basicid={x2;$basicid}">导出成绩</a>
 				</li>
 			</ul>
 	        <table class="table table-hover">

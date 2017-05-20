@@ -4,6 +4,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>模拟考试系统</title>
+<meta name="title" content="无纸化模拟考试系统">
+<meta name="description" content="无纸化模拟考试系统,在线考试系统,模拟考试系统">
+<meta name="keywords" content="无纸化模拟考试系统,在线考试系统,模拟考试系统">
 <link href="app/core/styles/css/bootstrap.css" rel="stylesheet">
 <link href="app/core/styles/css/layoutit.css" rel="stylesheet">
 <link href="app/exam/styles/css/plugin.css" rel="stylesheet">
@@ -18,11 +21,8 @@
 <script src="app/core/styles/js/html5shiv.js"></script>
 <script type="text/javascript" src="app/core/styles/js/jquery-1.9.1.min.js"></script>
 <![endif]-->
-<link media="all" rel="stylesheet" href="app/exam/styles/assets/css/item.css" type="text/css">
-<link rel="stylesheet" href="app/exam/styles/assets/js/mathquill/mathquill.css" type="text/css">
-<link rel="stylesheet" type="text/css" href="app/exam/styles/assets/css/site.css">
+<link rel="stylesheet" href="app/exam/styles/css/mathquill.css" type="text/css">
 <link href="app/core/styles/css/jquery-ui.css" rel="stylesheet" />
-<link media="all" rel="stylesheet" href="app/exam/styles/assets/css/calculator.css" type="text/css" />
 <link href="app/exam/styles/css/global.css" rel="stylesheet" type="text/css" />
 <link href="app/exam/styles/css/style.css" rel="stylesheet" type="text/css" />
 <link href="app/exam/styles/css/exam_paper.css" rel="stylesheet" type="text/css" />
@@ -33,7 +33,6 @@
 <script src="app/exam/styles/js/plugin.js"></script>
 <script src="files/public/js/jquery.countdown.js"></script>
 <script src="files/public/js/artDialog.js?skin=default"></script>
-<script type="text/javascript" src="app/exam/styles/js/mathquill.min.js"></script>
 <script type="text/javascript" src="app/core/styles/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="app/core/styles/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="app/core/styles/js/jquery-ui.js"></script>

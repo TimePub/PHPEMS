@@ -183,12 +183,13 @@ class app
 				}
 				else
 				{
+					setlocale(LC_ALL,'zh_CN');
 					$handle = fopen($uploadfile,"r");
 					$defaultgroup = $this->user->getDefaultGroup();
 					$strings = $this->G->make('strings');
 					while ($data = fgetcsv($handle,200))
 					{
-					    if($data[0] && $data[1] && $data[2])
+					    if($data[0] && $data[1])
 					    {
 						    $args = array();
 						    $args['username'] = iconv("GBK","UTF-8",$data[0]);

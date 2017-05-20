@@ -20,16 +20,16 @@
                     <!--分数-->
                     <div id="fenshu">
                         {x2;if:$sessionvars['examsessionscore'] >= 100}
-						<div class="n1"></div>
-						{x2;endif}
-						{x2;if:$sessionvars['examsessionscore'] >= 10}
-						<div class="n{x2;eval: echo intval($sessionvars['examsessionscore']/10)}"></div>
-						{x2;endif}
+                        <div class="n{x2;eval: echo intval($sessionvars['examsessionscore']/100%10)}"></div>
+                        {x2;endif}
+                        {x2;if:$sessionvars['examsessionscore'] >= 10}
+                        <div class="n{x2;eval: echo intval($sessionvars['examsessionscore']/10%10)}"></div>
+                        {x2;endif}
                         <div class="n{x2;eval: echo intval($sessionvars['examsessionscore']%10)}"></div>
-						{x2;if:$sessionvars['examsessionscore']*10%10 > 0}
+                        {x2;if:$sessionvars['examsessionscore']*10%10 > 0}
                         <div class="ndot"></div>
-						<div style="display:none;" class="n{x2;eval: echo intval($sessionvars['examsessionscore']*10%10)}"></div>
-						{x2;endif}
+                        <div style="display:none;" class="n{x2;eval: echo intval($sessionvars['examsessionscore']*10%10)}"></div>
+                        {x2;endif}
                     </div>
                     <!--分数 结束-->
                   </h2>

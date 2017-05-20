@@ -51,6 +51,12 @@
 							<fieldset>
 								<legend>{x2;$user['username']}</legend>
 								<div class="control-group">
+									<label for="oldpassowrd" class="control-label">旧密码：</label>
+									<div class="controls">
+										<input id="oldpassowrd" type="password" name="oldpassword" needle="true" datatype="password" msg="密码字数必须在6位以上"/>
+									</div>
+								</div>
+								<div class="control-group">
 									<label for="passowrd1" class="control-label">新密码：</label>
 									<div class="controls">
 										<input id="passowrd1" type="password" name="args[password]" needle="true" datatype="password" msg="密码字数必须在6位以上"/>

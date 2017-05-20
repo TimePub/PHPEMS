@@ -23,6 +23,7 @@
 <script src="app/core/styles/js/html5shiv.js"></script>
 <script type="text/javascript" src="app/core/styles/js/jquery-1.9.1.min.js"></script>
 <![endif]-->
+<link rel="stylesheet" href="app/exam/styles/css/mathquill.css" type="text/css">
 <script type="text/javascript" src="app/core/styles/js/jquery-ui.js"></script>
 <script type="text/javascript" src="app/core/styles/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="app/core/styles/js/bootstrap.min.js"></script>

@@ -1,6 +1,5 @@
 {x2;include:head}
 <body onbeforeunload="javascript:saveanswer(false);">
-<style>label.inline{width:24px;}</style>
 {x2;include:nav}
 <div id="main">
 	<!--主体左侧-->
@@ -61,7 +60,7 @@
                     <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
                         {x2;if:v:quest['questsort']}
                         <span class="font_12 float_r cz">【<a href="javascript:favorquestion('{x2;v:question['questionid']}');">收藏</a>】</span>
-                            <p class=" float_l">本题答案：</p>
+                              <p class=" float_l">本题答案：</p>
                         <div id="editor" class="clear">
                         	{x2;eval: $dataid = v:question['questionid']}
                         	{x2;include:plugin_editor}
@@ -74,14 +73,14 @@
 		                        {x2;if:v:key == v:question['questionselectnumber']}
 		                        {x2;eval: break;}
 		                        {x2;endif}
-		                        <label class="radio inline">{x2;v:so} <input type="radio" name="question[{x2;v:question['questionid']}]" rel="{x2;v:question['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:question['questionid']]}checked{x2;endif}/></label>
+		                        <label class="radio inline">{x2;v:so} <input type="radio" name="question[{x2;v:question['questionid']}]" rel="{x2;v:question['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:question['questionid']]}checked{x2;endif}/></label>&nbsp;&nbsp;
 		                        {x2;endtree}
 	                        {x2;else}
 		                        {x2;tree:$selectorder,so,sid}
 		                        {x2;if:v:key >= v:question['questionselectnumber']}
 		                        {x2;eval: break;}
 		                        {x2;endif}
-		                        <label class="checkbox inline">{x2;v:so} <input type="checkbox" name="question[{x2;v:question['questionid']}][]" rel="{x2;v:question['questionid']}" value="{x2;v:so}" {x2;if:in_array(v:so,$sessionvars['examsessionuseranswer'][v:question['questionid']])}checked{x2;endif}/></label>
+		                        <label class="checkbox inline">{x2;v:so} <input type="checkbox" name="question[{x2;v:question['questionid']}][]" rel="{x2;v:question['questionid']}" value="{x2;v:so}" {x2;if:in_array(v:so,$sessionvars['examsessionuseranswer'][v:question['questionid']])}checked{x2;endif}/></label>&nbsp;&nbsp;
 		                        {x2;endtree}
 	                        {x2;endif}
 

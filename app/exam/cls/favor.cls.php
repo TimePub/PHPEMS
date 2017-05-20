@@ -173,6 +173,14 @@ class favor_exam
 		return $r;
 	}
 
+	//根据用户和科目获取考试记录列表
+	public function getAllExamHistoryByArgs($args = array(),$fields = false)
+	{
+		$data = array($fields,'examhistory',$args,false,"ehscore DESC");
+		$sql = $this->sql->makeSelect($data);
+		return $this->db->fetchAll($sql);
+	}
+
 	//根据用户和ID获取一个考试记录
 	public function getExamHistoryById($id)
 	{

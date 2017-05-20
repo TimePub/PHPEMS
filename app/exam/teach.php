@@ -10,6 +10,7 @@ class app
 		$this->G = $G;
 		$this->ev = $this->G->make('ev');
 		$this->session = $this->G->make('session');
+		$this->files = $this->G->make('files');
 		$this->user = $this->G->make('user','user');
 		$_user = $this->session->getSessionUser();
 		$this->_user = $this->user->getUserById($_user['sessionuserid']);
@@ -1374,6 +1375,40 @@ class app
 		$this->tpl->assign('page',$page);
 		switch($subaction)
 		{
+			case 'outscore':
+			$args = array();
+			$basicid = $this->ev->get('basicid');
+			if($basicid)
+			{
+				$fname = 'data/score/'.TIME.'-'.$basicid.'-score.csv';
+				$args[] =  "ehbasicid = {$basicid}";
+				$rs = $this->favor->getAllExamHistoryByArgs($args,array('ehusername','ehscore'));
+				$r = array();
+				foreach($rs as $p)
+				{
+					$r[] = array('ehusername' => iconv("UTF-8","GBK",$p['ehusername']),'ehscore' => $p['ehscore']);
+				}
+				if($this->files->outCsv($fname,$r))
+				$message = array(
+					'statusCode' => 200,
+					"message" => "成绩导出成功，转入下载页面，如果浏览器没有相应，请<a href=\"{$fname}\">点此下载</a>",
+				    "callbackType" => 'forward',
+				    "forwardUrl" => "{$fname}"
+				);
+				else
+				$message = array(
+					'statusCode' => 300,
+					"message" => "成绩导出失败"
+				);
+			}
+			else
+			$message = array(
+				'statusCode' => 300,
+				"message" => "请选择好考场"
+			);
+			exit(json_encode($message));
+			break;
+
 			//计算主观题分数和显示分数
 			case 'makescore':
 			$questype = $this->basic->getQuestypeList();
@@ -1483,6 +1518,7 @@ class app
 			$basicid = intval($this->ev->get('basicid'));
 			$page = $page > 0?$page:1;
 			$exams = $this->favor->getExamHistoryListByArgs($page,10,array("ehstatus = '1'","ehbasicid = '{$basicid}'"));
+			$this->tpl->assign('basicid',$basicid);
 			$this->tpl->assign('page',$page);
 			$this->tpl->assign('exams',$exams);
 			$this->tpl->display('users_scorelist');

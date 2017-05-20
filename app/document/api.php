@@ -16,7 +16,7 @@ class app
 		$this->_user = $this->session->getSessionUser();
 		$_user = $this->session->getSessionUser();
 		$group = $this->user->getGroupById($_user['sessiongroupid']);
-		if($group['groupmoduleid'] != 1 && $this->ev->url(2) != 'login')
+		if(!$_user['sessionuserid'])
 		{
 			if($this->ev->get('userhash'))
 			exit(json_encode(array(
@@ -27,7 +27,7 @@ class app
 			)));
 			else
 			{
-				header("location:index.php?core-master-login");
+				header("location:index.php?user-app-login");
 				exit;
 			}
 		}

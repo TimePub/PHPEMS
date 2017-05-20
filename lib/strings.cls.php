@@ -103,7 +103,7 @@ class strings
 	public function encode($info)
 	{
 		$info = serialize($info);
-		$key = SK;
+		$key = CS;
 		$kl = strlen($key);
 		$il = strlen($info);
 		for($i = 0; $i < $il; $i++)
@@ -116,7 +116,7 @@ class strings
 
 	public function decode($info)
 	{
-		$key = SK;
+		$key = CS;
 		$info = urldecode($info);
 		$kl = strlen($key);
 		$il = strlen($info);

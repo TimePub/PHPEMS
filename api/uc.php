@@ -64,6 +64,7 @@ if(!defined('IN_UC')) {
 		unset($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
 		**/
 		$uc_note = new uc_note();
+		//file_put_contents('aa.txt','1');
 		exit($uc_note->$get['action']($get, $post));
 	} else {
 		exit(API_RETURN_FAILED);
@@ -202,7 +203,7 @@ class uc_note {
 	function _encode($info)
 	{
 		$info = serialize($info);
-		$key = SK;
+		$key = CS;
 		$kl = strlen($key);
 		$il = strlen($info);
 		for($i = 0; $i < $il; $i++)
@@ -271,6 +272,7 @@ class uc_note {
 			$email = $username."@phpems.net";
 			$pass = md5(rand(1000,9999));
 			$sql = "INSERT INTO ".DTH."user (`username`,`useremail`,`userpassword`,`usergroupid`,`userregtime`,`userregip`) VALUES ('{$username}','{$email}','{$pass}','{$grouid}','".TIME."','".$this->_getClientIp()."')";
+			$this->dblink->query("SET NAMES ".UC_DBCHARSET);
 			$this->dblink->query($sql);
 			$args = array('sessionuserid'=>$this->dblink->insert_id(),'sessionpassword'=>$pass,'sessionip'=>$this->_getClientIp(),'sessiongroupid'=>$grouid,'sessionlogintime'=>TIME,'sessionusername'=>$username);
 		}

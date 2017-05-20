@@ -217,7 +217,7 @@ class module
 		$field = $this->getFieldById($fieldid);
 		$args['field'] = $field['field'];
 		$r = $this->getModuleById($field['fieldmoduleid']);
-		$table = $this->G->app.'_data';
+		$table = $this->G->app;
 		$sql = $this->sql->modifyField($args,$table);
 		return $this->db->exec($sql);
 	}

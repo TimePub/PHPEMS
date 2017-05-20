@@ -12,5 +12,7 @@ define('UC_KEY', '1234567890');
 define('UC_API', 'http://127.0.0.1/dzx3/uc_server');
 define('UC_CHARSET', 'utf-8');
 define('UC_IP', '');
-define('UC_APPID', '2');
+define('UC_APPID', '4');
 define('UC_PPP', '20');
+
+?>

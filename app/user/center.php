@@ -47,7 +47,7 @@ class app
 	public function payfor()
 	{
 		$subaction = $this->ev->url(3);
-		$orderstatus = array(1=>'待付款',2=>'已完成',99=>'已撤单');
+		$orderstatus = array(1=>'待付款',2=>'已完成',3=>'待发货',4=>'待收货',99=>'已撤单');
 		$this->tpl->assign('orderstatus',$orderstatus);
 		switch($subaction)
 		{
@@ -97,7 +97,7 @@ class app
 				}
 				$args = array();
 				$args['orderprice'] = $money;
-				$args['ordertitle'] = "考试系统充值 {$args['orderprice']} 元";
+				$args['ordertitle'] = "考试系统 - 充值 {$args['orderprice']} 元";
 				$args['ordersn'] = date('YmdHi').rand(100,999);
 				$args['orderstatus'] = 1;
 				$args['orderuserid'] = $this->_user['sessionuserid'];

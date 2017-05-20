@@ -1,21 +1,50 @@
 安装步骤：
-1、将pe.sql用phpmyadmin导入数据库
-2、在lib/config.inc.php文件中设置数据库参数，注意都要保存为utf8无bom形式
-3、设置data目录、files/attach目录为可读写（777权限）
-4、以上3步完成后即可完成安装。
+	1.将pechina.sql用phpmyadmin导入数据库
+	2.在lib/config.inc.php文件中设置数据库参数，注意都要保存为utf8无bom形式（bom问题可能导致后台验证码不出现）
+	3.设置data目录、files/attach目录为可读写（777权限）
 
 前台地址：
-域名/index.php
+	域名/index.php
 后台地址：
-域名/index.php?core-master
+	域名/index.php?core-master
 
 默认管理员：
-用户名：peadmin
-密码：peadmin
+	账户：peadmin
+	密码：peadmin
 
+Ucenter用户整合请参看论坛帖子：http://phpems.net/forum/thread-141-1-1.html
+更多帮助请访问论坛：http://phpems.net/forum/
 
-1.1 正式版
+2014-01-29（1.2.2）更改功能：
+1、修复UC同步错误（SK->CS）
+2、修复UC同步登录乱码问题
+3、修复100分显示为10分问题（并正确显示1000分以下）
+4、将支付宝改为双接口（正在完善中，目前只能付款，不能充值积分）
 
+2013-12-27（1.2.1）更改功能：
+修改1.2版本已知BUG
+
+2013-12-20（1.2）更改功能：
+1、增加代金券系统
+2、考生考试成绩支持导出CSV
+3、修正批量导入试题和用户时汉字出现BUG
+4、修正用户中心密码无法修改问题
+5、调整后台菜单显示
+6、前台增加代金券冲值入口
+7、调整考场缩略图为可设置
+
+2013-11-1(1.1正式版)
+修正先行版部分BUG
+
+2013-10-24（1.1beta先行版，正式版将在11月1日发布）更改功能：
+1、重新换回考试页为默认首页，CMS作为辅助功能可选
+2、更换注册登录模板
+3、支持用户CSV文件导入
+4、支持普通试题CSV文件导入
+5、支持付费开通考场：付费购买积分，用积分换取考场开通时间。
+6、增加万能用户接口API
+7、增加用户中心
+8、增加财务模块，查看充值订单。
 
 
 2013-08-30（1.1测试版）更改功能：
@@ -35,22 +64,4 @@ UCenter支持（目前仅支持用户同步登陆和退出，暂不支持积分�
 4、题型修改模板缺失。
 5、题冒题添加bug。
 
-
-安装步骤：
-1、将pe.sql用phpmyadmin导入数据库
-2、在lib/config.inc.php文件中设置数据库参数，注意都要保存为utf8无bom形式（bom问题可能导致后台验证码不出现，修改方法请看：http://phpems.net/bbs/?thread-index-fid-2-tid-23.htm）
-3、设置data目录、files/attach目录为可读写（777权限）
-4、以上3步完成后即可完成安装。
-
-前台地址：
-域名/index.php
-后台地址：
-域名/index.php?core-master
-
-默认管理员：
-用户名：peadmin
-密码：peadmin
-
-ucenter用户整合请参看论坛帖子：
-http://phpems.net/bbs/?thread-index-fid-1-tid-26.htm
 

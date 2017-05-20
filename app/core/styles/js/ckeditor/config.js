@@ -7,9 +7,9 @@ CKEDITOR.editorConfig = function( config ) {
 	// Define changes to default configuration here. For example:
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
-	config.filebrowserUploadUrl = '?document-api-uploadfile';
-	config.filebrowserImageUploadUrl = '?document-api-upload';
-    config.filebrowserFlashUploadUrl = '?document-api-upload';
+	config.filebrowserUploadUrl = 'index.php?document-api-uploadfile';
+	config.filebrowserImageUploadUrl = 'index.php?document-api-upload';
+    config.filebrowserFlashUploadUrl = 'index.php?document-api-upload';
     config.allowedContent = true;
 	config.height = '250px';
 	config.toolbar = [
@@ -26,4 +26,5 @@ CKEDITOR.editorConfig = function( config ) {
 		['Styles','Format','Font','FontSize'],
 		['TextColor','MathJax','BGColor']
 	];
+	CKEDITOR.config.contentsCss = ['app/core/styles/js/ckeditor/contents.css','app/core/styles/css/bootstrap.css', 'app/exam/styles/css/mathquill.css'];
 };

@@ -139,7 +139,43 @@ class app
 				'statusCode' => 200,
 				"message" => "操作成功",
 				"callbackType" => "forward",
-			    "forwardUrl" => "index.php?exam-app-basics"
+			    "forwardUrl" => "index.php?exam-app"
+			);
+			exit(json_encode($message));
+			break;
+
+			case 'coupon':
+			if($this->ev->get('coupon'))
+			{
+				$couponsn = strtoupper($this->ev->get('couponsn'));
+				$r = $this->G->make('coupon','bank')->useCouponById($couponsn,$this->_user['sessionuserid']);
+				if(!$r)
+				$message = array(
+					'statusCode' => 300,
+					"message" => "错误的代金券"
+				);
+				elseif($r == '301')
+				$message = array(
+					'statusCode' => 300,
+					"message" => "使用过的代金券"
+				);
+				elseif($r == '302')
+				$message = array(
+					'statusCode' => 300,
+					"message" => "过期的代金券"
+				);
+				else
+				$message = array(
+					'statusCode' => 200,
+					"message" => "充值成功",
+					"callbackType" => "forward",
+				    "forwardUrl" => "reload"
+				);
+			}
+			else
+			$message = array(
+				'statusCode' => 300,
+				"message" => "操作失败"
 			);
 			exit(json_encode($message));
 			break;
@@ -198,9 +234,8 @@ class app
 			break;
 
 			default:
-			$this->tpl->assign('basics',$this->data['openbasics']);
+			if(!$this->data['openbasics'])exit(header("location:index.php?exam-app"));
 			$this->tpl->display('basics');
-			break;
 		}
 	}
 
@@ -217,7 +252,7 @@ class app
 				'statusCode' => 200,
 				"message" => "操作成功",
 			    "callbackType" => 'forward',
-			    "forwardUrl" => "index.php?exam-app"
+			    "forwardUrl" => "index.php?exam-app-basics"
 			);
 			exit(json_encode($message));
 			break;
@@ -289,8 +324,9 @@ class app
 			break;
 
 			default:
-			if(!$this->data['openbasics'])exit(header("location:index.php?exam-app-basics-open"));
+			$this->tpl->assign('basics',$this->data['openbasics']);
 			$this->tpl->display('index');
+			break;
 		}
 	}
 

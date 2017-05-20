@@ -4,15 +4,11 @@
 <!--导航-->
 {x2;include:nav}
 <div id="main">
-	<!--主体左侧-->
-	{x2;include:left}
-	<!--主体左侧 结束-->
 	<!--主体右侧 -->
-	<div id="right_760" class="right_760">
-    	{x2;include:bread}
+	<div id="right_970" class="right_970">
+		{x2;include:bread}
     	<div class="bor_top"></div>
     	<div class="bor_mid">
-    		<div id="hide_left"><a href="javascript:pr()"></a></div>
             <div id="notice">
             	<h2 class="page_title"><img src="app/exam/styles/image/exam_notice_basic.jpg" alt="开通考场" /></h2>
             </div>
@@ -79,9 +75,9 @@
 					<div class="span12">
 			            <ul class="thumbnails">
 							{x2;tree:$basics['data'],basic,bid}
-							<li class="span4" style="margin:0.25em;">
+							<li class="span3">
 								<div class="thumbnail">
-									<a class="thumbnail" href="index.php?exam-app-basics-detail&basicid={x2;v:basic['basicid']}" title="{x2;v:basic['basic']}"><img alt="300x200" src="app/exam/styles/image/paper.png" style="width:160px;"/></a>
+									<a class="thumbnail" href="index.php?exam-app-basics-detail&basicid={x2;v:basic['basicid']}" title="{x2;v:basic['basic']}"><img alt="300x200" src="{x2;if:v:basic['basicthumb']}{x2;v:basic['basicthumb']}{x2;else}app/exam/styles/image/paper.png{x2;endif}" style="width:160px;"/></a>
 									<div class="caption">
 										<div class="text-center">
 											<h6>{x2;substring:v:basic['basic'],28}</h6>
@@ -100,6 +96,10 @@
 									</div>
 								</div>
 							</li>
+							{x2;if:v:bid % 4 == 0}
+							</ul>
+							<ul class="thumbnails">
+							{x2;endif}
 							{x2;endtree}
 						</ul>
 					</div>

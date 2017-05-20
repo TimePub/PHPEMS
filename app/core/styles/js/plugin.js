@@ -852,6 +852,10 @@ function formsubmit(){
 	});
 	if(status)return false;
 	if(!$(_this).attr('action') || $(_this).attr('action') == '')return false;
+	if($(_this).attr('btnact') == 'on'){
+		$("input:submit",_this).attr('disabled','true');
+		$("input:submit",_this).attr('value','正在提交……');
+	};
 	submitAjax({"url":$(_this).attr('action'),"query":query,"target":target});
 	return false;
 }

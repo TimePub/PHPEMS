@@ -67,7 +67,10 @@ class app
 					    "callbackType" => 'forward',
 					    "forwardUrl" => "index.php?".$this->G->defaultApp
 					);
+					if($this->ev->get('userhash'))
 					exit(json_encode($message));
+					else
+					exit(header("location:{$message['forwardUrl']}"));
 				}
 				else
 				{
@@ -145,7 +148,7 @@ class app
 				exit(json_encode($message));
 			}
 			$id = $this->user->insertUser(array('username' => $username,'usergroupid' => $defaultgroup['groupid'],'userpassword' => md5($args['userpassword']),'useremail' => $email));
-			$this->session->setSessionUser(array('sessionuserid'=>$id,'sessionpassword'=>md5($args['userpassword']),'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>8,'sessionlogintime'=>TIME,'sessionusername'=>$username));
+			$this->session->setSessionUser(array('sessionuserid'=>$id,'sessionpassword'=>md5($args['userpassword']),'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>$defaultgroup['groupid'],'sessionlogintime'=>TIME,'sessionusername'=>$username));
 			$message = array(
 				'statusCode' => 200,
 				"message" => "操作成功",

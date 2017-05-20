@@ -40,7 +40,7 @@
 				  	<div class="controls">
 					  	<button class="btn btn-primary" type="submit">提交</button>
 						<input type="hidden" name="modifyarea" value="1"/>
-						<input type="hidden" name="areaid" value="1"/>
+						<input type="hidden" name="areaid" value="{x2;$area['areaid']}"/>
 						<input type="hidden" name="page" value="{x2;$page}"/>
 					</div>
 				</div>

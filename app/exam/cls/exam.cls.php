@@ -257,7 +257,7 @@ class exam_exam
 	//批量导入试题
 	//参数：批量试题内容字符串，知识点ID
 	//返回值：true
-	public function importQuestionBat($uploadfile,$questionparent = 0)
+	public function importQuestionBat($uploadfile,$knowsid,$questionparent = 0)
 	{
 		$handle = fopen($uploadfile,"r");
 		while ($data = fgetcsv($handle))
@@ -267,12 +267,15 @@ class exam_exam
 			if(count($question) >= 6)
 			{
 				$args['questiontype'] = intval($question[0]);
-				$args['question'] = iconv("GBK","UTF-8",trim($question[1]," \n\t"));
-				$args['questionselect'] = iconv("GBK","UTF-8",trim($question[2]," \n\t"));
-				$args['questionselectnumber'] = trim($question[3]," \n\t");
-				$args['questionanswer'] = iconv("GBK","UTF-8",trim($question[4]," \n\t"));
-				$args['questiondescribe'] = iconv("GBK","UTF-8",trim($question[5]," \n\t"));
+				$args['question'] = $this->ev->addSlashes(htmlspecialchars(iconv("GBK","UTF-8",trim($question[1]," \n\t"))));
+				$args['questionselect'] = $this->ev->addSlashes(htmlspecialchars(iconv("GBK","UTF-8",trim($question[2]," \n\t"))));
+				$args['questionselectnumber'] = intval(trim($question[3]," \n\t"));
+				$args['questionanswer'] = $this->ev->addSlashes(htmlspecialchars(iconv("GBK","UTF-8",trim($question[4]," \n\t"))));
+				$args['questiondescribe'] = $this->ev->addSlashes(htmlspecialchars(iconv("GBK","UTF-8",trim($question[5]," \n\t"))));
+				if(!$knowsid)
 				$questionknowsid = trim($question[6]," \n\t");
+				else
+				$questionknowsid = $knowsid;
 				if($questionknowsid)
 				{
 					$questionknowsid = explode(',',$questionknowsid);

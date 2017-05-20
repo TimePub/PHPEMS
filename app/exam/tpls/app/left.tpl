@@ -19,7 +19,9 @@
               </li>
     		</ul>
             <ol class="menu_con">
+      			<!--
       			<li{x2;if:$method == 'basics'} class="on"{x2;endif}><a href="?exam-app-basics">我的考场</a></li>
+      			-->
       			<li{x2;if:$method == 'exercise'} class="on"{x2;endif}><a href="?exam-app-exercise">强化训练</a></li>
                 <li{x2;if:$method == 'exampaper'} class="on"{x2;endif}><a href="?exam-app-exampaper">随机考试</a></li>
                 <li{x2;if:$method == 'exam'} class="on"{x2;endif}><a href="?exam-app-exam">正式考试</a></li>

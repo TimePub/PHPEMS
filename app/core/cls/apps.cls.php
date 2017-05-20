@@ -54,7 +54,12 @@ class apps_core
 	{
 		$data = array(false,'app',$args,false,false,false);
 		$sql = $this->sql->makeSelect($data);
-		return $this->db->fetchAll($sql,'appid','appsetting');
+		$r = $this->db->fetchAll($sql,'appid','appsetting');
+		foreach($r as $key => $p)
+		{
+			if(!file_exists('app/'.$key))unset($r[$key]);
+		}
+		return $r;
 	}
 }
 
