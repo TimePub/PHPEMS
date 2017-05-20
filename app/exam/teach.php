@@ -140,6 +140,8 @@ class app
 				{
 					$args['basicsection'][] = $key;
 				}
+				$args['basicexam']['opentime']['start'] = strtotime($args['basicexam']['opentime']['start']);
+				$args['basicexam']['opentime']['end'] = strtotime($args['basicexam']['opentime']['end']);
 				$args['basicsection'] = $this->ev->addSlashes(serialize($args['basicsection']));
 				$args['basicknows'] = $this->ev->addSlashes(serialize($args['basicknows']));
 				$args['basicexam'] = $this->ev->addSlashes(serialize($args['basicexam']));
@@ -1407,6 +1409,18 @@ class app
 				"message" => "请选择好考场"
 			);
 			exit(json_encode($message));
+			break;
+
+			case 'readpaper':
+			$ehid = $this->ev->get('ehid');
+			$eh = $this->favor->getExamHistoryById($ehid);
+			$questype = $this->basic->getQuestypeList();
+			$sessionvars = array('examsession'=>$eh['ehexam'],'examsessionscore'=>$eh['ehscore'],'examsessionscorelist'=>$eh['ehscorelist'],'examsessionsetting'=>$eh['ehsetting'],'examsessionquestion'=>$eh['ehquestion'],'examsessionuseranswer'=>$eh['ehuseranswer']);
+			$this->tpl->assign('eh',$eh);
+			$this->tpl->assign('user',$this->user->getUserById($eh['ehuserid']));
+			$this->tpl->assign('sessionvars',$sessionvars);
+			$this->tpl->assign('questype',$questype);
+			$this->tpl->display('exam_view');
 			break;
 
 			//计算主观题分数和显示分数

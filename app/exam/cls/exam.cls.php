@@ -45,9 +45,12 @@ class exam_exam
 		$sessionid = $this->session->getSessionId();
 	}
 
-	public function clearOutTimeExamSession()
+	public function clearOutTimeExamSession($time)
     {
+    	if(!$time)
     	$date = TIME-6*24*3600;
+    	else
+    	$date = $time;
     	$data = array('examsession',"examsessionstarttime < '{$date}'");
     	$sql = $this->sql->makeDelete($data);
 	    $this->db->exec($sql);
@@ -62,6 +65,16 @@ class exam_exam
 		$sessionid = $this->session->getSessionId();
 		$data = array('examsession',$args,"examsessionid = '{$sessionid}'");
 		$sql = $this->sql->makeUpdate($data);
+		$this->db->exec($sql);
+		return true;
+	}
+
+	//清除会话内容
+	public function delExamSession()
+	{
+		$sessionid = $this->session->getSessionId();
+		$data = array('examsession',"examsessionid = '{$sessionid}'");
+		$sql = $this->sql->makeDelete($data);
 		$this->db->exec($sql);
 		return true;
 	}
@@ -593,9 +606,19 @@ class exam_exam
 	//根据参数获取单一题帽试题
 	//参数：参数（数组或者字符串）
 	//返回值：试题内容数组
-	public function getQuestionRowsByArgs($args)
+	public function getQuestionRowsByArgs($args,$fields = false)
 	{
-		$data = array(false,'questionrows',$args);
+		$data = array($fields,array('questionrows','quest2knows'),$args);
+		$sql = $this->sql->makeSelect($data);
+		$r = $this->db->fetch($sql,array('qrknowsid'));
+		if($r['qrid'])
+		$r['data'] = $this->getQuestionListByArgs(array("questionparent = '{$r['qrid']}'","questionstatus = 1"));
+		return $r;
+	}
+
+	public function getQuestionRowsById($id,$fields = false)
+	{
+		$data = array($fields,'questionrows',"qrid = {$id}");
 		$sql = $this->sql->makeSelect($data);
 		$r = $this->db->fetch($sql,array('qrknowsid'));
 		if($r['qrid'])
@@ -606,9 +629,16 @@ class exam_exam
 	//根据参数获取所有普通试题列表
 	//参数：参数（数组或者字符串）
 	//返回值：试题内容列表数组
-	public function getQuestionListByArgs($args)
+	public function getQuestionListByArgs($args,$fields = false)
 	{
-		$data = array(false,'questions',$args,false,array("questionsequence ASC","questionid ASC"),false);
+		$data = array($fields,array('questions','quest2knows'),$args,false,array("questionsequence ASC","questionid ASC"),false);
+		$sql = $this->sql->makeSelect($data);
+		return $this->db->fetchAll($sql,'questionid',array('questionhtml','questionknowsid'));
+	}
+
+	public function getQuestionListByIds($ids,$fields = false)
+	{
+		$data = array($fields,'questions',"questionid IN ($ids)",false,array("questionsequence ASC","questionid ASC"),false);
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetchAll($sql,'questionid',array('questionhtml','questionknowsid'));
 	}
@@ -624,6 +654,22 @@ class exam_exam
 		$sql = $this->sql->makeSelect($data);
 		$r['data'] = $this->db->fetchAll($sql,false,array('questionhtml','questionknowsid'));
 		$data = array('count(DISTINCT questions.questionid) AS number',array('questions','quest2knows'),$args);
+		$sql = $this->sql->makeSelect($data);
+		$t = $this->db->fetch($sql);
+		$pages = $this->pg->outPage($this->pg->getPagesNumber($t['number'],$number),$page);
+		$r['pages'] = $pages;
+		$r['number'] = $t['number'];
+		return $r;
+	}
+
+	public function getSimpleQuestionsList($page,$number = 20,$args = 1)
+	{
+		$page = $page > 0?$page:1;
+		$r = array();
+		$data = array(false,'questions',$args,false,'questionid DESC',array(intval($page-1)*$number,$number));
+		$sql = $this->sql->makeSelect($data);
+		$r['data'] = $this->db->fetchAll($sql,false,array('questionhtml','questionknowsid'));
+		$data = array('count(*) AS number','questions',$args);
 		$sql = $this->sql->makeSelect($data);
 		$t = $this->db->fetch($sql);
 		$pages = $this->pg->outPage($this->pg->getPagesNumber($t['number'],$number),$page);

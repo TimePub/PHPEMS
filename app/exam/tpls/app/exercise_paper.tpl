@@ -1,14 +1,13 @@
 {x2;include:header}
 <body>
-<script src="app/exam/styles/js/plugin.js"></script>
 {x2;include:nav}
 <div class="row-fluid">
-	<div class="container examcontent">
+	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
 			<form class="examform form-horizontal" id="form1" name="form1" action="index.php?exam-app-exercise-score">
 				<ul class="breadcrumb">
 					<li>
-						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
 					</li>
 					<li>
 						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
@@ -150,9 +149,9 @@
 						<p>共有试题 <span class="allquestionnumber">50</span> 题，已做 <span class="yesdonumber">0</span> 题。您确认要交卷吗？</p>
 					</div>
 					<div class="modal-footer">
-						 <button onclick="javascript:submitPaper();" class="btn btn-primary">确定交卷</button>
+						 <button type="submit" class="btn btn-primary">确定交卷</button>
 						 <input type="hidden" name="insertscore" value="1"/>
-						 <button aria-hidden="true" class="btn" data-dismiss="modal">再检查一下</button>
+						 <button aria-hidden="true" class="btn" type="button" data-dismiss="modal">再检查一下</button>
 					</div>
 				</div>
 			</form>
@@ -166,7 +165,7 @@
 			试题列表
 		</h3>
 	</div>
-	<div class="modal-body" id="modal-body" style="max-height:100%;">
+	<div class="modal-body" id="modal-body" style="max-height:560px;">
 		{x2;eval: v:oid = 0}
     	{x2;tree:$questype,quest,qid}
     	{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
@@ -195,8 +194,8 @@
 	</div>
 </div>
 <div class="row-fluid">
-	<div class="container toolcontent">
-		<div class="footcontent">
+	<div class="toolcontent">
+		<div class="container-fluid footcontent">
 			<div class="span2">
 				<ul class="unstyled">
 					<li><h4><img src="app/core/styles/images/icons/Watches.png" style="width:1.2em;"/> <span id="timer_h">00</span>：<span id="timer_m">00</span>：<span id="timer_s">00</span></h4></li>

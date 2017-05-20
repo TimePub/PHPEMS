@@ -34,8 +34,8 @@ class AlipayNotify {
      * @return 验证结果
      */
 	function verifyNotify(){
-		$getresult = $_GET;
-		unset($getresult['user-api-alipayreturn']);
+		$getresult = $_POST;
+		unset($getresult['route']);
 		if(empty($getresult)) {//判断POST来的数组是否为空
 			return false;
 		}
@@ -109,8 +109,8 @@ class AlipayNotify {
 
 	function verifyReturn(){
 		$getresult = $_GET;
-		unset($getresult['user-api-alipayreturn']);
-		if(empty($getresult)) {//判断POST来的数组是否为空
+		unset($getresult['route']);
+		if(empty($getresult)) {//判断GET来的数组是否为空
 			return false;
 		}
 		else {

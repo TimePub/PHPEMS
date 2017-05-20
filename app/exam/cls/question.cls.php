@@ -105,9 +105,12 @@ class question_exam
 	}
 
 	//获取某些指定知识点的题帽题列表
-	public function getRandQuestionRowsListByKnowid($knowid,$typeid,$number)
+	public function getRandQuestionRowsListByKnowid($knowid,$typeid,$number = false)
 	{
+		if($number)
 		$data = array('DISTINCT questionrows.qrid',array('questionrows','quest2knows'),array("quest2knows.qkknowsid IN ({$knowid})","quest2knows.qktype = 1","quest2knows.qkquestionid = questionrows.qrid","questionrows.qrtype = '{$typeid}'","questionrows.qrnumber <= '{$number}'","questionrows.qrstatus = 1"),false,false,false);
+		else
+		$data = array('DISTINCT questionrows.qrid',array('questionrows','quest2knows'),array("quest2knows.qkknowsid IN ({$knowid})","quest2knows.qktype = 1","quest2knows.qkquestionid = questionrows.qrid","questionrows.qrtype = '{$typeid}'","questionrows.qrstatus = 1"),false,false,false);
 		$sql = $this->sql->makeSelect($data);
 		$r = $this->db->fetchAll($sql);
 		$t = array();
@@ -189,10 +192,170 @@ class question_exam
 		return implode(',',$m);
 	}
 
+	public function selectScaleQuestions($examid,$basic)
+	{
+		$exam = $this->exam->getExamSettingById($examid);
+		if(!$exam['examsetting']['scalemodel'])
+		return $this->selectQuestions($examid,$basic);
+		$settings = $exam['examsetting'];
+		foreach($settings['examscale'] as $key => $p)
+		{
+			$s1 = explode("\n",$p);
+			foreach($s1 as $s2)
+			{
+				$s2 = trim($s2,"\n\r");
+				$s2 = explode(":",$s2);
+				if($s2[2])$num = explode(',',$s2[2]);
+				else $num = $s2[1];
+				$knowsids = explode(',',$s2[0]);
+				$tmp = array();
+				foreach($basic['basicknows'] as $bp)
+				{
+					foreach($bp as $tbp)
+					{
+						$tmp[] = $tbp;
+					}
+				}
+				$knowsids = array_intersect ($knowsids, $tmp);
+				$knowsids = implode(',',$knowsids);
+				if(!$knowsids)$knowsids = '0';
+				if(is_array($num))
+				{
+					$number = array('1'=>intval($num[0]),'2'=>intval($num[1]),'3'=>intval($num[2]));
+					arsort($number);
+					$par = 0;
+					foreach($number as $nkey => $t)
+					{
+						if(!$par)
+						{
+							$par++;
+							$trand = rand(1,4);
+							if($trand < 3)
+							{
+								$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrlevel = '{$nkey}'","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'"));
+								if(count($qrs))
+								{
+									$qrid = $qrs[array_rand($qrs,1)];
+									$questionrow[$key][] = $qrid;
+									$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+									$t = intval($t - $qr['qrnumber']);
+								}
+							}
+						}
+						if($t)
+						{
+							$r = $this->getRandQuestionList(array("quest2knows.qkknowsid IN ({$knowsids})","questions.questionlevel = '{$nkey}'","questions.questiontype = '{$key}'"));
+							if(is_array($r))
+							{
+								if((count($r) >= $t))
+								{
+									if($t <= 1)
+									{
+										$question[$key][] = $r[array_rand($r,1)];
+									}
+									else
+									{
+										$ts = array_rand($r,$t);
+										foreach($ts as $tmp)
+										{
+											$question[$key][] = $r[$tmp];
+										}
+									}
+								}
+								else
+								{
+									foreach($r as $tmp)
+									$question[$key][] = $tmp;
+								}
+							}
+						}
+						while($t)
+						{
+							$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrlevel = '{$nkey}'","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'","questionrows.qrnumber > 0"));
+							if(count($qrs))
+							{
+								$qrid = $qrs[array_rand($qrs,1)];
+								$questionrow[$key][] = $qrid;
+								$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+								$t = intval($t - $qr['qrnumber']);
+							}
+							else
+							break;
+						}
+					}
+				}
+				else
+				{
+					$par = 0;
+					$t = $num;
+					if(!$par)
+					{
+						$par++;
+						$trand = rand(1,4);
+						if($trand < 3)
+						{
+							$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'"));
+							if(count($qrs))
+							{
+								$qrid = $qrs[array_rand($qrs,1)];
+								$questionrow[$key][] = $qrid;
+								$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+								$t = intval($t - $qr['qrnumber']);
+							}
+						}
+					}
+					if($t)
+					{
+						$r = $this->getRandQuestionList(array("quest2knows.qkknowsid IN ({$knowsids})","questions.questiontype = '{$key}'"));
+						if(is_array($r))
+						{
+							if((count($r) >= $t))
+							{
+								if($t <= 1)
+								{
+									$question[$key][] = $r[array_rand($r,1)];
+								}
+								else
+								{
+									$ts = array_rand($r,$t);
+									foreach($ts as $tmp)
+									{
+										$question[$key][] = $r[$tmp];
+									}
+								}
+							}
+							else
+							{
+								foreach($r as $tmp)
+								$question[$key][] = $tmp;
+							}
+						}
+					}
+					while($t)
+					{
+						$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'"));
+						if(count($qrs))
+						{
+							$qrid = $qrs[array_rand($qrs,1)];
+							$questionrow[$key][] = $qrid;
+							$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
+							$t = intval($t - $qr['qrnumber']?$qr['qrnumber']:1);
+						}
+						else
+						break;
+					}
+				}
+			}
+		}
+		return array('question'=>$question,'questionrow'=>$questionrow,'setting'=>$exam);
+	}
+
 	//筛选随机试题
 	public function selectQuestions($examid,$basic)
 	{
 		$exam = $this->exam->getExamSettingById($examid);
+		if($exam['examsetting']['scalemodel'])
+		return $this->selectScaleQuestions($examid,$basic);
 		$knowsids = '';
 		foreach($basic['basicknows'] as $p)
 		{
@@ -252,13 +415,13 @@ class question_exam
 				}
 				while($t)
 				{
-					$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrlevel = '{$nkey}'","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'"));
+					$qrs = $this->getRandQuestionRowsList(array("quest2knows.qkknowsid IN ({$knowsids})","questionrows.qrlevel = '{$nkey}'","questionrows.qrtype = '{$key}'","questionrows.qrnumber <= '{$t}'","questionrows.qrnumber > 0"));
 					if(count($qrs))
 					{
 						$qrid = $qrs[array_rand($qrs,1)];
 						$questionrow[$key][] = $qrid;
 						$qr = $this->exam->getQuestionRowsByArgs("qrid = '{$qrid}'");
-						$t = intval($t - $qr['qrnumber']);
+						$t = intval($t - $qr['qrnumber']?$qr['qrnumber']:1);
 					}
 					else
 					break;

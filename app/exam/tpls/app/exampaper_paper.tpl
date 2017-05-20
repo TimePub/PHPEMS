@@ -1,14 +1,13 @@
 {x2;include:header}
 <body>
-<script src="app/exam/styles/js/plugin.js"></script>
 {x2;include:nav}
 <div class="row-fluid">
-	<div class="container examcontent">
+	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
 			<form class="examform form-horizontal" id="form1" name="form1" action="index.php?exam-app-exampaper-score">
 				<ul class="breadcrumb">
 					<li>
-						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
 					</li>
 					<li>
 						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
@@ -36,7 +35,7 @@
 	                {x2;eval: v:tid++}
 	                <div id="question_{x2;v:question['questionid']}" class="paperexamcontent">
 						<div class="media well">
-							<ul class="nav nav-tabs">
+							<ul class="nav nav-tabs noborder">
 								<li class="active">
 									<span class="badge badge-info questionindex">{x2;v:tid}</span></a>
 								</li>
@@ -45,14 +44,14 @@
 									<button class="btn" type="button" onclick="javascript:favorquestion('{x2;v:question['questionid']}');"><em class="icon-heart" title="收藏"></em></button>
 								</li>
 							</ul>
-							<div class="media-body well text-warning">
+							<div class="media-body well text-warning noborder">
 								<a name="question_{x2;v:question['questionid']}"></a>{x2;realhtml:v:question['question']}
 							</div>
 							{x2;if:!v:quest['questsort']}
-							<div class="media-body well">
+							<div class="media-body well noborder">
 		                    	{x2;realhtml:v:question['questionselect']}
 		                    </div>
-							<div class="media-body well">
+							<div class="media-body well noborder">
 		                    	{x2;if:v:quest['questchoice'] == 1 || v:quest['questchoice'] == 4}
 			                        {x2;tree:$selectorder,so,sid}
 			                        {x2;if:v:key == v:question['questionselectnumber']}
@@ -70,7 +69,7 @@
 		                        {x2;endif}
 		                    </div>
 							{x2;else}
-							<div class="media-body well">
+							<div class="media-body well noborder">
 								{x2;eval: $dataid = v:question['questionid']}
 								<textarea class="jckeditor" etype="simple" id="editor{x2;$dataid}" name="question[{x2;$dataid}]" rel="{x2;v:question['questionid']}">{x2;realhtml:$sessionvars['examsessionuseranswer'][$dataid]}</textarea>
 							</div>
@@ -87,7 +86,7 @@
 									<span class="badge badge-info questionindex">{x2;v:tid}</span>
 								</li>
 							</ul>
-							<div class="media-body well">
+							<div class="media-body well noborder">
 								{x2;realhtml:v:questionrow['qrquestion']}
 							</div>
 							{x2;tree:v:questionrow['data'],data,did}
@@ -101,13 +100,15 @@
 										<button class="btn" type="button" onclick="javascript:favorquestion('{x2;v:data['questionid']}');"><em class="icon-heart" title="收藏"></em></button>
 									</li>
 								</ul>
-								<div class="media-body well text-warning">
+								<div class="media-body well text-warning noborder">
 									<a name="question_{x2;v:data['questionid']}"></a>{x2;realhtml:v:data['question']}
 								</div>
 								{x2;if:!v:quest['questsort']}
-								<div class="media-body well">
+								{x2;if:v:data['questionselect']}
+								<div class="media-body well noborder">
 			                    	{x2;realhtml:v:data['questionselect']}
 			                    </div>
+			                    {x2;endif}
 								<div class="media-body well">
 			                    	{x2;if:v:quest['questchoice'] == 1 || v:quest['questchoice'] == 4}
 				                        {x2;tree:$selectorder,so,sid}
@@ -150,9 +151,9 @@
 						<p>共有试题 <span class="allquestionnumber">50</span> 题，已做 <span class="yesdonumber">0</span> 题。您确认要交卷吗？</p>
 					</div>
 					<div class="modal-footer">
-						 <button onclick="javascript:submitPaper();" class="btn btn-primary">确定交卷</button>
+						 <button type="submit" class="btn btn-primary">确定交卷</button>
 						 <input type="hidden" name="insertscore" value="1"/>
-						 <button aria-hidden="true" class="btn" data-dismiss="modal">再检查一下</button>
+						 <button aria-hidden="true" class="btn" type="button" data-dismiss="modal">再检查一下</button>
 					</div>
 				</div>
 			</form>
@@ -166,7 +167,7 @@
 			试题列表
 		</h3>
 	</div>
-	<div class="modal-body" id="modal-body" style="max-height:100%;">
+	<div class="modal-body" id="modal-body" style="max-height:560px;">
 		{x2;eval: v:oid = 0}
     	{x2;tree:$questype,quest,qid}
     	{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
@@ -195,8 +196,8 @@
 	</div>
 </div>
 <div class="row-fluid">
-	<div class="container toolcontent">
-		<div class="footcontent">
+	<div class="toolcontent">
+		<div class="container-fluid footcontent">
 			<div class="span2">
 				<ul class="unstyled">
 					<li><h4><img src="app/core/styles/images/icons/Watches.png" style="width:1.2em;"/> <span id="timer_h">00</span>：<span id="timer_m">00</span>：<span id="timer_s">00</span></h4></li>
@@ -246,43 +247,39 @@ $(document).ready(function(){
 			formData[p]=initData[p];
 		}
 
-		var textarea = $('#form1 textarea');
-		$.each(textarea,function(){
+		$.each($('#form1 textarea'),function(){
 			var _this = $(this);
 			_this.val(initData[_this.attr('name')]);
 			CKEDITOR.instances[_this.attr('id')].setData(initData[_this.attr('name')]);
 			markQuestion(_this.attr('rel'),true);
 		});
 
-		var texts = $('#form1 :input[type=text]');
-		$.each(texts,function(){
+		$.each($('#form1 :input[type=text]'),function(){
 			var _this = $(this);
 			_this.val(initData[_this.attr('name')]);
 			markQuestion(_this.attr('rel'),true);
 		});
 
-		var radios = $('#form1 :input[type=radio]');
-		$.each(radios,function(){
+		$.each($('#form1 :input[type=radio]'),function(){
 			var _= this, v = initData[_.name];
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked = true;
+				markQuestion(_this.attr('rel'));
 			}else{
 				_.checked=false;
 			}
-			markQuestion(_this.attr('rel'));
 		});
 
-		var checkboxs=$('#form1 :input[type=checkbox]');
-		$.each(checkboxs,function(){
+		$.each($('#form1 :input[type=checkbox]'),function(){
 			var _=this,v=initData[_.name];
 			var _this = $(this);
 			if(v!=''&&v==_.value){
 				_.checked=true;
+				markQuestion(_this.attr('rel'));
 			}else{
 				_.checked=false;
 			}
-			markQuestion(_this.attr('rel'));
 		});
 	}
 
@@ -317,7 +314,7 @@ $(document).ready(function(){
 		p.push(_.name);
 		p.push(_.value);
 		set.apply(formData,p);
-		markQuestion(_this.attr('rel'));
+		markQuestion(_this.attr('rel'),ture);
 	});
 
 	$('#form1 :input[type=checkbox]').change(function(){

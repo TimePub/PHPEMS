@@ -76,7 +76,7 @@
 					  	<span class="help-block">无选择项的请不要填写，如填空题、问答题等主观题。</span>
 					</div>
 				</div>
-				<div class="control-group" id="selectnumber">
+				<div class="control-group" id="selectnumber"{x2;if:$questypes[$question['questiontype']]['questsort']} style="display:none;"{x2;endif}>
 					<label for="questionselectnumber" class="control-label">备选项数量：</label>
 				  	<div class="controls">
 					  	<select name="args[questionselectnumber]" id="questionselectnumber">
@@ -91,7 +91,7 @@
 				<div class="control-group">
 					<label class="control-label">参考答案：</label>
 					<div class="controls">
-						<div id="answerbox_1" class="answerbox"{x2;if:$questypes[$question['questiontype']]['questchoice'] != 1} style="display:none;"{x2;endif}>
+						<div id="answerbox_1" class="answerbox"{x2;if:$questypes[$question['questiontype']]['questchoice'] != 1 || $questypes[$question['questiontype']]['questsort']} style="display:none;"{x2;endif}>
 						  	<label class="radio inline"><input type="radio" name="targs[questionanswer1]" value="A"{x2;if:$question['questionanswer'] == 'A'} checked{x2;endif}>A</label>
 						  	<label class="radio inline"><input type="radio" name="targs[questionanswer1]" value="B"{x2;if:$question['questionanswer'] == 'B'} checked{x2;endif}>B</label>
 						  	<label class="radio inline"><input type="radio" name="targs[questionanswer1]" value="C"{x2;if:$question['questionanswer'] == 'C'} checked{x2;endif}>C</label>

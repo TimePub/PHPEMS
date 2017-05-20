@@ -33,7 +33,7 @@
 						<td>{x2;v:know['knows']}</td>
 						<td>
 							<div class="btn-group">
-	                    		<a class="btn" href="index.php?exam-teach-recyle-backknows&page={x2;$page}&knowsid={x2;v:know['knowsid']}{x2;$u}" title="修改"><em class="icon-edit"></em></a>
+	                    		<a class="btn ajax" href="index.php?exam-teach-recyle-backknows&page={x2;$page}&knowsid={x2;v:know['knowsid']}{x2;$u}" title="修改"><em class="icon-edit"></em></a>
 								<a class="btn ajax" href="index.php?exam-teach-recyle-delknows&page={x2;$page}&knowsid={x2;v:know['knowsid']}{x2;$u}" title="删除"><em class="icon-remove"></em></a>
 	                    	</div>
 	                    </td>

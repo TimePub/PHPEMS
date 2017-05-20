@@ -1,14 +1,13 @@
 {x2;include:header}
 <body>
-<script src="app/exam/styles/js/plugin.js"></script>
 {x2;include:nav}
 <div class="row-fluid">
-	<div class="container examcontent">
+	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
 			<form class="examform form-horizontal" id="form1" name="form1" action="index.php?exam-app-exam-score">
 				<ul class="breadcrumb">
 					<li>
-						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
 					</li>
 					<li>
 						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
@@ -24,11 +23,15 @@
 				{x2;eval: v:oid = 0}
 				{x2;tree:$questype,quest,qid}
 				{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
+				{x2;if:$data['currentbasic']['basicexam']['changesequence']}
+				{x2;eval: shuffle($sessionvars['examsessionquestion']['questions'][v:quest['questid']]);}
+				{x2;eval: shuffle($sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]);}
+				{x2;endif}
 				{x2;eval: v:oid++}
 				<div id="panel-type{x2;v:quest['questid']}" class="tab-pane{x2;if:(!$ctype && v:qid == 1) || ($ctype == v:quest['questid'])} active{x2;endif}">
 					<ul class="breadcrumb">
 						<li>
-							<h5>{x2;v:oid}、{x2;v:quest['questype']}</h5>
+							<h5>{x2;v:oid}、{x2;v:quest['questype']}{x2;$sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['describe']}</h5>
 						</li>
 					</ul>
 					{x2;eval: v:tid = 0}
@@ -148,13 +151,28 @@
 						<p>共有试题 <span class="allquestionnumber">50</span> 题，已做 <span class="yesdonumber">0</span> 题。您确认要交卷吗？</p>
 					</div>
 					<div class="modal-footer">
-						 <button onclick="javascript:submitPaper();" class="btn btn-primary">确定交卷</button>
+						 <button type="submit" class="btn btn-primary">确定交卷</button>
 						 <input type="hidden" name="insertscore" value="1"/>
-						 <button aria-hidden="true" class="btn" data-dismiss="modal">再检查一下</button>
+						 <button aria-hidden="true" class="btn" type="button" data-dismiss="modal">再检查一下</button>
 					</div>
 				</div>
 			</form>
 		</div>
+	</div>
+</div>
+<div aria-hidden="true" id="fenlumodal" class="modal hide fade" role="dialog" aria-labelledby="#myFenluModalLabel">
+	<div class="modal-header">
+		<button aria-hidden="true" class="close" type="button" data-dismiss="modal">×</button>
+		<h3 id="myFenluModalLabel">
+			交卷
+		</h3>
+	</div>
+	<div class="modal-body" id="modal-fenlubody" style="max-height:100%;">
+		<p>共有试题 <span class="allquestionnumber">50</span> 题，已做 <span class="yesdonumber">0</span> 题。您确认要交卷吗？</p>
+	</div>
+	<div class="modal-footer">
+		 <button type="button" class="btn btn-primary">确定</button>
+		 <button aria-hidden="true" class="btn" type="button" data-dismiss="modal">取消</button>
 	</div>
 </div>
 <div aria-hidden="true" id="modal" class="modal hide fade" role="dialog" aria-labelledby="#myModalLabel">
@@ -164,7 +182,7 @@
 			试题列表
 		</h3>
 	</div>
-	<div class="modal-body" id="modal-body" style="max-height:100%;">
+	<div class="modal-body" id="modal-body" style="max-height:560px;">
 		{x2;eval: v:oid = 0}
     	{x2;tree:$questype,quest,qid}
     	{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
@@ -193,11 +211,11 @@
 	</div>
 </div>
 <div class="row-fluid">
-	<div class="container toolcontent">
-		<div class="footcontent">
+	<div class="toolcontent">
+		<div class="container-fluid footcontent">
 			<div class="span2">
 				<ul class="unstyled">
-					<li><h4><img src="app/core/styles/images/icons/Watches.png" style="width:1.2em;"/> <span id="timer_h">00</span>：<span id="timer_m">00</span>：<span id="timer_s">00</span></h4></li>
+					<li><h4><img src="app/core/styles/images/icons/Watches.png" style="width:1.3em;"/> <span id="timer_h">00</span>：<span id="timer_m">00</span>：<span id="timer_s">00</span></h4></li>
 				</ul>
 			</div>
 			<div class="span2">
@@ -222,7 +240,15 @@
 $(document).ready(function(){
 	$.get('index.php?exam-app-index-ajax-lefttime&rand'+Math.random(),function(data){
 		var setting = {
+			{x2;if:$data['currentbasic']['basicexam']['opentime']['start'] && $data['currentbasic']['basicexam']['opentime']['end']}
+			{x2;if:$data['currentbasic']['basicexam']['opentime']['end']-300 <= ($sessionvars['examsessiontime'] * 60 + $sessionvars['examsessionstarttime'])}
+			time:{x2;eval: echo intval(($data['currentbasic']['basicexam']['opentime']['end']- 300 - $sessionvars['examsessionstarttime'])/60)},
+			{x2;else}
 			time:{x2;$sessionvars['examsessiontime']},
+			{x2;endif}
+			{x2;else}
+			time:{x2;$sessionvars['examsessiontime']},
+			{x2;endif}
 			hbox:$("#timer_h"),
 			mbox:$("#timer_m"),
 			sbox:$("#timer_s"),

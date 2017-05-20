@@ -22,7 +22,7 @@ class app
 		{
 			if($this->ev->get('userhash'))
 			exit(json_encode(array(
-				'statusCode' => 300,
+				'statusCode' => 301,
 				"message" => "请您重新登录",
 			    "callbackType" => 'forward',
 			    "forwardUrl" => "index.php?user-app-login"
@@ -77,7 +77,7 @@ class app
 			if(!$oid)exit(header("location:index.php?user-center"));
 			$order = $this->order->getOrderById($oid);
 			$alipay = $this->G->make('alipay');
-			$payforurl = $alipay->outPayForUrl($order,WP.'index.php?user-api-alipaynotify',WP.'index.php?user-api-alipayreturn');
+			$payforurl = $alipay->outPayForUrl($order,WP.'index.php?route=user-api-alipaynotify',WP.'index.php?route=user-api-alipayreturn');
 			$this->tpl->assign('payforurl',$payforurl);
 			$this->tpl->assign('order',$order);
 			$this->tpl->display('payfor_detail');

@@ -2,12 +2,12 @@
 <body>
 {x2;include:nav}
 <div class="row-fluid">
-	<div class="container examcontent">
+	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
 			<div class="examform">
 				<ul class="breadcrumb">
 					<li>
-						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
 					</li>
 					<li>
 						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
@@ -40,7 +40,7 @@
 							{x2;if:$data['currentbasic']['basicexam']['examnumber'] > 0 && $number['all'] >= $data['currentbasic']['basicexam']['examnumber']}
 							<div class="span4 text-center"><a class="btn" href="javascript:;">您的考试次数已经用完</a></div>
 							{x2;else}
-							<div class="span4 text-center"><a class="ajax btn btn-primary" href="index.php?exam-app-exam-selectquestions&examid={x2;v:exam['examid']}">开始考试</a></div>
+							<div class="span4 text-center"><a class="ajax btn btn-primary" href="index.php?exam-app-exam-selectquestions&examid={x2;v:exam['examid']}" action-before="clearStorage">开始考试</a></div>
 							{x2;endif}
 							<div class="span4"></div>
 						</div>
@@ -55,7 +55,7 @@
 											{x2;if:$data['currentbasic']['basicexam']['examnumber'] > 0 && $number['child'][v:exam['examid']] >= $data['currentbasic']['basicexam']['examnumber']}
 											<a class="btn" href="javascript:;" title="考试次数已经用完">{x2;substring:v:exam['exam'],28}</a>
 											{x2;else}
-											<a class="ajax btn btn-primary" href="index.php?exam-app-exam-selectquestions&examid={x2;v:exam['examid']}" title="{x2;v:exam['exam']}">{x2;substring:v:exam['exam'],28}</a>
+											<a class="ajax btn btn-primary" href="index.php?exam-app-exam-selectquestions&examid={x2;v:exam['examid']}" title="{x2;v:exam['exam']}" action-before="clearStorage">{x2;substring:v:exam['exam'],28}</a>
 											{x2;endif}
 										</p>
 									</div>
@@ -63,6 +63,9 @@
 							</li>
 							{x2;endtree}
 						</ul>
+						<div class="pagination pagination-right">
+				            <ul>{x2;$exams['pages']}</ul>
+				        </div>
 						{x2;endif}
 					{x2;else}
 						<p class="alert">本考场开放考试时间为：{x2;date:$data['currentbasic']['basicexam']['opentime']['start'],'Y-m-d H:i:s'} - {x2;date:$data['currentbasic']['basicexam']['opentime']['end'],'Y-m-d H:i:s'}，目前不是考试时间，请在规定时间内前来考试哦。</p>
@@ -74,7 +77,7 @@
 					{x2;if:$data['currentbasic']['basicexam']['examnumber'] > 0 && $number['all'] >= $data['currentbasic']['basicexam']['examnumber']}
 					<div class="span4 text-center"><a class="btn" href="javascript:;">您的考试次数已经用完</a></div>
 					{x2;else}
-					<div class="span4 text-center"><a class="ajax btn btn-primary" href="index.php?exam-app-exam-selectquestions&examid={x2;v:exam['examid']}">开始考试</a></div>
+					<div class="span4 text-center"><a class="ajax btn btn-primary" href="index.php?exam-app-exam-selectquestions&examid={x2;v:exam['examid']}" action-before="clearStorage">开始考试</a></div>
 					{x2;endif}
 					<div class="span4"></div>
 				</div>
@@ -89,13 +92,16 @@
 									{x2;if:$data['currentbasic']['basicexam']['examnumber'] > 0 && $number['child'][v:exam['examid']] >= $data['currentbasic']['basicexam']['examnumber']}
 									<a class="btn" href="javascript:;" title="考试次数已经用完">{x2;substring:v:exam['exam'],28}</a>
 									{x2;else}
-									<a class="ajax btn btn-primary" href="index.php?exam-app-exam-selectquestions&examid={x2;v:exam['examid']}" title="{x2;v:exam['exam']}">{x2;substring:v:exam['exam'],28}</a>
+									<a class="ajax btn btn-primary" href="index.php?exam-app-exam-selectquestions&examid={x2;v:exam['examid']}" title="{x2;v:exam['exam']}" action-before="clearStorage">{x2;substring:v:exam['exam'],28}</a>
 									{x2;endif}
 								</p>
 							</div>
 						</div>
 					</li>
 					{x2;endtree}
+					<div class="pagination pagination-right">
+			            <ul>{x2;$exams['pages']}</ul>
+			        </div>
 				</ul>
 				{x2;endif}
 				{x2;endif}

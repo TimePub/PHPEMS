@@ -3,7 +3,7 @@
 						<tr>
 							<td class="form-inline">
 								录入时间：
-								<input type="text" name="search[stime]" size="9" class="input-small datepicker" data-date="{x2;date:TIME,'Y-m-d'}" data-date-format="yyyy-mm-dd" id="stime" value="{x2;$search['stime']}"/> - <input class="input-small datepicker" data-date="{x2;date:TIME,'Y-m-d'}" data-date-format="yyyy-mm-dd" size="9" type="text" name="search[etime]" id="etime" value="{x2;$search['etime']}"/>
+								<input type="text" name="search[stime]" size="9" class="input-small datetimepicker" data-date="{x2;date:TIME,'Y-m-d'}" data-date-format="yyyy-mm-dd" id="stime" value="{x2;$search['stime']}"/> - <input class="input-small datetimepicker" data-date="{x2;date:TIME,'Y-m-d'}" data-date-format="yyyy-mm-dd" size="9" type="text" name="search[etime]" id="etime" value="{x2;$search['etime']}"/>
 								关键字：
 								<input name="search[keyword]" class="input-small" size="8" type="text" value="{x2;$search['keyword']}"/>
 							</td>

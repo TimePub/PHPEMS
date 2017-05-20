@@ -1,15 +1,14 @@
 {x2;include:header}
 <body>
-<script src="app/exam/styles/js/plugin.js"></script>
 {x2;include:nav}
 <div class="row-fluid">
-	<div class="container examcontent">
+	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
 			<div class="examform" style="position:relative;">
 				<div class="scoreArea">{x2;$sessionvars['examsessionscore']}</div>
 				<ul class="breadcrumb">
 					<li>
-						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
 					</li>
 					<li>
 						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
@@ -36,7 +35,7 @@
 	                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest['questid']],question,qnid}
 	                {x2;eval: v:tid++}
 	                <div id="question_{x2;v:question['questionid']}" class="paperexamcontent decidediv">
-						{x2;if:$sessionvars['examsessionscorelist'][v:question['questionid']] && $sessionvars['examsessionscorelist'][v:question['questionid']] == $sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['score']}<div class="right"></div>{x2;else}<div class="wrong"></div>{x2;endif}
+						{x2;if:$sessionvars['examsessionscorelist'][v:question['questionid']] && $sessionvars['examsessionscorelist'][v:question['questionid']] == 1}<div class="right"></div>{x2;else}<div class="wrong"></div>{x2;endif}
 						<div class="media well">
 							<ul class="nav nav-tabs">
 								<li class="active">
@@ -86,7 +85,7 @@
 							</div>
 							{x2;tree:v:questionrow['data'],data,did}
 							<div class="paperexamcontent decidediv">
-								{x2;if:$sessionvars['examsessionscorelist'][v:data['questionid']] && $sessionvars['examsessionscorelist'][v:data['questionid']] == $sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['score']}<div class="right"></div>{x2;else}<div class="wrong"></div>{x2;endif}
+								{x2;if:$sessionvars['examsessionscorelist'][v:data['questionid']] && $sessionvars['examsessionscorelist'][v:data['questionid']] == 1}<div class="right"></div>{x2;else}<div class="wrong"></div>{x2;endif}
 								<ul class="nav nav-tabs">
 									<li class="active">
 										<span class="badge questionindex">{x2;v:did}</span></a>

@@ -17,11 +17,12 @@ class category
 		$this->db = $this->G->make('db');
 		$this->pg = $this->G->make('pg');
 		$this->ev = $this->G->make('ev');
+		$this->app = $this->G->app;
 	}
 
 	public function addCategory($args)
 	{
-		if(!$args['catapp'])$args['catapp'] = $this->G->app;
+		if(!$args['catapp'])$args['catapp'] = $this->app;
 		if(is_array($args['catmanager']))
 		$args['catmanager'] = $this->ev->addSlashes(serialize($args['catmanager']));
 		return $this->db->insertElement(array('table' => 'category','query' => $args));
@@ -37,9 +38,9 @@ class category
 	public function getCategoryList($args,$page,$number = 20)
 	{
 		if(is_array($args))
-		$args[] = "catapp = '".$this->G->app."'";
+		$args[] = "catapp = '".$this->app."'";
 		else
-		$args = array($args,"catapp = '".$this->G->app."'");
+		$args = array($args,"catapp = '".$this->app."'");
 		$data = array(
 			'select' => false,
 			'table' => 'category',
@@ -54,13 +55,13 @@ class category
 	public function getCategoriesByArgs($args)
 	{
 		if(is_array($args))
-		$args[] = "catapp = '".$this->G->app."'";
+		$args[] = "catapp = '".$this->app."'";
 		else
 		{
 			$p = $args;
 			$args = array();
 			$args[] = $p;
-			$args[] = "catapp = '".$this->G->app."'";
+			$args[] = "catapp = '".$this->app."'";
 		}
 		$data = array(false,'category',$args,false,"catlite DESC,catid DESC",false);
 		$sql = $this->sql->makeSelect($data);
@@ -69,7 +70,7 @@ class category
 
 	public function delCategory($id)
 	{
-		return $this->db->delElement(array('table' => 'category','query' => array("catid = '{$id}'","catapp = '".$this->G->app."'")));
+		return $this->db->delElement(array('table' => 'category','query' => array("catid = '{$id}'","catapp = '".$this->app."'")));
 	}
 
 	public function modifyCategory($id,$args)
@@ -90,7 +91,7 @@ class category
 	{
 		if($this->categories === NULL)
 		{
-			$data = array(false,'category',"catapp = '".$this->G->app."'",false,"catlite DESC,catid DESC",false);
+			$data = array(false,'category',"catapp = '".$this->app."'",false,"catlite DESC,catid DESC",false);
 			$sql = $this->sql->makeSelect($data);
 			$this->categories = $this->db->fetchAll($sql,'catid','catmanager');
 			$this->tidyCategory();

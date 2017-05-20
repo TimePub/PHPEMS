@@ -16,7 +16,6 @@ class app
 		$this->_user = $this->session->getSessionUser();
 		$_user = $this->session->getSessionUser();
 		$group = $this->user->getGroupById($_user['sessiongroupid']);
-		/**
 		if(!$_user['sessionuserid'])
 		{
 			if($this->ev->get('userhash'))
@@ -32,7 +31,6 @@ class app
 				exit;
 			}
 		}
-		**/
 	}
 
 	public function index()

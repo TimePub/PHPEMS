@@ -2,12 +2,12 @@
 <body>
 {x2;include:nav}
 <div class="row-fluid">
-	<div class="container examcontent">
+	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
 			<div class="examform">
 				<ul class="breadcrumb">
 					<li>
-						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
 					</li>
 					<li>
 						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
@@ -51,12 +51,12 @@
 					<tr>
 						<td>{x2;v:exam['ehexam']}</td>
 						<td>{x2;date:v:exam['ehstarttime'],'Y-m-d'}</td>
-						<td>{x2;v:exam['ehtime']}分钟</td>
+						<td>{x2;if:v:exam['ehtime'] >= 60}{x2;if:v:exam['ehtime']%60}{x2;eval: echo intval(v:exam['ehtime']/60)+1}{x2;else}{x2;eval: echo intval(v:exam['ehtime']/60)}{x2;endif}分钟{x2;else}{x2;v:exam['ehtime']}秒{x2;endif}</td>
                         <td><b class="red">{x2;if:!v:exam['ehstatus'] && v:exam['ehdecide']}评分中{x2;else}{x2;v:exam['ehscore']}{x2;endif}</b></td>
 						<td><b class="red">{x2;v:exam['errornumber']}</b></td>
 						<td><a href="index.php?exam-app-record-wrongs&ehid={x2;v:exam['ehid']}">查看错题</a></td>
 						<td><a href="index.php?exam-app-history-view&ehid={x2;v:exam['ehid']}">试题解析</a></td>
-						<td><a class="ajax" href="index.php?exam-app-history-redo&ehid={x2;v:exam['ehid']}">重做试卷</a></td>
+						<td><a class="ajax" href="index.php?exam-app-history-redo&ehid={x2;v:exam['ehid']}" action-before="clearStorage">重做试卷</a></td>
 						<td>
 							{x2;if:$ehtype != 2}
 							<a href="javascript:;" onclick="javascript:delhistory({x2;v:exam['ehid']})">删除</a>

@@ -58,7 +58,7 @@ class app
 				$defaultgroup = $this->user->getDefaultGroup();
 				$pass = md5(rand(1000,9999));
 				$id = $this->user->insertUser(array('username' => $username,'usergroupid' => $defaultgroup['groupid'],'userpassword' => md5($pass),'useremail' => $useremail));
-				$this->session->setSessionUser(array('sessionuserid'=>$id,'sessionpassword'=>md5($pass),'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>8,'sessionlogintime'=>TIME,'sessionusername'=>$username));
+				$this->session->setSessionUser(array('sessionuserid'=>$id,'sessionpassword'=>md5($pass),'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>$defaultgroup,'sessionlogintime'=>TIME,'sessionusername'=>$username));
 			}
 			else
 			{

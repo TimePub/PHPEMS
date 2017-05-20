@@ -32,7 +32,11 @@ class ev
 	//解析url
 	public function parseUrl()
 	{
-		if(isset($_SERVER['QUERY_STRING']))
+		if(isset($_REQUEST['route']))
+		{
+			return explode('-',$_REQUEST['route']);
+		}
+		elseif(isset($_SERVER['QUERY_STRING']))
 		{
 			$tmp = explode('#',$_SERVER['QUERY_STRING'],2);
 			$tp = explode('&',$tmp[0],2);

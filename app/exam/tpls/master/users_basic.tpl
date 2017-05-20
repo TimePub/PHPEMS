@@ -22,7 +22,7 @@
 					<a href="index.php?{x2;$_app}-master-users">开通课程</a>
 				</li>
 			</ul>
-	        <form action="index.php?exam-master-users-basics" method="post" class="form-inline">
+	        <form action="index.php?exam-master-users-basics&userid={x2;$userid}" method="post" class="form-inline">
 				<table class="table">
 					<thead>
 						<tr>
@@ -75,7 +75,6 @@
 						<td>
 							<button class="btn btn-primary" type="submit">搜索</button>
 							<input type="hidden" value="1" name="search[argsmodel]" />
-							<input type="hidden" value="{x2;$userid}" name="userid" />
 						</td>
 						<td></td>
 					</tr>
@@ -88,7 +87,7 @@
 				        <th>考场名称</th>
 				        <th>考场地区</th>
 				        <th>考试科目</th>
-				        <th>状态</th>
+				        <th>到期时间</th>
 				        <th>操作</th>
 	                </tr>
 	            </thead>
@@ -108,7 +107,7 @@
 							{x2;$subjects[v:basic['basicsubjectid']]['subject']}
 						</td>
 						<td>
-							{x2;if:$openbasics[v:basic['basicid']]}已开启{x2;else}未开启{x2;endif}
+							{x2;if:$openbasics[v:basic['basicid']]}{x2;date:$openbasics[v:basic['basicid']]['obendtime'],'Y-m-d'}{x2;else}未开启{x2;endif}
 						</td>
 						<td>
 							{x2;if:$openbasics[v:basic['basicid']]}<a class="ajax btn" title="关闭考场" href="index.php?exam-master-users-closebasics&userid={x2;$userid}&basicid={x2;v:basic['basicid']}"><em class="icon-minus-sign"></em></a>{x2;else}<a class="ajax btn" href="index.php?exam-master-users-openbasics&userid={x2;$userid}&basicid={x2;v:basic['basicid']}" title="开启考场"><em class="icon-plus-sign"></em></a>{x2;endif}

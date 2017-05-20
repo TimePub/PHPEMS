@@ -361,6 +361,18 @@ class tpl
     	return $this->compileContentTpl($content);
     }
 
+    public function fetchExeCnt($file)
+    {
+    	$source = 'app/'.$this->dir.$file.'.tpl';
+    	$content = $this->compileTpl($source);
+    	ob_start();
+    	eval(' ?>'.$source.'<?php ');
+    	$cachecontent = ob_get_contents();
+    	ob_flush();
+    	ob_clean();
+    	return $cachecontent;
+    }
+
     //展示模板
     public function display($file,$par=NULL,$cachename = NULL)
     {

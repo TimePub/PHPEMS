@@ -2,7 +2,7 @@
 <body>
 {x2;include:nav}
 <div class="row-fluid">
-	<div class="container examcontent">
+	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
 			<div class="examform">
 				<ul class="thumbnails">

@@ -166,8 +166,11 @@ class session
     }
 
     //清除超时用户
-    public function clearOutTimeUser()
+    public function clearOutTimeUser($time)
     {
+    	if($time)
+    	$date = $time;
+    	else
     	$date = TIME-24*3600;
     	$data = array('session',"sessionlogintime < '{$date}'");
     	$sql = $this->sql->makeDelete($data);

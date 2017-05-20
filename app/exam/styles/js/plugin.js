@@ -10,9 +10,14 @@ function set(k,v){
 	}
 }
 
-function submitPaper()
+function clearStorage()
 {
 	storage.removeItem('questions');
+}
+
+function submitPaper()
+{
+	clearStorage();
 	$('#submodal').modal('hide');
 	$('#form1').submit();
 }
@@ -54,6 +59,15 @@ function saveanswer(){
 function markQuestion(rel,isTextArea)
 {
 	var t = 0;
+	var f = false;
+	try
+	{
+		f = $('#form1 :input[rel='+rel+']');
+	}catch(e)
+	{
+		f = false;
+	}
+	if(!f)return false;
 	if(isTextArea)
 	{
 		if($('#form1 :input[rel='+rel+']').val() && $('#form1 :input[rel='+rel+']').val() != '' && $('#form1 :input[rel='+rel+']').val() != '<p></p>')t++;
@@ -68,6 +82,12 @@ function markQuestion(rel,isTextArea)
 	{
 		$('#sign_'+rel).removeClass("badge-info");
 	}
+	$('.yesdonumber').html($('#modal-body .badge-info').length);
+}
+
+function _markQuestion(rel)
+{
+	if(!$('#sign_'+rel).hasClass("badge-info"))$('#sign_'+rel).addClass("badge-info");
 	$('.yesdonumber').html($('#modal-body .badge-info').length);
 }
 

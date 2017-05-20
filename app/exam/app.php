@@ -66,6 +66,14 @@ class app
 		$this->tpl->assign('globalknows',$this->section->getAllKnowsBySubject($this->data['currentbasic']['basicsubjectid']));
 		$this->tpl->assign('_user',$this->user->getUserById($this->_user['sessionuserid']));
 		$this->tpl->assign('userhash',$this->ev->get('userhash'));
+		if($this->data['currentbasic']['basicexam']['model'])
+		{
+			if($this->ev->url('2') && !in_array($this->ev->url('2'),array('index','basics','exam','recover')))
+			{
+				header("location:index.php?exam-app-exam");
+				exit;
+			}
+		}
 	}
 
 	public function basics()
@@ -256,9 +264,112 @@ class app
 		else
 		$message = array(
 			'statusCode' => 300,
-			"message" => "回复失败，考试已经结束"
+			"message" => "恢复失败，考试已经结束"
 		);
 		$this->G->R($message);
+	}
+
+	public function lesson()
+	{
+		$action = $this->ev->url(3);
+		$page = $this->ev->get('page');
+		switch($action)
+		{
+			case 'ajax':
+			switch($this->ev->url(4))
+			{
+				case 'questions':
+				$number = $this->ev->get('number');
+				if(!$number)$number = 1;
+				$questid = $this->ev->getCookie('questype');
+				$knowsid = $this->ev->getCookie('knowsid');
+				$questions = $this->question->getRandQuestionListByKnowid($knowsid,$questid);
+				$allnumber = $this->exam->getQuestionNumberByQuestypeAndKnowsid($questid,$knowsid);
+				if($number > ($qunumber = count($questions)))
+				{
+					$qrs = $this->question->getRandQuestionRowsListByKnowid($knowsid,$questid);
+					if($number < $allnumber)
+					{
+						$question =  $this->exam->getQuestionRowsByArgs("qrid = ".$qrs[0]);
+					}
+					else
+					{
+						$message = array(
+							'statusCode' => 300,
+							"message" => "您已经做完所有的题了"
+						);
+						$this->G->R($message);
+					}
+				}
+				else
+				$question = $this->exam->getQuestionByArgs("questionid = ".$questions[intval($number - 1)]);
+				$questype = $this->basic->getQuestypeById($questid);
+				$this->tpl->assign('question',$question);
+				$this->tpl->assign('questype',$questype);
+				$this->tpl->assign('number',$number);
+				$this->tpl->display('lesson_ajaxquestion');
+				break;
+
+				case 'setlesson':
+				$questype = intval($this->ev->get('questype'));
+				$knowsid = intval($this->ev->get('knowsid'));
+				if($questype && $knowsid)
+				{
+					$this->ev->setCookie('questype',$questype);
+					$this->ev->setCookie('knowsid',$knowsid);
+					$this->ev->setCookie('questionid',0);
+					$message = array(
+						'statusCode' => 200,
+						"message" => "操作成功",
+					    "callbackType" => 'forward',
+					    "forwardUrl" => "index.php?exam-app-lesson-paper"
+					);
+				}
+				else
+				{
+					$message = array(
+						'statusCode' => 300,
+						"message" => "非法参数"
+					);
+				}
+				$this->G->R($message);
+				break;
+			}
+			break;
+
+			case 'paper':
+			$questid = $this->ev->getCookie('questype');
+			$knowsid = $this->ev->getCookie('knowsid');
+			$questype = $this->basic->getQuestypeById($questid);
+			$knows = $this->section->getKnowsByArgs("knowsid = '{$knowsid}'");
+			$this->tpl->assign('knows',$knows);
+			$this->tpl->assign('questype',$questype);
+			$this->tpl->display('lesson_paper');
+			break;
+
+			case 'lessonnumber':
+			$questype = $this->basic->getQuestypeList();
+			$knowids = intval($this->ev->get('knowsid'));
+			$numbers = array();
+			foreach($questype as $p)
+			{
+				$numbers[$p['questid']] = intval(ceil($this->exam->getQuestionNumberByQuestypeAndKnowsid($p['questid'],$knowids)));
+			}
+			$this->tpl->assign('knows',$this->section->getKnowsByArgs("knowsid = '{$knowids}'"));
+			$this->tpl->assign('numbers',$numbers);
+			$this->tpl->assign('questype',$questype);
+			$this->tpl->display('lesson_number');
+			break;
+
+			default:
+			$basic = $this->data['currentbasic'];
+			$knows = $this->section->getAllKnowsBySubject($basic['basicsubjectid']);
+			$sections = $this->section->getSectionListByArgs("sectionsubjectid = '{$basic['basicsubjectid']}'");
+			$this->tpl->assign('basic',$basic);
+			$this->tpl->assign('sections',$sections);
+			$this->tpl->assign('knows',$knows);
+			$this->tpl->display('lesson');
+		}
 	}
 
 	//首页
@@ -458,10 +569,9 @@ class app
 
 			//计算主观题分数和显示分数
 			case 'makescore':
-			$questype = $this->basic->getQuestypeList();
-			$sessionvars = $this->exam->getExamSessionBySessionid();
 			if($this->ev->get('makescore'))
-			{
+			{				$questype = $this->basic->getQuestypeList();
+				$sessionvars = $this->exam->getExamSessionBySessionid();
 				$score = $this->ev->get('score');
 				$sumscore = 0;
 				if(is_array($score))
@@ -481,13 +591,10 @@ class app
 				$args['examsessionscore'] = floatval(($sessionvars['examsessionscore']*100)/$allnumber);
 				$args['examsessionstatus'] = 2;
 				$this->exam->modifyExamSession($args);
-				if(!$sessionvars['examsessionissave'])
-				{
-					$this->favor->addExamHistory();
-				}
+				$ehid = $this->favor->addExamHistory();
 				if($this->ev->get('direct'))
 				{
-					header("location:index.php?exam-app-exercise-makescore");
+					header("location:index.php?exam-app-exercise-makescore&ehid={$ehid}");
 					exit;
 				}
 				else
@@ -496,17 +603,28 @@ class app
 						'statusCode' => 200,
 						"message" => "操作成功",
 					    "callbackType" => 'forward',
-					    "forwardUrl" => "index.php?exam-app-exercise-makescore"
+					    "forwardUrl" => "index.php?exam-app-exercise-makescore&ehid={$ehid}"
 					);
 					$this->G->R($message);
 				}
 			}
 			else
 			{
-				if(!$sessionvars['examsessionissave'])
-				{
-					$this->favor->addExamHistory();
-				}
+				$ehid = $this->ev->get('ehid');
+				$eh = $this->favor->getExamHistoryById($ehid);
+				$sessionvars = array(
+					'examsession' => $eh['ehexam'],
+					'examsessiontype'=> $eh['ehtype'] == 2?1:$eh['ehtype'],
+					'examsessionsetting'=> $eh['ehsetting'],
+					'examsessionbasic'=> $eh['ehbasicid'],
+					'examsessionquestion'=> $eh['ehquestion'],
+					'examsessionuseranswer'=>$eh['ehanswer'],
+					'examsessiontime'=> $eh['ehtime'],
+					'examsessionscorelist'=> $eh['ehscorelist'],
+					'examsessionscore'=>$eh['ehscore'],
+					'examsessionstarttime'=>$eh['ehstarttime']
+				);
+
 				$questype = $this->basic->getQuestypeList();
 				$number = array();
 				$right = array();
@@ -550,6 +668,7 @@ class app
 						}
 					}
 				}
+				$this->tpl->assign('ehid',$ehid);
 				$this->tpl->assign('questype',$questype);
 				$this->tpl->assign('allright',$allright);
 				$this->tpl->assign('allnumber',$allnumber);
@@ -745,88 +864,6 @@ class app
 			}
 			break;
 
-			/**
-			case 'selectquestions':
-			$knowsid = $this->ev->get('knowsid');
-			$knows = $this->section->getKnowsByArgs("knowsid = '{$knowsid}'");
-			if(!$knows['knowsid'])header("location:index.php?exam-app-exercise");
-			$args = array('score'=>100,'examtime'=>60,'title'=>date('Y-m-d').$knows['knows']."知识点强化训练");
-			$args['knowsid'] = $knowsid;
-			$sessionvars = $this->exam->getExamSessionBySessionid();
-			$questype = $this->basic->getQuestypeList();
-			foreach($questype as $p)
-			{
-				$args['number'][$p['questid']] = rand(5,10);
-			}
-			arsort($args['number']);
-			$dt = key($args['number']);
-			$questionids = $this->question->selectQuestionsByKnows($args['knowsid'],$args['number'],$dt);
-			$questions = array();
-			$questionrows = array();
-			foreach($questionids['question'] as $key => $p)
-			{
-				$ids = "";
-				if(count($p))
-				{
-					foreach($p as $t)
-					{
-						$ids .= $t.',';
-					}
-					$ids = trim($ids," ,");
-					if(!$ids)$ids = 0;
-					$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$ids})");
-				}
-			}
-			foreach($questionids['questionrow'] as $key => $p)
-			{
-				$ids = "";
-				if(is_array($p))
-				{
-					if(count($p))
-					{
-						foreach($p as $t)
-						{
-							$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
-						}
-					}
-				}
-				else $questionrows[$key][$p] = $this->exam->getQuestionRowsByArgs("qrid = '{$p}'");
-			}
-			$sargs['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questionids'=>$questionids,'questions'=>$questions,'questionrows'=>$questionrows)));
-			$sargs['examsessionsetting'] = $this->ev->addSlashes(serialize(array('examsetting' => $args)));
-			$sargs['examsessionstarttime'] = TIME;
-			$sargs['examsessionuseranswer'] = NULL;
-			$sargs['examsession'] = $args['title'];
-			$sargs['examsessiontime'] = $args['examtime']>0?$args['examtime']:60;
-			$sargs['examsessionstatus'] = 0;
-			$sargs['examsessiontype'] = 0;
-			$sargs['examsessionbasic'] = $this->data['currentbasic']['basicid'];
-			$sargs['examsessionkey'] = md5($args['knowsid']);
-			$sargs['examsessionissave'] = 0;
-			$sargs['examsessionsign'] = NULL;
-			$sargs['examsessionscore'] = 0;
-			$sargs['examsessionscorelist'] = '';
-			if($sessionvars['examsessionid'])
-			$this->exam->modifyExamSession($sargs);
-			else
-			$this->exam->insertExamSession($sargs);
-			header("location:index.php?exam-app-exercise-paper");
-			break;
-
-			//强化训练考试页面
-			default:
-			$sectionids = trim(implode(",",$this->data['currentbasic']['basicsection']),", ");
-			$sections = $this->section->getSectionListByArgs("sectionid IN ({$sectionids})");
-			$knows = array();
-			foreach($this->data['currentbasic']['basicsection'] as $p)
-			{
-				$knowsids = trim(implode(",",$this->data['currentbasic']['basicknows'][$p]),", ");
-				$knows[$p] = $this->section->getKnowsListByArgs(array("knowsid IN ({$knowsids})","knowsstatus = 1"));
-			}
-			$this->tpl->assign('sections',$sections);
-			$this->tpl->assign('knows',$knows);
-			$this->tpl->display('exercise');
-			**/
 			default:
 			$questype = $this->basic->getQuestypeList();
 			if($this->ev->get('setExecriseConfig'))
@@ -847,6 +884,19 @@ class app
 					$args['knowsid'] = trim($args['knowsid']," ,");
 				}
 				arsort($args['number']);
+				$snumber = 0;
+				foreach($args['number'] as $key => $v)
+				{
+					$snumber += $v;
+					if($snumber > 100)
+					{
+						$message = array(
+							'statusCode' => 300,
+							"message" => "强化练习最多一次只能抽取100道题"
+						);
+						$this->G->R($message);
+					}
+				}
 				$dt = key($args['number']);
 				$questionids = $this->question->selectQuestionsByKnows($args['knowsid'],$args['number'],$dt);
 				$questions = array();
@@ -862,7 +912,7 @@ class app
 						}
 						$ids = trim($ids," ,");
 						if(!$ids)$ids = 0;
-						$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$ids})");
+						$questions[$key] = $this->exam->getQuestionListByIds($ids);
 					}
 				}
 				foreach($questionids['questionrow'] as $key => $p)
@@ -874,7 +924,7 @@ class app
 						{
 							foreach($p as $t)
 							{
-								$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
+								$questionrows[$key][$t] = $this->exam->getQuestionRowsById($t);
 							}
 						}
 					}
@@ -1029,11 +1079,11 @@ class app
 				$this->exam->modifyExamSession($args);
 				if(!$sessionvars['examsessionissave'])
 				{
-					$this->favor->addExamHistory();
+					$id = $this->favor->addExamHistory();
 				}
 				if($this->ev->get('direct'))
 				{
-					header("location:index.php?exam-app-exampaper-makescore");
+					header("location:index.php?exam-app-exampaper-makescore&ehid={$id}");
 					exit;
 				}
 				else
@@ -1042,13 +1092,27 @@ class app
 						'statusCode' => 200,
 						"message" => "操作成功",
 					    "callbackType" => 'forward',
-					    "forwardUrl" => "index.php?exam-app-exampaper-makescore"
+					    "forwardUrl" => "index.php?exam-app-exampaper-makescore&ehid={$id}"
 					);
 					$this->G->R($message);
 				}
 			}
 			else
 			{
+				$ehid = $this->ev->get('ehid');
+				$eh = $this->favor->getExamHistoryById($ehid);
+				$sessionvars = array(
+					'examsession' => $eh['ehexam'],
+					'examsessiontype'=> $eh['ehtype'] == 2?1:$eh['ehtype'],
+					'examsessionsetting'=> $eh['ehsetting'],
+					'examsessionbasic'=> $eh['ehbasicid'],
+					'examsessionquestion'=> $eh['ehquestion'],
+					'examsessionuseranswer'=>$eh['ehanswer'],
+					'examsessiontime'=> $eh['ehtime'],
+					'examsessionscorelist'=> $eh['ehscorelist'],
+					'examsessionscore'=>$eh['ehscore'],
+					'examsessionstarttime'=>$eh['ehstarttime']
+				);
 				$number = array();
 				$right = array();
 				$score = array();
@@ -1091,6 +1155,7 @@ class app
 						}
 					}
 				}
+				$this->tpl->assign('ehid',$ehid);
 				$this->tpl->assign('allright',$allright);
 				$this->tpl->assign('allnumber',$allnumber);
 				$this->tpl->assign('right',$right);
@@ -1238,7 +1303,7 @@ class app
 					{
 						$args['examsessionstatus'] = 2;
 						$this->exam->modifyExamSession($args);
-						$this->favor->addExamHistory(0);
+						$id = $this->favor->addExamHistory(0);
 						$message = array(
 							'statusCode' => 200,
 							"message" => "操作成功，本试卷需要教师评分，请等待评分结果",
@@ -1298,6 +1363,9 @@ class app
 				$this->tpl->assign('sessionvars',$sessionvars);
 				$this->tpl->assign('lefttime',$lefttime);
 				$this->tpl->assign('donumber',is_array($sessionvars['examsessionuseranswer'])?count($sessionvars['examsessionuseranswer']):0);
+				if($this->data['currentbasic']['basicexam']['autotemplate'])
+				$this->tpl->display($this->data['currentbasic']['basicexam']['autotemplate']);
+				else
 				$this->tpl->display('exampaper_paper');
 			}
 			break;
@@ -1321,6 +1389,7 @@ class app
 					$questionids = $this->question->selectQuestions($examid,$this->data['currentbasic']);
 					$questions = array();
 					$questionrows = array();
+					$str = '';
 					foreach($questionids['question'] as $key => $p)
 					{
 						$ids = "";
@@ -1331,8 +1400,9 @@ class app
 								$ids .= $t.',';
 							}
 							$ids = trim($ids," ,");
+							$str .= $ids."\n";
 							if(!$ids)$ids = 0;
-							$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$ids})");
+							$questions[$key] = $this->exam->getQuestionListByIds($ids);
 						}
 					}
 					foreach($questionids['questionrow'] as $key => $p)
@@ -1344,11 +1414,11 @@ class app
 							{
 								foreach($p as $t)
 								{
-									$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
+									$questionrows[$key][$t] = $this->exam->getQuestionRowsById($t);
 								}
 							}
 						}
-						else $questionrows[$key][$p] = $this->exam->getQuestionRowsByArgs("qrid = '{$p}'");
+						else $questionrows[$key][$p] = $this->exam->getQuestionRowsById($p);
 					}
 					$sargs['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questionids'=>$questionids,'questions'=>$questions,'questionrows'=>$questionrows)));
 					$sargs['examsessionsetting'] = $this->ev->addSlashes(serialize($questionids['setting']));
@@ -1386,14 +1456,16 @@ class app
 						$qrids = '';
 						if($p['questions'])$qids = trim($p['questions']," ,");
 						if($qids)
-						$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$qids})");
+						$questions[$key] = $this->exam->getQuestionListByIds($qids);
 						if($p['rowsquestions'])$qrids = trim($p['rowsquestions']," ,");
 						if($qrids)
 						{
 							$qrids = explode(",",$qrids);
 							foreach($qrids as $t)
 							{
-								$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
+								$qr = $this->exam->getQuestionRowsById($t);
+								if($qr)
+								$questionrows[$key][$t] = $qr;
 							}
 						}
 					}
@@ -1462,19 +1534,14 @@ class app
 				case 'getexamlefttime':
 				$sessionvars = $this->exam->getExamSessionBySessionid();
 				$lefttime = 0;
-				if($sessionvars['examsessionstatus'] == 0 && $sessionvars['examsessiontype'] == 1)
-				{
-					if(TIME > ($sessionvars['examsessionstarttime'] + $sessionvars['examsessiontime']*60))
-					{
-						$lefttime = $sessionvars['examsessiontime']*60;
-					}
-					else
-					{
-						$lefttime = TIME - $sessionvars['examsessionstarttime'];
-					}
-				}
-				echo $lefttime;
-				exit();
+				$sessionvars = $this->exam->getExamSessionBySessionid();
+				if($this->data['currentbasic']['basicexam']['opentime']['start'] && $this->data['currentbasic']['basicexam']['opentime']['end'])
+				$t = $this->data['currentbasic']['basicexam']['opentime']['end']-300;
+				else
+				$t = TIME;
+				$lefttime = $t - $sessionvars['examsessionstarttime'];
+				if($lefttime < 0 )$lefttime = 0;
+				exit("{$lefttime}");
 				break;
 
 				case 'saveUserAnswer':
@@ -1535,11 +1602,11 @@ class app
 				$this->exam->modifyExamSession($args);
 				if(!$sessionvars['examsessionissave'])
 				{
-					$this->favor->addExamHistory();
+					$id = $this->favor->addExamHistory();
 				}
 				if($this->ev->get('direct'))
 				{
-					header("location:index.php?exam-app-exam-makescore");
+					header("location:index.php?exam-app-exam-makescore&ehid={$id}");
 					exit;
 				}
 				else
@@ -1548,13 +1615,27 @@ class app
 						'statusCode' => 200,
 						"message" => "操作成功",
 					    "callbackType" => 'forward',
-					    "forwardUrl" => "index.php?exam-app-exam-makescore"
+					    "forwardUrl" => "index.php?exam-app-exam-makescore&ehid={$id}"
 					);
 					$this->G->R($message);
 				}
 			}
 			else
 			{
+				$ehid = $this->ev->get('ehid');
+				$eh = $this->favor->getExamHistoryById($ehid);
+				$sessionvars = array(
+					'examsession' => $eh['ehexam'],
+					'examsessiontype'=> $eh['ehtype'] == 2?1:$eh['ehtype'],
+					'examsessionsetting'=> $eh['ehsetting'],
+					'examsessionbasic'=> $eh['ehbasicid'],
+					'examsessionquestion'=> $eh['ehquestion'],
+					'examsessionuseranswer'=>$eh['ehanswer'],
+					'examsessiontime'=> $eh['ehtime'],
+					'examsessionscorelist'=> $eh['ehscorelist'],
+					'examsessionscore'=>$eh['ehscore'],
+					'examsessionstarttime'=>$eh['ehstarttime']
+				);
 				$number = array();
 				$right = array();
 				$score = array();
@@ -1597,6 +1678,7 @@ class app
 						}
 					}
 				}
+				$this->tpl->assign('ehid',$ehid);
 				$this->tpl->assign('allright',$allright);
 				$this->tpl->assign('allnumber',$allnumber);
 				$this->tpl->assign('right',$right);
@@ -1745,7 +1827,7 @@ class app
 					{
 						$args['examsessionstatus'] = 2;
 						$this->exam->modifyExamSession($args);
-						$this->favor->addExamHistory(0);
+						$id = $this->favor->addExamHistory(0);
 						$message = array(
 							'statusCode' => 200,
 							"message" => "操作成功，本试卷需要教师评分，请等待评分结果",
@@ -1805,20 +1887,12 @@ class app
 				$this->tpl->assign('sessionvars',$sessionvars);
 				$this->tpl->assign('lefttime',$lefttime);
 				$this->tpl->assign('donumber',is_array($sessionvars['examsessionuseranswer'])?count($sessionvars['examsessionuseranswer']):0);
+				if($this->data['currentbasic']['basicexam']['selftemplate'])
+				$this->tpl->display($this->data['currentbasic']['basicexam']['selftemplate']);
+				else
 				$this->tpl->display('exam_paper');
 			}
 			break;
-
-			//试题列表
-			/**
-			case 'sign':
-			$sessionvars = $this->exam->getExamSessionBySessionid();
-			$questype = $this->basic->getQuestypeList();
-			$this->tpl->assign('questype',$questype);
-			$this->tpl->assign('sessionvars',$sessionvars);
-			$this->tpl->display('exam_sign');
-			break;
-			**/
 
 			case 'selectquestions':
 			$sessionvars = $this->exam->getExamSessionBySessionid();
@@ -1857,7 +1931,7 @@ class app
 							}
 							$ids = trim($ids," ,");
 							if(!$ids)$ids = 0;
-							$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$ids})");
+							$questions[$key] = $this->exam->getQuestionListByIds($ids);
 						}
 					}
 					foreach($questionids['questionrow'] as $key => $p)
@@ -1869,11 +1943,11 @@ class app
 							{
 								foreach($p as $t)
 								{
-									$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
+									$questionrows[$key][$t] = $this->exam->getQuestionRowsById($t);
 								}
 							}
 						}
-						else $questionrows[$key][$p] = $this->exam->getQuestionRowsByArgs("qrid = '{$p}'");
+						else $questionrows[$key][$p] = $this->exam->getQuestionRowsById($p);
 					}
 					$sargs['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questionids'=>$questionids,'questions'=>$questions,'questionrows'=>$questionrows)));
 					$sargs['examsessionsetting'] = $this->ev->addSlashes(serialize($questionids['setting']));
@@ -1911,17 +1985,26 @@ class app
 						$qrids = '';
 						if($p['questions'])$qids = trim($p['questions']," ,");
 						if($qids)
-						$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$qids})");
+						$questions[$key] = $this->exam->getQuestionListByIds($qids);
 						if($p['rowsquestions'])$qrids = trim($p['rowsquestions']," ,");
 						if($qrids)
 						{
 							$qrids = explode(",",$qrids);
 							foreach($qrids as $t)
 							{
-								$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
+								$qr = $this->exam->getQuestionRowsById($t);
+								if($qr)
+								$questionrows[$key][$t] = $qr;
 							}
 						}
 					}
+					/**
+					$questype = $this->basic->getQuestypeList();
+					foreach($questype as $k)
+					{
+
+					}
+					**/
 					$args['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questions'=>$questions,'questionrows'=>$questionrows)));
 					$args['examsessionsetting'] = $this->ev->addSlashes(serialize($r));
 					$args['examsessionstarttime'] = TIME;
@@ -2294,18 +2377,46 @@ class app
 					foreach($questions['questions'] as $nkey => $q)
 					{
 						if(is_array($q))
-						foreach($q as $qid => $t)
-						if($p['ehtype'] == 0)
 						{
-							if($scorelist[$qid] != 1)$exams['data'][$key]['errornumber']++;
+							foreach($q as $qid => $t)
+							{
+								if($p['ehtype'] == 0)
+								{
+									if($scorelist[$qid] != 1)$exams['data'][$key]['errornumber']++;
+								}
+								elseif($p['ehtype'] == 1)
+								{
+									if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+								}
+								else
+								{
+									if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+								}
+							}
 						}
-						elseif($p['ehtype'] == 1)
+					}
+					foreach($questions['questionrows'] as $nkey => $qt)
+					{
+						foreach($qt as $qtid => $q)
 						{
-							if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
-						}
-						else
-						{
-							if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+							if(is_array($q))
+							{
+								foreach($q['data'] as $qid => $t)
+								{
+									if($p['ehtype'] == 0)
+									{
+										if($scorelist[$qid] != 1)$exams['data'][$key]['errornumber']++;
+									}
+									elseif($p['ehtype'] == 1)
+									{
+										if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+									}
+									else
+									{
+										if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+									}
+								}
+							}
 						}
 					}
 				}

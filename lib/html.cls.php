@@ -226,7 +226,7 @@ class html
 	    	$id = 'form'.$name;
 	    	if(!$value)$value = 'app/core/styles/images/noimage.gif';
     	}
-    	$str = "<div class=\"thumbuper pull-left\"><div class=\"thumbnail\"><a href=\"javascript:;\" class=\"second label\"><em class=\"uploadbutton\" id=\"{$id}\" exectype=\"thumb\"></em></a><div class=\"first\" id=\"{$id}_percent\"></div><div class=\"boot\"><img src=\"{$value}\" id=\"{$id}_view\"/><input type=\"hidden\" name=\"{$name}\" value=\"\" id=\"{$id}_value\"/></div></div></div>";
+    	$str = "<div class=\"thumbuper pull-left\"><div class=\"thumbnail\"><a href=\"javascript:;\" class=\"second label\"><em class=\"uploadbutton\" id=\"{$id}\" exectype=\"thumb\"></em></a><a href=\"javascript:;\" onclick=\"javascript:$('#{$id}_view').attr('src','app/core/styles/images/noimage.gif');$('#{$id}_value').val('');\" class=\"second2 label\" title=\"重置\"><em class=\"icon-remove\"></em></a><div class=\"first\" id=\"{$id}_percent\"></div><div class=\"boot\"><img src=\"{$value}\" id=\"{$id}_view\"/><input type=\"hidden\" name=\"{$name}\" value=\"{$value}\" id=\"{$id}_value\"/></div></div></div>";
     	return $str;
     }
 

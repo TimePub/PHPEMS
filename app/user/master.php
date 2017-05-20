@@ -86,6 +86,25 @@ class app
 			exit(json_encode($message));
 			break;
 
+			case 'batdel':
+			if($this->ev->get('action') == 'delete')
+			{
+				$page = $this->ev->get('page');
+				$delids = $this->ev->get('delids');
+				foreach($delids as $userid)
+				$this->user->delUserById($userid);
+				$message = array(
+					'statusCode' => 200,
+					"message" => "操作成功",
+				    "navTabId" => "",
+				    "rel" => "",
+				    "callbackType" => "forward",
+				    "forwardUrl" => "index.php?user-master-user&page={$page}{$u}"
+				);
+				exit(json_encode($message));
+			}
+			break;
+
 			case 'modify':
 			$page = $this->ev->get('page');
 			$search = $this->ev->get('search');
@@ -291,14 +310,23 @@ class app
 					$u .= "&search[{$key}]={$arg}";
 				}
 			}
+			if($search['userid'])$args = array("userid = '{$search['userid']}'");
+			elseif($search['username'])$args = array("username LIKE '%{$search['username']}%'");
+			elseif($search['useremail'])$args = array("useremail  LIKE '%{$search['useremail']}%'");
+			elseif($search['groupid'])$args = array("usergroupid = '{$search['groupid']}'");
+			else
 			$args = 1;
-			if($search['groupid'] || $search['username'])
+			if($search['stime'] || $search['etime'])
 			{
-				$args = array();
-				if($search['groupid'])
-				$args[] = "usergroupid = '{$search['groupid']}'";
-				if($search['username'])
-				$args[] = "username LIKE '%{$search['username']}%'";
+				if(!is_array($args))$args = array();
+				if($search['stime']){
+					$stime = strtotime($search['stime']);
+					$args[] = "userregtime >= '{$stime}'";
+				}
+				if($search['etime']){
+					$etime = strtotime($search['etime']);
+					$args[] = "userregtime <= '{$etime}'";
+				}
 			}
 			$users = $this->user->getUserList($page,10,$args);
 			$this->tpl->assign('users',$users);

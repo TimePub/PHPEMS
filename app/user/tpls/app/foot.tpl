@@ -1,5 +1,5 @@
 <div class="row-fluid">
-	<div class="container logfooter">
+	<div class="container-fluid logfooter">
 		<ul class="inline unstyled">
 			<li><a href="http://phpems.net">网站首页</a></li>
 			<li>|</li>

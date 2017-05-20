@@ -29,8 +29,9 @@
 	                    <th>考生用户名</th>
 	                    <th>分数</th>
 				        <th>考试名称</th>
-				        <th>考试时间</th>
+				        <th>考试用时</th>
 				        <th>组卷类型</th>
+				        <th>操作</th>
 	                </tr>
 	            </thead>
 	            <tbody>
@@ -49,11 +50,12 @@
 							{x2;v:exam['ehexam']}
 						</td>
 						<td>
-							{x2;date:v:exam['ehstarttime'],'Y-m-d'}
+							{x2;v:exam['ehtime']}分钟
 						</td>
 						<td>
 							{x2;if:v:exam['ehtype'] == 1}随机组卷{x2;else}手工组卷{x2;endif}
 						</td>
+						<td><a class="btn btn-primary" href="index.php?exam-teach-users-readpaper&ehid={x2;v:exam['ehid']}" target="_blank">阅卷</a>&nbsp;<a class="btn btn-primary hide" href="index.php?exam-teach-users-changescore&ehid={x2;v:exam['ehid']}" target="_blank">纠分</a></td>
 			        </tr>
 			        {x2;endtree}
 	        	</tbody>

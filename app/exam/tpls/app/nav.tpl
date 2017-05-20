@@ -1,7 +1,6 @@
 <div class="row-fluid top">
-	<div class="container">
-		<div class="span1"><a name="top"></a><h1><img src="app/user/styles/img/theme/logo.png" /></h1></div>
-		<div class="span6"><h2>模拟考试系统</h2></div>
+	<div class="container-fluid">
+		<div class="span7"><a name="top"></a><h2><img src="app/user/styles/img/theme/logo.png" /> 模拟考试系统</h2></div>
 		<div class="span5">
 			<ul class="unstyled" id="userNav">
 				<li>

@@ -63,20 +63,58 @@
 			  			<input type="text" name="args[examsetting][passscore]" value="" size="4" needle="needle" msg="你要为本考卷设置一个及格分数线" datatype="number"/>
 					</div>
 				</div>
-				{x2;tree:$questypes,questype,qid}
 				<div class="control-group">
-					<label class="control-label" for="content">{x2;v:questype['questype']}：</label>
-					<div class="controls">
-						<span class="info">共&nbsp;</span>
-						<input id="iselectallnumber_{x2;v:questype['questid']}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:questype['questid']}][number]" value="" size="2" msg="您必须填写总题数"/>
-						<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][score]" value="" size="2" msg="您必须填写每题的分值"/>
-						<span class="info">&nbsp;分，描述&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][describe]" value="" size="12"/>
-						<span class="info">&nbsp;难度题数：易&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][easynumber]" value="0" size="2" msg="您需要填写简单题的数量，最小为0"/>
-  						<span class="info">&nbsp;中&nbsp;</span><input class="input-mini" type="text" needle="needle" name="args[examsetting][questype][{x2;v:questype['questid']}][middlenumber]" value="0" size="2" msg="您需要填写中等难度题的数量，最小为0"/>
-  						<span class="info">&nbsp;难&nbsp;</span><input class="input-mini" type="text" needle="needle" name="args[examsetting][questype][{x2;v:questype['questid']}][hardnumber]" value="0" size="2" datatype="number" msg="您需要填写难题的数量，最小为0"/>
+			        <label class="control-label">题量配比模式：</label>
+		          	<div class="controls">
+						<label class="radio inline">
+			          		<input type="radio" class="input-text" name="args[examsetting][scalemodel]" value="1" onchange="javascript:$('#sptype').show();$('#normaltype').hide();"/> 开启
+			          	</label>
+			          	<label class="checkbox inline">
+			          		<input type="radio" class="input-text" name="args[examsetting][scalemodel]" value="0" onchange="javascript:$('#sptype').hide();$('#normaltype').show();" checked/> 关闭
+			          	</label>
+			       </div>
+			    </div>
+			    <div id="sptype" class="hide">
+				    <div class="control-group">
+				        <label class="control-label">题量配比：</label>
+			          	<div class="controls">
+				          	<label class="radio inline">题量配比模式关闭时，此设置不生效。题量配比操作繁琐，请尽量熟悉后再行操作。</label>
+				       </div>
+				    </div>
+				    {x2;tree:$questypes,questype,qid}
+					<div class="control-group">
+						<label class="control-label" for="content">{x2;v:questype['questype']}：</label>
+						<div class="controls">
+							<span class="info">共&nbsp;</span>
+							<input id="iselectallnumber_{x2;v:questype['questid']}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:questype['questid']}][number]" value="" size="2" msg="您必须填写总题数"/>
+							<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][score]" value="" size="2" msg="您必须填写每题的分值"/>
+							<span class="info">&nbsp;分，描述&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][describe]" value="" size="12"/>
+						</div>
 					</div>
+					<div class="control-group">
+						<label class="control-label" for="content">配比率：</label>
+						<div class="controls">
+							<textarea class="input-xxlarge" rows="7" cols="4" name="args[examsetting][examscale][{x2;v:questype['questid']}]"></textarea>
+						</div>
+					</div>
+					{x2;endtree}
 				</div>
-				{x2;endtree}
+				<div id="normaltype">
+					{x2;tree:$questypes,questype,qid}
+					<div class="control-group">
+						<label class="control-label" for="content">{x2;v:questype['questype']}：</label>
+						<div class="controls">
+							<span class="info">共&nbsp;</span>
+							<input id="iselectallnumber_{x2;v:questype['questid']}" type="text" class="input-mini" needle="needle" name="args[examsetting][questype][{x2;v:questype['questid']}][number]" value="" size="2" msg="您必须填写总题数"/>
+							<span class="info">&nbsp;题，每题&nbsp;</span><input class="input-mini" needle="needle" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][score]" value="" size="2" msg="您必须填写每题的分值"/>
+							<span class="info">&nbsp;分，描述&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][describe]" value="" size="12"/>
+							<span class="info">&nbsp;难度题数：易&nbsp;</span><input class="input-mini" type="text" name="args[examsetting][questype][{x2;v:questype['questid']}][easynumber]" value="0" size="2" msg="您需要填写简单题的数量，最小为0"/>
+	  						<span class="info">&nbsp;中&nbsp;</span><input class="input-mini" type="text" needle="needle" name="args[examsetting][questype][{x2;v:questype['questid']}][middlenumber]" value="0" size="2" msg="您需要填写中等难度题的数量，最小为0"/>
+	  						<span class="info">&nbsp;难&nbsp;</span><input class="input-mini" type="text" needle="needle" name="args[examsetting][questype][{x2;v:questype['questid']}][hardnumber]" value="0" size="2" datatype="number" msg="您需要填写难题的数量，最小为0"/>
+						</div>
+					</div>
+					{x2;endtree}
+				</div>
 				<div class="control-group">
 					<div class="controls">
 						<button class="btn btn-primary" type="submit">提交</button>

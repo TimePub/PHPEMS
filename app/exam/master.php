@@ -39,7 +39,7 @@ class app
 		$this->area = $this->G->make('area','exam');
 		$this->section = $this->G->make('section','exam');
 		$this->exam = $this->G->make('exam','exam');
-		$this->answer = $this->G->make('answer','exam');
+		$this->favor = $this->G->make('favor','exam');
 		$this->tpl->assign('action',$this->ev->url(2)?$this->ev->url(2):'exams');
 		$this->tpl->assign('_user',$this->user->getUserById($this->_user['sessionuserid']));
 		$this->tpl->assign('sectionorder',array(1=>'第一章','第二章','第三章','第四章','第五章','第六章','第七章','第八章','第九章','第十章','第十一章','第十二章','第十三章','第十四章','第十五章','第十六章','第十七章','第十八章','第十九章','第二十章','第二十一章','第二十二章'));
@@ -103,7 +103,7 @@ class app
 					    "forwardUrl" => "index.php?exam-master-basic-section&subjectid={$args['sectionsubjectid']}"
 					);
 				}
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -141,7 +141,7 @@ class app
 					    "forwardUrl" => "index.php?exam-master-basic-section&subjectid={$section['sectionsubjectid']}&page={$page}"
 					);
 				}
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -167,7 +167,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-basic-section&subjectid={$section['sectionsubjectid']}&page={$page}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//知识点管理
@@ -218,7 +218,7 @@ class app
 					"message" => "操作成功！".$errmsg,
 				    "forwardUrl" => "index.php?exam-master-basic-point&sectionid={$args['knowssectionid']}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -267,7 +267,7 @@ class app
 					    "forwardUrl" => "index.php?exam-master-basic-point&sectionid={$knows['knowssectionid']}&page={$page}"
 					);
 				}
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -293,7 +293,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "reload"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//科目列表
@@ -315,7 +315,7 @@ class app
 					'statusCode' => 300,
 					"message" => "操作失败，该科目已经存在"
 					);
-					exit(json_encode($message));
+					$this->G->R($message);
 				}
 				$this->basic->addSubject($args);
 				$message = array(
@@ -324,7 +324,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-basic-subject"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -347,7 +347,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-basic-subject"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -377,7 +377,7 @@ class app
 				    "forwardUrl" => "index.php?exam-master-basic-subject"
 				);
 			}
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//题型列表
@@ -400,7 +400,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-basic-questype&page={$page}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -422,7 +422,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-basic-questype&page={$page}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -444,7 +444,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-basic-questype&page={$page}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'delarea':
@@ -456,7 +456,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-basic-area&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'modifyarea':
@@ -471,7 +471,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-basic-area&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -501,7 +501,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-basic-area&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -526,7 +526,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-basic&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//删除考试设置信息
@@ -540,7 +540,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-basic&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'modifybasic':
@@ -556,7 +556,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-basic&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -595,7 +595,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-basic&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -640,7 +640,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-basic-setexamrange&basicid={$id}&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -789,7 +789,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-questions{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'filebataddquestion':
@@ -806,7 +806,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-questions&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			$this->tpl->display('question_filebatadd');
@@ -859,7 +859,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-questions&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -889,7 +889,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-questions&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -909,7 +909,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-questions&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//批量删除问题
@@ -924,7 +924,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-questions&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 
@@ -939,7 +939,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-recyle&page={$page}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//编辑问题
@@ -970,7 +970,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-questions&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -1124,7 +1124,10 @@ class app
 				}
 			}
 			$questypes = $this->basic->getQuestypeList();
+			if($search)
 			$questions = $this->exam->getQuestionsList($page,10,$args);
+			else
+			$questions = $this->exam->getSimpleQuestionsList($page,10,array("questions.questionstatus = '1'","questionparent = 0"));
 			$subjects = $this->basic->getSubjectList();
 			$sections = $this->section->getSectionListByArgs("sectionsubjectid = '{$search['questionsubjectid']}'");
 			$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
@@ -1167,7 +1170,7 @@ class app
 					'statusCode' => 300,
 					"message" => "操作失败，请先删除子试题"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			$this->exam->delQuestionRows($questionid);
 			$message = array(
@@ -1176,7 +1179,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-rowsquestions&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//批量删除问题
@@ -1191,7 +1194,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-rowsquestions&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//删除子问题
@@ -1207,7 +1210,7 @@ class app
 				"callbackType" => "forward",
 				"forwardUrl" => "index.php?exam-master-rowsquestions-rowsdetail&questionid={$questionparent}&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//恢复被删除的问题
@@ -1221,7 +1224,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-recyle-rows&page={$page}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//编辑问题
@@ -1238,7 +1241,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-rowsquestions&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -1280,7 +1283,7 @@ class app
 					"callbackType" => "forward",
 					"forwardUrl" => "index.php?exam-master-rowsquestions-rowsdetail&questionid={$args['questionparent']}&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -1352,7 +1355,7 @@ class app
 					"callbackType" => "forward",
 					"forwardUrl" => "index.php?exam-master-rowsquestions-rowsdetail&questionid={$questionparent}&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -1379,7 +1382,7 @@ class app
 					"message" => "操作成功",
 					"forwardUrl" => "index.php?exam-master-rowsquestions-rowsdetail&questionid={$questionparent}&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -1406,7 +1409,7 @@ class app
 				"callbackType" => "forward",
 				"forwardUrl" => "index.php?exam-master-rowsquestions-rowsdetail&questionid={$questionparent}&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'bataddquestionrows':
@@ -1421,7 +1424,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-rowsquestions&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -1445,7 +1448,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-rowsquestions&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -1541,7 +1544,7 @@ class app
 					'statusCode' => 300,
 					"message" => "操作失败，所在章节下存在同名且未删除的知识点"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			$this->section->backKnows($knowsid);
 			$message = array(
@@ -1550,7 +1553,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-recyle-knows&page={$page}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'delknows':
@@ -1563,7 +1566,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-recyle-knows&page={$page}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//被删除的知识点列表
@@ -1601,7 +1604,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-recyle&page={$page}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//彻底删除问题
@@ -1616,7 +1619,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-recyle-rows&page={$page}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//被删除的试题列表
@@ -1637,21 +1640,223 @@ class app
 	public function tools()
 	{
 		$subaction = $this->ev->url(3);
+		$search = $this->ev->get('search');
+		$questypes = $this->basic->getQuestypeList();
 		switch($subaction)
 		{
-			case 'clear':
-			$this->session->clearOutTimeUser();
-			$this->exam->clearOutTimeExamSession();
+			case 'clearouttimeexamsession':
+			if($search['argsmodel'])
+			{
+				if($search['stime'])$time = strtotime($search['stime']);
+				$this->session->clearOutTimeUser($time);
+				$this->exam->clearOutTimeExamSession($time);
+				$message = array(
+					'statusCode' => 200,
+					"message" => "操作成功",
+				    "callbackType" => "forward",
+				    "forwardUrl" => "reload"
+				);
+			}
+			else
 			$message = array(
-				'statusCode' => 200,
-				"message" => "操作成功",
-			    "navTabId" => "",
-			    "rel" => ""
+				'statusCode' => 300,
+				"message" => "请先选择查询条件"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
+			break;
+
+			case 'clearsession':
+			$this->tpl->display('tools_session');
+			break;
+
+			case 'clearquestionrows':
+			if($search['argsmodel'])
+			{
+				$args = array("quest2knows.qkquestionid = questionrows.qrid");
+				if($search['questionid'])
+				{
+					$args[] = "questionrows.qrid = '{$search['questionid']}'";
+				}
+				if($search['questiontype'])
+				{
+					$args[] = "questionrows.qrtype = '{$search['questiontype']}'";
+				}
+				if($search['keyword'])
+				{
+					$args[] = "questionrows.qrquestion LIKE '%".$search['keyword']."%'";
+				}
+				if($search['stime'])
+				{
+					$args[] = "questionrows.qrtime >= '".strtotime($search['stime'])."'";
+				}
+				if($search['etime'])
+				{
+					$args[] = "questionrows.qrtime <= '".strtotime($search['etime'])."'";
+				}
+				if($search['qrlevel'])
+				{
+					$args[] = "questionrows.qrlevel = '{$search['qrlevel']}'";
+				}
+				if($search['questionknowsid'])
+				{
+					$args[] = "quest2knows.qkknowsid = '".$search['questionknowsid']."'";
+				}
+				else
+				{
+					$tmpknows = '0';
+					if($search['questionsectionid'])
+					{
+						$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
+						foreach($knows as $p)
+						{
+							if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
+						}
+						$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+					}
+					elseif($search['questionsubjectid'])
+					{
+						$knows = $this->section->getAllKnowsBySubject($search['questionsubjectid']);
+						foreach($knows as $p)
+						{
+							if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
+						}
+						$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+					}
+				}
+				$questions = $this->exam->getQuestionRowsByArgs($args,'qrid');
+				foreach($questions as $n)
+				{
+					$this->exam->finalDelQuestionRows($n['qrid']);
+				}
+				$message = array(
+					'statusCode' => 200,
+					"message" => "操作成功",
+				    "callbackType" => "forward",
+				    "forwardUrl" => "reload"
+				);
+				$this->G->R($message);
+			}
+			else
+			{
+				$message = array(
+					'statusCode' => 300,
+					"message" => "请先选择查询条件"
+				);
+				$this->G->R($message);
+			}
+			break;
+
+			case 'clearhistory':
+			if($search['argsmodel'])
+			{
+				if($search['stime'] || $search['etime'])
+				{
+					$args = array();
+					if($search['stime'])$args[] = "ehstarttime >= ".strtotime($search['stime']);
+					if($search['etime'])$args[] = "ehendtime <= ".strtotime($search['etime']);
+					$this->favor->clearExamHistory($args);
+					$message = array(
+						'statusCode' => 200,
+						"message" => "操作成功",
+					    "callbackType" => "forward",
+					    "forwardUrl" => "reload"
+					);
+					$this->G->R($message);
+				}
+				else
+				{
+					$message = array(
+						'statusCode' => 300,
+						"message" => "请先选择起止时间"
+					);
+					$this->G->R($message);
+				}
+			}
+			else
+			$this->tpl->display('tools_history');
+			break;
+
+			case 'clearquestions':
+			if($search['argsmodel'])
+			{
+				$args = array("quest2knows.qkquestionid = questions.questionid","questions.questionparent = 0","quest2knows.qktype = 0" );
+				if($search['knowsids'])
+				{
+					$args[] = "questions.questionknowsid IN (".$search['knowsids'].")";
+				}
+				if($search['stime'])
+				{
+					$args[] = "questions.questioncreatetime >= '".strtotime($search['stime'])."'";
+				}
+				if($search['etime'])
+				{
+					$args[] = "questions.questioncreatetime <= '".strtotime($search['etime'])."'";
+				}
+				if($search['questiontype'])
+				{
+					$args[] = "questions.questiontype = '".$search['questiontype']."'";
+				}
+				if($search['questionlevel'])
+				{
+					$args[] = "questions.questionlevel = '{$search['questionlevel']}'";
+				}
+				if($search['questionknowsid'])
+				{
+					$args[] = "quest2knows.qkknowsid = '".$search['questionknowsid']."'";
+				}
+				else
+				{
+					$tmpknows = '0';
+					if($search['questionsectionid'])
+					{
+						$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
+						foreach($knows as $p)
+						{
+							if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
+						}
+						$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+					}
+					elseif($search['questionsubjectid'])
+					{
+						$knows = $this->section->getAllKnowsBySubject($search['questionsubjectid']);
+						foreach($knows as $p)
+						{
+							if($p['knowsid'])$tmpknows .= ','.$p['knowsid'];
+						}
+						$args[] = "quest2knows.qkknowsid IN ({$tmpknows})";
+					}
+				}
+				$questions = $this->exam->getQuestionListByArgs($args,'questionid');
+				foreach($questions as $n)
+				{
+					$this->exam->fanalDelQuestions($n['questionid']);
+				}
+				$message = array(
+					'statusCode' => 200,
+					"message" => "操作成功",
+				    "callbackType" => "forward",
+				    "forwardUrl" => "reload"
+				);
+				$this->G->R($message);
+			}
+			else
+			{
+				$message = array(
+					'statusCode' => 300,
+					"message" => "请先选择查询条件"
+				);
+				$this->G->R($message);
+			}
 			break;
 
 			default:
+			$subjects = $this->basic->getSubjectList();
+			$sections = $this->section->getSectionListByArgs("sectionsubjectid = '{$search['questionsubjectid']}'");
+			$knows = $this->section->getKnowsListByArgs(array("knowsstatus = 1","knowssectionid = '{$search['questionsectionid']}'"));
+			$this->tpl->assign('subjects',$subjects);
+			$this->tpl->assign('sections',$sections);
+			$this->tpl->assign('knows',$knows);
+			$this->tpl->assign('questypes',$questypes);
 			$this->tpl->display('tools');
 			break;
 		}
@@ -1686,7 +1891,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-exams&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'ajax':
@@ -1718,7 +1923,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-exams&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'autopage':
@@ -1735,7 +1940,7 @@ class app
 					"message" => "操作成功",
 				    "forwardUrl" => "index.php?exam-master-exams&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -1763,7 +1968,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-exams-examself&examid={$id}&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -1935,7 +2140,7 @@ class app
 					"callbackType" => "forward",
 				    "forwardUrl" => "index.php?exam-master-exams&page={$page}{$u}"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -2043,7 +2248,7 @@ class app
 				    "forwardUrl" => "index.php?exam-master-users-basics&userid={$userid}{$u}"
 				);
 			}
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'closebasics':
@@ -2057,7 +2262,78 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-master-users-basics&userid={$ob['obuserid']}&page={$page}{$u}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
+			break;
+
+			case 'batopen':
+			if($this->ev->get('batopen'))
+			{
+				$userids = $this->ev->get('userids');
+				$usernames = $this->ev->get('usernames');
+				$usergroupids = $this->ev->get('usergroupids');
+				$basics = $this->ev->get('basics');
+				$days = $this->ev->get('days');
+				if($userids && $basics && $days)
+				{
+					$userids = explode(",",$userids);
+					$basics = explode(",",$basics);
+					foreach($userids as $userid)
+					{
+						foreach($basics as $basicid)
+						{
+							$this->basic->openBasic(array('obuserid'=>$userid,'obbasicid'=>$basicid,'obendtime' => TIME + $days*24*3600));
+						}
+					}
+					$message = array(
+						'statusCode' => 200,
+						"message" => "操作成功"
+					);
+				}
+				elseif($usernames && $basics && $days)
+				{
+					$usernames = implode("','",array_unique(explode(",",$usernames)));
+					$basics = explode(",",$basics);
+					$userids = $this->user->getUsersByArgs("username IN ('{$usernames}')");
+					foreach($userids as $user)
+					{
+						foreach($basics as $basicid)
+						{
+							$this->basic->openBasic(array('obuserid'=>$user['userid'],'obbasicid'=>$basicid,'obendtime' => TIME + $days*24*3600));
+						}
+					}
+					$message = array(
+						'statusCode' => 200,
+						"message" => "操作成功"
+					);
+				}
+				elseif($usergroupids && $basics && $days)
+				{
+					$usergroupids = implode(",",array_unique(explode(",",$usergroupids)));
+					$basics = explode(",",$basics);
+					$userids = $this->user->getUsersByArgs("usergroupid IN ({$usergroupids})");
+					foreach($userids as $user)
+					{
+						foreach($basics as $basicid)
+						{
+							$this->basic->openBasic(array('obuserid'=>$user['userid'],'obbasicid'=>$basicid,'obendtime' => TIME + $days*24*3600));
+						}
+					}
+					$message = array(
+						'statusCode' => 200,
+						"message" => "操作成功"
+					);
+				}
+				else
+				{
+					$message = array(
+						'statusCode' => 300,
+						"message" => "参数错误"
+					);
+				}
+				$this->G->R($message);
+			}
+			else
+			$this->tpl->display('user_batopen');
 			break;
 
 			default:

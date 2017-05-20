@@ -1,15 +1,12 @@
 {x2;include:header}
 <body>
 <div class="row-fluid top">
-	<div class="container">
-		<div class="span1"><h1><img src="app/user/styles/img/theme/logo.png" /></h1></div>
-		<div class="span6"><h2>模拟考试系统</h2></div>
-		<div class="span5">
-		</div>
+	<div class="container-fluid">
+		<div class="span12"><h2><img src="app/user/styles/img/theme/logo.png" /> 模拟考试系统</h2></div>
 	</div>
 </div>
 <div class="row-fluid">
-	<div class="container logcontent">
+	<div class="container-fluid logcontent">
 		<div class="logbox">
 			<form class="form-horizontal logform" method="post" action="index.php?user-app-register">
 				<fieldset>

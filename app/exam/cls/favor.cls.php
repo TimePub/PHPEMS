@@ -207,6 +207,15 @@ class favor_exam
 		return true;
 	}
 
+	//批量清理考试记录
+	public function clearExamHistory($args)
+	{
+		$data = array("examhistory",$args);
+		$sql = $this->sql->makeDelete($data);
+		$this->db->exec($sql);
+		return true;
+	}
+
 	//获取记录数量
 	public function getExamHistoryNumber($userid,$basicid,$type = 0)
 	{
@@ -232,10 +241,10 @@ class favor_exam
 	public function addExamHistory($status = 1)
 	{
 		$exam = $this->exam->getExamSessionBySessionid();
-		if($exam['examsessionissave'])return false;
-		$args['examsessionissave'] = 1;
-		$this->exam->modifyExamSession($args);
+		if(!$exam)return false;
 		$user = $this->session->getSessionUser();
+		$t = TIME - $exam['examsessionstarttime'];
+		if($t >= $exam['examsessiontime']*60)$t = $exam['examsessiontime']*60;
 		$args = array(
 					'ehtype'=>$exam['examsessiontype'],
 					'ehexam'=>$exam['examsession'],
@@ -245,7 +254,7 @@ class favor_exam
 					'ehsetting'=>$this->ev->addSlashes(serialize($exam['examsessionsetting'])),
 					'ehuseranswer'=>$this->ev->addSlashes(serialize($exam['examsessionuseranswer'])),
 					'ehstarttime'=>$exam['examsessionstarttime'],
-					'ehtime'=>$exam['examsessiontime'],
+					'ehtime'=>$t,
 					'ehscore'=>$exam['examsessionscore'],
 					'ehscorelist'=>$this->ev->addSlashes(serialize($exam['examsessionscorelist'])),
 					'ehuserid'=>$user['sessionuserid'],
@@ -256,7 +265,9 @@ class favor_exam
 		$data = array('examhistory',$args);
 		$sql = $this->sql->makeInsert($data);
 		$this->db->exec($sql);
-		return $this->db->lastInsertId();
+		$ehid = $this->db->lastInsertId();
+		$this->exam->delExamSession();
+		return $ehid;
 	}
 
 	public function getAvgScore($args)

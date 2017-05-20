@@ -2,13 +2,20 @@ String.prototype.replaceAll = function(s1,s2) {
     return this.replace(new RegExp(s1,"gm"),s2);
 }
 jQuery.extend({'zoombox':(function(){
-	var m = $("<div class=\"modal hide fade\"></div>");
+	var m = $("<div class=\"modal hide fade\" id=\"zoombox\"></div>");
 	var cnt = "";
 	return {'show':function(type,obj,url){
 			switch(type)
 			{
 				case 'confirm':
-				cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>操作确认</h5></div><div class=\"modal-body\"><p class=\"alert alert-error\">您确定要删除吗？</p></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" onclick=\"javascript:submitAjax({'url':'"+url+"'});\">确定</button><button class=\"btn\" onclick=\"javascript:$.zoombox.hide();\">取消</button></div";
+				var msg;
+				if($(obj).attr('msg') && ($(obj).attr('msg') != ""))
+				{
+					msg = $(obj).attr('msg');
+				}
+				else
+				msg = '您确定要删除吗？';
+				cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>操作确认</h5></div><div class=\"modal-body\"><p class=\"alert alert-error\">"+msg+"</p></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" onclick=\"javascript:submitAjax({'url':'"+url+"'});\">确定</button><button class=\"btn\" onclick=\"javascript:$.zoombox.hide();\">取消</button></div";
 				break;
 
 				case 'ajax':
@@ -23,10 +30,26 @@ jQuery.extend({'zoombox':(function(){
 				cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>出现错误</h5></div><div class=\"modal-body\"><p class=\"alert alert-error\">"+$(obj).attr('message')+"</p></div>";
 			}
 			m.html(cnt);
-			m.modal({"backdrop":false});
+			m.modal({});
 		},
 		'hide':function(){
 			m.modal('hide');
+			m.remove();
+		}
+	};
+})(),
+'loginbox':(function(){
+	var l = $("<div class=\"modal hide fade\" id=\"peloginbox\"></div>");
+	var lcnt = "";
+	return {'show':function(){
+			lcnt = "<div class=\"modal-header\"><button class=\"close\" type=\"button\" data-dismiss=\"modal\">×</button><h5>用户登录</h5></div><div class=\"modal-body\"><form class=\"form-horizontal\" id=\"peloginform\" action=\"index.php?user-app-login\" style=\"padding-top:20px;\"><div class=\"control-group\"><label class=\"control-label\" for=\"inputEmail\">用户名</label><div class=\"controls\"><input name=\"args[username]\" type=\"text\" needle=\"needle\" msg=\"请输入正确格式的用户名\"/></div></div><div class=\"control-group\"><label class=\"control-label\" for=\"inputPassword\">密　码</label><div class=\"controls\"><input needle=\"needle\" msg=\"请输入正确格式的密码\" name=\"args[userpassword]\" type=\"password\" /><input type=\"hidden\" value=\"1\" name=\"userlogin\"/></div></div></form></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" type=\"button\" onclick=\"javascript:$('#peloginform').submit();\">登录</button><button aria-hidden=\"true\" class=\"btn\" data-dismiss=\"modal\">取消</button></div>";
+			l.html(lcnt);
+			l.find("form").on('submit',formsubmit);
+			l.modal({});
+		},
+		'hide':function(){
+			l.modal('hide');
+			l.remove();
 		}
 	};
 })(),
@@ -656,6 +679,7 @@ function xvars(x){
 function submitAjax(parms){
 	if(!parms.query)parms.query = "";
 	parms.query += "&userhash="+Math.random();
+	if(parms['action-before'])eval(parms['action-before'])();
 	$.ajax({"url":parms.url,
 		"type":"post",
 		"data":parms.query,
@@ -692,12 +716,38 @@ function submitAjax(parms){
 									$.zoombox.hide();
 									submitAjax({'url': data.forwardUrl,'target' : parms.target});
 								}
-								else window.location.reload();
+								else $.zoombox.hide();
 							}
 						},500);
+					}else if(parseInt(data.statusCode) == 201){
+						if(data.callbackType == 'forward'){
+							if(data.forwardUrl && data.forwardUrl != '')
+							{
+								if(data.forwardUrl == 'reload')
+								window.location.reload();
+								else if(data.forwardUrl == 'back')
+								{
+									window.history.back();
+									window.location.reload();
+								}
+								else
+								window.location.href = data.forwardUrl;
+							}
+						}
+						else{
+							if(data.forwardUrl && data.forwardUrl != '')
+							{
+								$.zoombox.hide();
+								submitAjax({'url': data.forwardUrl,'target' : parms.target});
+							}
+							else window.location.reload();
+						}
 					}else if(parseInt(data.statusCode) == 300){
 						$.zoombox.show('ajax',data);
-					}else{
+					}else if(parseInt(data.statusCode) == 301){
+						$.loginbox.show();
+					}
+					else{
 						$.zoombox.show('ajax',data);
 					}
 				}
@@ -717,9 +767,10 @@ function submitAjax(parms){
 						$(":input",dom).on("blur",inputBlur);
 						$("select.autocombox",dom).on("change",autocombox);
 						$(":checkbox.checkall",dom).on("change",checkAll);
-						$('.datepicker',dom).datepicker();
+						$('.datetimepicker',dom).each(initdatepicker);
 						$(".selfmodal",dom).on("click",modalAjax);
 						$("a.confirm",dom).each(confirmDialog);
+						$(".jckeditor",dom).each(initEditor);
 					}
 				}
 				return data.statusCode;
@@ -839,7 +890,7 @@ function htmlajax(obj){
 	$(_this).attr('href','javascript:;');
 	$(_this).attr('data',href);
 	$(_this).click(function(){
-		var status = submitAjax({"url":href,"target":target});
+		var status = submitAjax({"url":href,"target":target,'action-before':$(_this).attr('action-before')});
 		return false;
 	});
 }
@@ -883,7 +934,7 @@ function formsubmit(){
 		$("input:submit",_this).attr('disabled','true');
 		$("input:submit",_this).attr('value','正在提交……');
 	};
-	submitAjax({"url":$(_this).attr('action'),"query":query,"target":target});
+	submitAjax({"url":$(_this).attr('action'),"query":query,"target":target,'action-before':$(_this).attr('action-before')});
 	return false;
 }
 
@@ -907,7 +958,7 @@ function modalAjax(){
 		c.find(":input").on("blur",inputBlur);
 		c.find("select.autocombox").on("change",autocombox);
 		c.find(":checkbox.checkall").on("change",checkAll);
-		c.find('.datepicker').datepicker();
+		c.find('.datepicker').each(initdatepicker);
 		c.find(".selfmodal").on("click",modalAjax);
 		c.find(".jckeditor").each(initEditor);
 		c.find("a.confirm").each(confirmDialog);
@@ -1002,7 +1053,13 @@ function confirmDialog(){
 	var _this = this;
 	var href = $(_this).attr('href');
 	$(_this).attr('href','javascript:;')
-	$(_this).on('click',function(){$.zoombox.show('confirm',null,href);});
+	$(_this).on('click',function(){$.zoombox.show('confirm',_this,href);});
+}
+
+function initdatepicker(){
+	var _this = this;
+	var minview = $(_this).attr('data-minview');
+	$(_this).datetimepicker({"language":'zh-CN',"autoclose": 1,"minView":$(_this).attr('data-minview')?$(_this).attr('data-minview'):2});
 }
 
 $(function(){
@@ -1011,7 +1068,7 @@ $(function(){
 	$(".randCode").on('click',function(){
 		$(this).attr('src',$(this).attr('src')+'&'+Math.random());
 	});
-	$('.datepicker').datepicker();
+	$('.datetimepicker').each(initdatepicker);
 	$(".randCode").each(function(){$(this).attr('src',$(this).attr('src')+'&'+Math.random());})
 	$('.sortable').sortable();
 	$('.sortable').disableSelection();
@@ -1025,6 +1082,7 @@ $(function(){
 	$(".selfmodal").on("click",modalAjax);
 	$("a.catool").each(function(){openmenu(this);});
 	$("a.confirm").each(confirmDialog);
+	$('a.poproom').popover();
 });
 
 function openmenu(_this){

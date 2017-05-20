@@ -19,7 +19,7 @@ class app
 		$alipay = $this->G->make('alipay');
 		$orderid = $this->ev->get('out_trade_no');
 		$order = $orderobj->getOrderById($orderid);
-		$verify_result = $alipay->alinotify();
+		$verify_result = $alipay->alireturn();
 		$this->tpl->assign('order',$order);
 		if($verify_result)
 		{

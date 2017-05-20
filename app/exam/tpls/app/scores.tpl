@@ -2,12 +2,12 @@
 <body>
 {x2;include:nav}
 <div class="row-fluid">
-	<div class="container examcontent">
+	<div class="container-fluid examcontent">
 		<div class="exambox" id="datacontent">
 			<div class="examform">
 				<ul class="breadcrumb">
 					<li>
-						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
 					</li>
 					<li>
 						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
@@ -28,6 +28,7 @@
 						<td>用户名</td>
                         <td>得分</td>
 						<td>考试时间</td>
+						<td>用时</td>
 					</tr>
 					{x2;tree:$scores['data'],score,sid}
 					<tr>
@@ -35,6 +36,7 @@
 						<td>{x2;v:score['ehusername']}</td>
 						<td>{x2;v:score['ehscore']}</td>
 						<td>{x2;date:v:score['ehstarttime'],'Y-m-d H:i:s'}</td>
+						<td>{x2;v:score['ehtime']}秒</td>
 					</tr>
 				{x2;endtree}
 				</table>

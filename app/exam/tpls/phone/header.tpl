@@ -11,13 +11,13 @@
 <link href="app/core/styles/css/bootstrap.css" rel="stylesheet">
 <link href="app/core/styles/css/moplugin.css" rel="stylesheet">
 <link href="app/user/styles/css/phone.css" rel="stylesheet" type="text/css" />
-<link href="app/core/styles/css/datepicker.css" rel="stylesheet">
+<link href="app/core/styles/css/datetimepicker.css" rel="stylesheet">
 <script type="text/javascript" src="app/core/styles/js/jquery-1.9.1.min.js"></script>
 <link rel="stylesheet" href="app/exam/styles/css/mathquill.css" type="text/css">
 <script type="text/javascript" src="app/core/styles/js/jquery-ui.js"></script>
 <script type="text/javascript" src="app/core/styles/js/jquery.json.js"></script>
 <script type="text/javascript" src="app/core/styles/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="app/core/styles/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="app/core/styles/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="app/core/styles/js/ckeditor/ckeditor.js"></script>
 <script type="text/javascript" src="app/core/styles/js/swfu/swfupload.js"></script>
 <script type="text/javascript" src="app/core/styles/js/plugin.js"></script>
