@@ -1,61 +1,64 @@
 {x2;include:header}
 <body>
 {x2;include:nav}
-<div class="row-fluid">
-	<div class="container-fluid">
-		<div class="span9 examcontent">
-			<div class="exambox">
-				<div class="examform">
-					<ul class="breadcrumb">
-						<li>
-							<span class="icon-home"></span> <a href="index.php">主页</a> <span class="divider">/</span>
-						</li>
-						{x2;tree:$catbread,cb,cbid}
-						<li><a href="index.php?content-app-category&catid={x2;v:cb['catid']}">{x2;v:cb['catname']}</a> <span class="divider">/</span></li>
-						{x2;endtree}
-						<li class="active">{x2;$cat['catname']}</li>
-					</ul>
-					<h5 class="title">{x2;$cat['catname']}</h5>
-					<ul>
-						{x2;tree:$contents['data'],content,cid}
-						<li><a href="index.php?content-app-content&contentid={x2;v:content['contentid']}">{x2;v:content['contenttitle']}</a></li>
-						{x2;if:v:cid % 5 == 0}
-						</ul>
-						<ul>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="main">
+			<div class="col-xs-2" style="margin-top:10px;">
+				<ul class="list-group">
+					{x2;tree:$catbrother,cat,cid}
+					<li class="list-group-item{x2;if:$cat['catid'] == v:cat['catid']} active{x2;endif}">
+						{x2;if:$cat['catid'] == v:cat['catid']}
+						{x2;v:cat['catname']}
+						{x2;else}
+						<a href="index.php?content-app-category&catid={x2;v:cat['catid']}">{x2;v:cat['catname']}</a>
 						{x2;endif}
-						{x2;endtree}
-					</ul>
-					<div class="pagination pagination-right">
-						<ul>{x2;$categorys['pages']}</ul>
+					</li>
+					{x2;endif}
+					{x2;if:$cat['catparent']}
+					<li class="list-group-item">
+						<a href="index.php?content-app-category&catid={x2;$cat['catparent']}">返回</a>
+					</li>
+					{x2;endif}
+				</ul>
+			</div>
+			<div class="col-xs-10">
+				<div class="box itembox" style="margin-bottom:0px;">
+					<div class="col-xs-12">
+						<ol class="breadcrumb">
+							<li><a href="index.php">首页</a></li>
+							<li><a href="index.php?content">新闻</a></li>
+						  	{x2;tree:$catbread,cb,cbid}
+							<li><a href="index.php?content-app-category&catid={x2;v:cb['catid']}">{x2;v:cb['catname']}</a> <span class="divider">/</span></li>
+							{x2;endtree}
+							<li class="active">{x2;$cat['catname']}</li>
+						</ol>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div class="span3 examcontent">
-			<div class="exambox">
-				<div class="examform">
-					<h5 class="title">分类列表</h5>
-					<ul>
-						{x2;if:$catchildren}
-						{x2;tree:$catchildren,cat,cid}
-						<li><a href="index.php?content-app-category&catid={x2;v:cat['catid']}">{x2;v:cat['catname']}</a></li>
-						{x2;endtree}
-						{x2;else}
-						{x2;tree:$catbrother,cat,cid}
-						<li><a href="index.php?content-app-category&catid={x2;v:cat['catid']}">{x2;v:cat['catname']}</a></li>
-						{x2;endtree}
-						{x2;endif}
-					</ul>
+				{x2;tree:$contents['data'],content,cid}
+				<div class="box itembox" style="padding-top:20px;">
+					<div class="col-xs-3">
+						<a href="index.php?content-app-content&contentid={x2;v:content['contentid']}" class="thumbnail pull-left">
+							<img src="{x2;v:content['contentthumb']}" alt="" width="100%">
+						</a>
+					</div>
+					<div class="col-xs-9">
+						<a href="index.php?content-app-content&contentid={x2;v:content['contentid']}"><h4 class="title">{x2;v:content['contenttitle']}</h4></a>
+						<p>{x2;v:content['contentdescribe']}</p>
+						<hr/>
+						<p>
+							<span class="pull-right">
+								<a href=""><span class="glyphicon glyphicon-time"></span> <span>{x2;date:v:content['contentinputtime'],'Y-m-d H:i:s'}</span></a>&nbsp;&nbsp;
+								<a href=""><span class="glyphicon glyphicon-heart"></span> <span>1026</span></a>
+							</span>
+						</p>
+					</div>
 				</div>
+				{x2;endtree}
 			</div>
 		</div>
 	</div>
 </div>
-{x2;include:foot}
-<script>
-$(function() {
-    $('.banner').unslider({dots: true});
-});
-</script>
+{x2;include:footer}
 </body>
 </html>

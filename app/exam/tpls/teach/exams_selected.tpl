@@ -9,12 +9,12 @@
 						<td>
 							<table>
 								<tr>
-									<td width="80"><label class="checkbox inline">{x2;if:!$show}<input type="checkbox" del="selectedq_{x2;v:question['questionid']}" rel="1" value="{x2;v:question['questionid']}" onclick="javascript:doselectquestions(this,'iselectquestions_{x2;v:question['questiontype']}','ialreadyselectnumber_{x2;v:question['questiontype']}');" checked />{x2;endif}第{x2;v:qid}题</label></td>
+									<td width="80"><label class="checkbox-inline">{x2;if:!$show}<input type="checkbox" del="selectedq_{x2;v:question['questionid']}" rel="1" value="{x2;v:question['questionid']}" onclick="javascript:doselectquestions(this,'iselectquestions_{x2;v:question['questiontype']}','ialreadyselectnumber_{x2;v:question['questiontype']}');" checked />{x2;endif}第{x2;v:qid}题</label></td>
 									<td>&nbsp;</td>
 								</tr>
 								{x2;if:v:question['questionknowsid']}
 								<tr>
-									<td>所属知识点：</td>
+									<td>知识点：</td>
 									<td>{x2;tree:v:question['questionknowsid'],know,kid}&nbsp;{x2;v:know['knows']}{x2;endtree}&nbsp;</td>
 								</tr>
 								{x2;endif}

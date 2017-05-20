@@ -67,22 +67,11 @@
 		</div>
 	</div>
 </div>
-{x2;include:foot}
+{x2;include:footer}
 <script>
 var delhistory = function(ehid)
 {
  	$.get("?exam-app-history-del&ehid="+ehid+"&rand"+Math.random(),function(data){window.location.reload();});
-}
-var confdelinfo = function(url)
-{
-	art.dialog({
-		ok: function(){delhistory(url);},
-		okval: '确定',
-		title:'删除答题记录',
-		cancel: true,
-		cancelval: '取消',
-		content: '您确定要删除这个记录吗？'
-	});
 }
 </script>
 </body>

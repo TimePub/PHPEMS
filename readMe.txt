@@ -1,18 +1,29 @@
-﻿安装步骤：
-	1.将pechina.sql用phpmyadmin导入数据库
-	2.在lib/config.inc.php文件中设置数据库参数，注意都要保存为utf8无bom形式（bom问题可能导致后台验证码不出现）
-	3.设置data目录、files/attach目录为可读写（777权限）
+﻿系统运行环境：
+php(5.2,5.3)+mysql5.0
+
+安装方法：
+1、将pe.sql用phpmyadmin导入数据库
+2、在lib/config.inc.php文件中设置数据库参数，注意都要保存为utf8无bom形式
+3、设置data目录、files/attach目录为可读写（777权限）
+4、以上3步完成后即可完成安装。
 
 前台地址：
-	域名/index.php
+域名/index.php
 后台地址：
-	域名/index.php?core-master
+域名/index.php?core-master
 
 默认管理员：
-	账户：peadmin
-	密码：peadmin
+用户名：peadmin
+密码：peadmin
 
 -------------
+
+v4.0 bulid2017.03.03
+1、全面更新软件界面，更新上传组件
+2、增加独立的手机端
+3、增加视频课程功能
+4、修复系统已知bug
+5、增加了用户单点登录和注册开关
 
 
 PHPEMS在线考试系统 3.1 更新日志：2015-12-01

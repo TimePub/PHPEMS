@@ -107,34 +107,34 @@ class ginkgo
 	//执行页面
 	public function run()
 	{
-		$ev = $this->make('ev');
 		include 'lib/config.inc.php';
+		header('P3P: CP=CAO PSA OUR');
+		header('Content-Type: text/html; charset='.HE);
+		ini_set('date.timezone','Asia/Shanghai');
+		date_default_timezone_set("Etc/GMT-8");
+		$ev = $this->make('ev');
 		$app = $ev->url(0);
 		if(!$app)$app = $this->defaultApp;
 		$this->app = $app;
 		$module = $ev->url(1);
+		$method = $ev->url(2);
 		if(!$module)$module = 'app';
-		$modulefile = 'app/'.$app.'/'.$module.'.php';
+		if(!$method)$method = 'index';
+		include 'app/'.$app.'/'.$module.'.php';
+		$modulefile = 'app/'.$app.'/controller/'.$method.'.'.$module.'.php';
 		if(!file_exists($modulefile))
 		{
 			$this->app = $app = $this->defaultApp;
-			$modulefile = 'app/'.$app.'/app.php';
+			$modulefile = 'app/'.$app.'/controller/index.'.$module.'.php';
 		}
 		if(file_exists($modulefile))
 		{
-			header('P3P: CP=CAO PSA OUR');
-			header('Content-Type: text/html; charset='.HE);
-			ini_set('date.timezone','Asia/Shanghai');
-			date_default_timezone_set("Etc/GMT-8");
 			include $modulefile;
-			$run = new app($this);
 			$tpl = $this->make('tpl');
-			$method = $ev->url(2);
-			if(!method_exists($run,$method))
-			$method = 'index';
 			$tpl->assign('_app',$app);
 			$tpl->assign('method',$method);
-			$run->$method();
+			$run = new action($this);
+			$run->display();
 		}
 		else die('error:Unknown app to load, the app is '.$app);
 	}

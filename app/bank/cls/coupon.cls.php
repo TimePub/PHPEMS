@@ -29,6 +29,11 @@ class coupon_bank
 		return $this->db->listElements($page,$number,$data);
 	}
 
+	public function clearOutTimeCoupon()
+	{
+		return $this->db->delElement(array('table' => 'coupon','query' => array(array("AND","couponendtime <= :couponendtime",'couponendtime',TIME))));
+	}
+
 	public function delCoupon($id)
 	{
 		return $this->db->delElement(array('table' => 'coupon','query' => array(array("AND","couponsn = :couponsn",'couponsn',$id))));

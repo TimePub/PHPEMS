@@ -10,11 +10,22 @@
  	public $G;
  	private $queryid = 0;
 	private $linkid = 0;
+	private $log = 0;
 
     public function __construct(&$G)
     {
     	$this->G = $G;
     	$this->sql = $this->G->make('pdosql');
+    }
+
+    private function _log($sql,$query)
+    {
+    	if($this->log)
+    	{
+    		$fp = fopen('data/error.log','a');
+			fputs($fp,print_r($sql,true).print_r($query->errorInfo(),true));
+			fclose($fp);
+    	}
     }
 
     public function connect($host = DH,$dbuser = DU,$password = DP,$dbname = DB,$dbcode = HE)
@@ -51,9 +62,7 @@
     	if(!$this->linkid)$this->connect();
     	$query = $this->linkid->prepare($sql['sql']);
     	$rs = $query->execute($sql['v']);
-    	$fp = fopen('data/error.log','a');
-		fputs($fp,print_r($sql,true).print_r($query->errorInfo(),true));
-		fclose($fp);
+    	$this->_log($sql,$query);
 		if ($rs) {
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			//return $query->fetchAll();
@@ -90,11 +99,7 @@
     	if(!$this->linkid)$this->connect();
     	$query = $this->linkid->prepare($sql['sql']);
     	$rs = $query->execute($sql['v']);
-    	//以下3行为调试代码，不需要可删除，其他勿删
-    	$fp = fopen('data/error.log','a');
-		fputs($fp,print_r($sql,true).print_r($query->errorInfo(),true));
-		fclose($fp);
-		//以上3行为调试代码，不需要可删除，其他勿删
+    	$this->_log($sql,$query);
     	if ($rs) {
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			$tmp = $query->fetch();
@@ -135,9 +140,7 @@
     	else
     	$query = $this->linkid->prepare($sql['sql']);
     	$rs = $query->execute($sql['v']);
-    	$fp = fopen('data/error.log','a');
-		fputs($fp,print_r($sql,true).print_r($query->errorInfo(),true));
-		fclose($fp);
+		$this->_log($sql,$query);
 		$this->affectedRows = $rs;
     	return $rs;
     }

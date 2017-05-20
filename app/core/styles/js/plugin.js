@@ -1,9 +1,9 @@
 String.prototype.replaceAll = function(s1,s2) {
     return this.replace(new RegExp(s1,"gm"),s2);
 }
-function ddd(){alert('ddd');}
 jQuery.extend({'zoombox':(function(){
-	var m = $("<div class=\"modal hide fade\" id=\"zoombox\"></div>");
+	$('#zoombox').remove();
+	var m = $("<div class=\"modal fade\" id=\"zoombox\"></div>");
 	return {'show':function(type,obj,url){
 			switch(type)
 			{
@@ -15,45 +15,47 @@ jQuery.extend({'zoombox':(function(){
 				}
 				else
 				msg = '您确定要删除吗？';
-				var cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>操作确认</h5></div><div class=\"modal-body\"><p class=\"text-error\">"+msg+"</p></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" onclick=\"javascript:submitAjax({'url':'"+url+"'});\">确定</button><button class=\"btn\" onclick=\"javascript:$.zoombox.hide();\">取消</button></div";
+				var cnt = "<div class=\"modal-dialog\" role=\"document\" style=\"width:550px;\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\" autocomplete=\"off\"><span aria-hidden=\"true\">×</span></button><h4 class=\"modal-title\" id=\"myModalLabel\">操作确认</h4></div><div class=\"modal-body\"><p class=\"text-danger\" style=\"font-size:1.2em;\">"+msg+"</p></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" onclick=\"javascript:submitAjax({'url':'"+url+"'});\">确定</button><button class=\"btn\" onclick=\"javascript:$.zoombox.hide();\">取消</button></div></div></div>";
+				m.html(cnt);
+				m.modal({'backdrop':false});
 				break;
 
 				case 'ajax':
-				var cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>出现错误</h5></div><div class=\"modal-body\"><p class=\"text-error\">"+obj.message+"</p></div>";
+				var cnt = "<div class=\"modal-dialog\" role=\"document\" style=\"width:650px;\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>出现错误</h5></div><div class=\"modal-body\"><p class=\"alert text-danger\">"+obj.message+"</p></div></div></div>";
+				var cnt = "<div class=\"modal-dialog\" role=\"document\" style=\"width:650px;margin-top:160px;\"><div class=\"modal-content\"><div class=\"modal-header\" style=\"border:0px;\"><h4 class=\"text-danger\"><em class=\"glyphicon glyphicon-remove-sign\" style=\"font-size:2em;vertical-align: middle;margin-left:25px;\"></em>&nbsp;&nbsp;"+$(obj).attr('message')+"<button type=\"button\" class=\"close pull-right\" data-dismiss=\"modal\" aria-hidden=\"true\" style=\"font-size:2em;\">×</button></h4></div><div class=\"modal-body hide\"><p class=\"alert text-danger\">"+$(obj).attr('message')+"</p></div></div></div>";
+				m.html(cnt);
+				m.modal({'backdrop':false});
 				break;
 
 				case 'ajaxOK':
-				var cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>操作成功</h5></div><div class=\"modal-body\"><p class=\"text-success\">"+obj.message+"</p></div>";
+				var cnt = "<div class=\"modal-dialog\" role=\"document\" style=\"width:650px;\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>操作成功</h5></div><div class=\"modal-body\"><p class=\"alert text-success\">"+obj.message+"</p></div></div></div>";
+				var cnt = "<div class=\"modal-dialog\" role=\"document\" style=\"width:650px;margin-top:160px;\"\"><div class=\"modal-content\"><div class=\"modal-header\" style=\"border:0px;\"><h5 class=\"text-success\"><em class=\"glyphicon glyphicon-ok-sign\" style=\"font-size:2em;vertical-align: middle;margin-left:25px;\"></em>&nbsp;&nbsp;"+$(obj).attr('message')+"<button type=\"button\" class=\"close pull-right\" data-dismiss=\"modal\" aria-hidden=\"true\" style=\"font-size:2em;\">×</button></h5></div><div class=\"modal-body hide\"><p class=\"alert text-danger\">"+$(obj).attr('message')+"</p></div></div></div>";
+				m.html(cnt);
+				m.modal({'backdrop':false});
 				break;
 
 				default:
-				var cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>出现错误</h5></div><div class=\"modal-body\"><p class=\"text-error\">"+$(obj).attr('message')+"</p></div>";
+				var cnt = "<div class=\"modal-dialog\" role=\"document\" style=\"width:650px;\"><div class=\"modal-content\"><div class=\"modal-header\" style=\"border:0px;\"><h5>出现错误<button type=\"button\" class=\"close pull-right\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button></h5></div><div class=\"modal-body hide\"><p class=\"alert text-danger\">4444"+$(obj).attr('message')+"</p></div></div></div>";
+				m.html(cnt);
+				m.modal({'backdrop':true});
 			}
-			m.html(cnt);
-			m.modal();
 		},
 		'hide':function(){
 			m.modal('hide');
 			m.remove();
+			$('body').removeClass('modal-open');
+			$('body').css('padding-right','0px');
 		}
 	};
 })(),
 'loginbox':(function(){
-	var l = $("<div class=\"modal hide fade\" id=\"peloginbox\"></div>");
+	var l = $("<div class=\"modal fade\" id=\"peloginbox\"></div>");
 	var lcnt = "";
 	return {'show':function(){
-			/**
-			if(Fingerprint)
-			{
-				var fp = new Fingerprint();
-				$.getScript('index.php?core-api-finger&unreload=1&finger='+fp.get());
-				fp = null;
-			}
-			**/
-			lcnt = "<div class=\"modal-header\"><button class=\"close\" type=\"button\" data-dismiss=\"modal\">×</button><h5>用户登录</h5></div><div class=\"modal-body\"><form class=\"form-horizontal\" id=\"peloginform\" action=\"index.php?user-app-login\" style=\"padding-top:20px;\"><div class=\"control-group\"><label class=\"control-label\" for=\"inputEmail\">用户名</label><div class=\"controls\"><input name=\"args[username]\" type=\"text\" needle=\"needle\" msg=\"请输入正确格式的用户名\"/></div></div><div class=\"control-group\"><label class=\"control-label\" for=\"inputPassword\">密　码</label><div class=\"controls\"><input needle=\"needle\" msg=\"请输入正确格式的密码\" name=\"args[userpassword]\" type=\"password\" /><input type=\"hidden\" value=\"1\" name=\"userlogin\"/></div></div></form></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" type=\"button\" onclick=\"javascript:$('#peloginform').submit();\">登录</button><button aria-hidden=\"true\" class=\"btn\" data-dismiss=\"modal\">取消</button></div>";
+			lcnt = "<div class=\"modal-dialog\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\" autocomplete=\"off\"><span aria-hidden=\"true\">×</span></button><h4 class=\"modal-title\" id=\"myModalLabel\">用户登录</h4></div><div class=\"modal-body\"><form class=\"form-horizontal\" id=\"peloginform\" action=\"index.php?user-app-login\" style=\"padding-top:20px;\"><div class=\"form-group\"><label class=\"col-sm-3 control-label\" for=\"inputEmail\">用户名：</label><div class=\"col-sm-7\"><input class=\"form-control\" name=\"args[username]\" type=\"text\" needle=\"needle\" msg=\"请输入正确格式的用户名\"/></div></div><div class=\"form-group\" style=\"margin-top:10px;\"><label class=\"col-sm-3 control-label\" for=\"inputPassword\">密　码：</label><div class=\"col-sm-7\"><input class=\"form-control\" needle=\"needle\" msg=\"请输入正确格式的密码\" name=\"args[userpassword]\" type=\"password\" /><input type=\"hidden\" value=\"1\" name=\"userlogin\"/></div></div></form></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" type=\"button\" onclick=\"javascript:$('#peloginform').submit();\">登录</button><button aria-hidden=\"true\" class=\"btn\" data-dismiss=\"modal\">取消</button></div></div></div>";
 			l.html(lcnt);
 			l.find("form").on('submit',formsubmit);
-			l.modal({});
+			l.modal({"backdrop":false});
 		},
 		'hide':function(){
 			l.modal('hide');
@@ -146,369 +148,6 @@ jQuery.cookie = function(key, value, options) {
     }: decodeURIComponent;
     return (result = new RegExp('(?:^|; )' + encodeURIComponent(key) + '=([^;]*)').exec(document.cookie)) ? decode(result[1]) : null;
 };
-jQuery.extend({
-	swfuexec : {
-		"fileQueueError" : function (file, errorCode, message)
-		{
-			try
-			{
-				switch(errorCode)
-				{
-					default:
-					var msg = '';
-					switch (errorCode) {
-						case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
-							msg = "文件超出限制大小！";
-						break;
-						case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
-							msg = "空文件，请重新上传！";
-						break;
-						case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
-							msg = "不支持的文件类型！";
-						break;
-						default:
-							msg = "未知错误！";
-					}
-					$('#'+this.customSettings.upload_target).attr('src','app/core/styles/images/none.gif');
-					$('#'+this.customSettings.upload_msg).html(msg);
-					this.cancelQueue(file);
-					$.zoombox.close();
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"fileDialogComplete" : function (numFilesSelected, numFilesQueued)
-		{
-			try
-			{
-				if (numFilesQueued > 0)
-				{
-					this.startUpload();
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"uploadProgress" : function (file, bytesLoaded)
-		{
-			try
-			{
-				var percent = parseInt(bytesLoaded*100/file.size);
-				if(percent < 100)
-				{
-					$('#'+this.customSettings.upload_msg).html(percent.toString()+'%');
-				}
-				else
-				{
-					$('#'+this.customSettings.upload_msg).html('&nbsp;');
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"uploadSuccess" : function (file, serverData)
-		{
-			try
-			{
-				var data = null;
-				try{
-					data = $.parseJSON(serverData);
-				}
-				catch(e)
-				{}
-				finally{
-					if(data){
-						var c = $("<div class=\"thumbuper pull-left\"></div>");
-						c.html('<div class="thumbnail"><a href="javascript:;" onclick="javascript:$.removeUploadedImage(this);" class="second label""><em class="icon-remove"></em></a><div class="boot"><img src="'+data.thumb+'"/><input type="hidden" name="args['+this.customSettings.upload_button+'][]" value="'+data.thumb+'"/></div></div>');
-						$('#'+this.customSettings.upload_range).append(c);
-						$('#'+this.customSettings.upload_target).attr('src','app/core/styles/images/none.gif');
-					}
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"uploadComplete" : function (file)
-		{
-			try {
-				if (this.getStats().files_queued > 0) {
-					this.startUpload();
-				}
-				else
-				$('#'+this.customSettings.upload_msg).html('所有图片上传完成');
-			} catch (ex) {
-				this.debug(ex);
-			}
-		},
-		"uploadError" : function (file, errorCode, message)
-		{
-			try
-			{
-				switch(errorCode)
-				{
-					default:
-					$('#'+this.customSettings.upload_msg).html('上传任务取消');
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"cancelQueue" : function (instance)
-		{
-			instance.stopUpload();
-			var stats;
-			do{
-				stats = instance.getStats();
-				instance.cancelUpload();
-			} while (stats.files_queued !== 0);
-		}
-	},
-	thumbexec : {
-		"fileQueueError" : function (file, errorCode, message)
-		{
-			try{
-				var msg = '';
-				switch (errorCode) {
-				case SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED:
-					msg = "您只能选择一个文件";
-				break;
-				case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
-					msg = "文件超出限制大小！";
-				break;
-				case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
-					msg = "空文件，请重新上传！";
-				break;
-				case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
-					msg = "不支持的文件类型！";
-				break;
-				default:
-					msg = "未知错误！";
-				}
-				$('#'+this.customSettings.upload_target).attr('src','app/core/styles/images/none.gif');
-				$('#'+this.customSettings.upload_msg).html(msg);
-
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"fileDialogStart" : function()
-		{
-			$('#'+this.customSettings.upload_msg).html('请选择要上传的文件，只能选择一个');
-		},
-		"fileDialogComplete" : function (numFilesSelected, numFilesQueued)
-		{
-			try
-			{
-				if (numFilesQueued == 1)
-				{
-					$('#'+this.customSettings.upload_msg).html("&nbsp;");
-					$('#'+this.customSettings.upload_target).attr('src',"app/core/styles/images/loader.gif");
-					this.startUpload();
-				}
-				else if(numFilesQueued > 1)
-				{
-					swfuexec.cancelQueue(this);
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"uploadProgress" : function (file, bytesLoaded)
-		{
-			try
-			{
-				var percent = parseInt(bytesLoaded*100/file.size);
-				if(percent < 100)
-				{
-					$('#'+this.customSettings.upload_msg).html(percent.toString()+'%');
-				}
-				else
-				{
-					$('#'+this.customSettings.upload_msg).html('&nbsp;');
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"uploadSuccess" : function (file, serverData)
-		{
-			try
-			{
-				var data = null;
-				try{
-					data = $.parseJSON(serverData);
-				}
-				catch(e)
-				{}
-				finally{
-					if(data){
-						$('#'+this.customSettings.upload_target).attr('src',data.thumb);
-						$('#'+this.customSettings.upload_value).val(data.thumb);
-						$('#'+this.customSettings.upload_msg).html('&nbsp;');
-					}
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"uploadComplete" : function (file)
-		{
-			try
-			{
-				$('#'+this.customSettings.upload_msg).html('&nbsp;');
-			} catch (ex) {
-				this.debug(ex);
-			}
-		},
-		"uploadError" : function (file, errorCode, message)
-		{
-			try
-			{
-				$('#'+this.customSettings.upload_msg).html(message);
-			}
-			catch (ex)
-			{
-				alert(ex);
-				this.debug(ex);
-			}
-		}
-	},
-	upfile : {
-		"fileQueueError" : function (file, errorCode, message)
-		{
-			try{
-				var msg = '';
-				switch (errorCode) {
-				case SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED:
-					msg = "您只能选择一个文件";
-				break;
-				case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
-					msg = "文件超出限制大小！";
-				break;
-				case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
-					msg = "空文件，请重新上传！";
-				break;
-				case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
-					msg = "不支持的文件类型！";
-				break;
-				default:
-					msg = "未知错误！";
-				}
-				$('#'+this.customSettings.upload_target).attr('src','app/core/styles/images/none.gif');
-				$('#'+this.customSettings.upload_msg).html(msg);
-
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"fileDialogStart" : function()
-		{
-			$('#'+this.customSettings.upload_msg).html('请选择要上传的文件，只能选择一个');
-		},
-		"fileDialogComplete" : function (numFilesSelected, numFilesQueued)
-		{
-			try
-			{
-				if (numFilesQueued == 1)
-				{
-					this.startUpload();
-				}
-				else if(numFilesQueued > 1)
-				{
-					swfuexec.cancelQueue(this);
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"uploadProgress" : function (file, bytesLoaded)
-		{
-			try
-			{
-				var percent = parseInt(bytesLoaded*100/file.size);
-				if(percent < 100)
-				{
-					$('#'+this.customSettings.upload_msg).html(percent.toString()+'%');
-				}
-				else
-				{
-					$('#'+this.customSettings.upload_msg).html('0.00%');
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"uploadSuccess" : function (file, serverData)
-		{
-			try
-			{
-				var data = null;
-				try{
-					data = $.parseJSON(serverData);
-				}
-				catch(e)
-				{}
-				finally{
-					if(data){
-						$('#'+this.customSettings.upload_value).val(data.thumb);
-						$('#'+this.customSettings.upload_msg).html('100%');
-					}
-				}
-			}
-			catch (ex)
-			{
-				this.debug(ex);
-			}
-		},
-		"uploadComplete" : function (file)
-		{
-			try
-			{
-				$('#'+this.customSettings.upload_msg).html('&nbsp;');
-			} catch (ex) {
-				this.debug(ex);
-			}
-		},
-		"uploadError" : function (file, errorCode, message)
-		{
-			try
-			{
-				$('#'+this.customSettings.upload_msg).html(message);
-			}
-			catch (ex)
-			{
-				alert(ex);
-				this.debug(ex);
-			}
-		}
-	}
-});
-
 function xvars(x){
 	var _this = this;
 	String.prototype.replaceAll  = function(s1,s2){
@@ -516,7 +155,6 @@ function xvars(x){
 	}
 
 	var ginkgo = function(x){
-		//return core(/^[\s|\S]+$/gi,x);
 		return core(/(.)*$/gi,x);
 	}
 
@@ -712,11 +350,13 @@ function submitAjax(parms){
 					$.zoombox.hide();
 					if(parseInt(data.statusCode) == 200){
 						$.loginbox.hide();
+						if(!data.time) data.time = 1000;
 						if(data.message)
 						$.zoombox.show('ajaxOK',data);
 						setTimeout(function(){if(data.callbackType == 'forward'){
 								if(data.forwardUrl && data.forwardUrl != '')
 								{
+									$.zoombox.hide();
 									if(data.forwardUrl == 'reload')
 									window.location.reload();
 									else if(data.forwardUrl == 'back')
@@ -736,7 +376,7 @@ function submitAjax(parms){
 								}
 								else $.zoombox.hide();
 							}
-						},1000);
+						},data.time);
 					}else if(parseInt(data.statusCode) == 201){
 						if(data.callbackType == 'forward'){
 							if(data.forwardUrl && data.forwardUrl != '')
@@ -803,11 +443,18 @@ function submitAjax(parms){
 					{
 						$('#'+parms.target).html(data);
 						var dom = document.getElementById(parms.target);
-						$(".autoloaditem",dom).each(function(){$(this).load($(this).attr('autoload')+"&current="+$(this).attr('current'));});
+						$('.di-style',dom).find('span').on('click',function(){
+							var _this = $(this);
+							_this.parents('.di-style').parent().find('span').removeClass('dis-select');
+							_this.addClass('dis-select');
+							if(_this.attr('data-element'))
+							{
+								$('#'+_this.attr('data-element')).val(_this.attr('data-value'));
+							}
+						});
+						$(".autoloaditem",dom).each(function(){if($(this).attr('autoload') && $(this).attr('autoload') != '');$(this).load($(this).attr('autoload')+"&current="+$(this).attr('current'));});
 						$("a.ajax",dom).each(htmlajax);
-						$(".uploadbutton",dom).each(flashupload);
-						$('.sortable',dom).sortable();
-						$("form",dom).on('submit',formsubmit);
+						$("form",dom).not('.dxform').on('submit',formsubmit);
 						$("select.combox",dom).on("change",combox);
 						$(":input",dom).attr("autocomplete","off");
 						$(":input",dom).on("blur",inputBlur);
@@ -817,6 +464,8 @@ function submitAjax(parms){
 						$(".selfmodal",dom).on("click",modalAjax);
 						$("a.confirm",dom).each(confirmDialog);
 						$(".jckeditor",dom).each(initEditor);
+						$('.fineuploader',dom).each(inituploader);
+						$('.sortable',dom).sortable();
 					}
 				}
 				return data.statusCode;
@@ -824,60 +473,6 @@ function submitAjax(parms){
 		}
 	});
 }
-
-function flashupload(){
-	if($(this).attr('id') && $(this).attr('id') != '')
-	{
-		var exectype = $.swfuexec;
-		if($(this).attr('exectype') == 'thumb')
-		exectype = $.thumbexec;
-		else if($(this).attr('exectype') == 'upfile')
-		exectype = $.upfile;
-		var swfsetting = {};
-		swfsetting.flash_url = "app/core/styles/js/swfu/swfupload.swf";
-		swfsetting.upload_url = "index.php?document-api-swfupload";
-		if($(this).attr('filesize'))swfsetting.file_types = $(this).attr('filesize');
-		else
-		swfsetting.file_size_limit = "2 MB";
-		if($(this).attr('uptypes'))swfsetting.file_types = $(this).attr('uptypes');
-		else
-		swfsetting.file_types = "*.jpg;*.gif;*.png;*.bmp";
-		swfsetting.file_types_description = "上传附件";
-		swfsetting.file_upload_limit =  0;
-		swfsetting.file_queue_limit =  0;
-		swfsetting.button_width =  "16";
-		swfsetting.button_height = "16";
-		swfsetting.button_text_left_padding = 0;
-		swfsetting.button_cursor =  SWFUpload.CURSOR.HAND;
-		swfsetting.button_text_top_padding = 0;
-		swfsetting.button_window_mode = SWFUpload.WINDOW_MODE.TRANSPARENT;
-		swfsetting.debug = false;
-		swfsetting.button_image_url = "app/core/styles/images/uploadico.png";
-		swfsetting.debug = false;
-		swfsetting.post_params = {
-			"exam_psid":$.cookie('exam_psid'),
-			"exam_currentuser" : $.cookie("exam_currentuser"),
-			"imgwidth":($(this).attr("imgwidth") && $(this).attr("imgwidth") != '')? $(this).attr("imgwidth"):0,
-			"imgheight":($(this).attr("imgheight") && $(this).attr("imgheight") != '')? $(this).attr("imgheight"):0
-		};
-		swfsetting.file_queue_error_handler = exectype.fileQueueError;
-		swfsetting.file_dialog_complete_handler = exectype.fileDialogComplete;
-		swfsetting.upload_progress_handler = exectype.uploadProgress;
-		swfsetting.upload_error_handler = exectype.uploadError;
-		swfsetting.upload_success_handler = exectype.uploadSuccess;
-		swfsetting.upload_complete_handler = exectype.uploadComplete;
-		swfsetting.button_placeholder_id = $(this).attr('id');
-		swfsetting.custom_settings = {
-			upload_button : $(this).attr('id'),
-			upload_value : $(this).attr('id')+'_value',
-			upload_target : $(this).attr('id')+'_view',
-			upload_msg : $(this).attr('id')+'_percent',
-			upload_range : $(this).attr('id')+'_range'
-		};
-		new SWFUpload(swfsetting);
-	}
-}
-
 function combox(){
 	var _this = this;
 	if($(_this).attr("target") && ($(_this).attr("target") != "")){
@@ -909,7 +504,7 @@ function autocombox(){
 		{
 			var d = dt.html;
 			$('select[rel="'+$(_this).attr('name')+'_auto_rel"]').each(function(){if($(this).attr('step') && $(this).attr('step') != '' && parseInt($(this).attr('step')) > step)$(this).remove();});
-			var o = $('<select order="'+$(_this).attr('order')+'" class="input-medium" rel="'+$(_this).attr('name')+'_auto_rel'+'" step="'+(step+1)+'" id="'+$(_this).attr('name')+'_auto_'+(step+1)+'" valuefrom="'+$(_this).attr("valuefrom")+'" refUrl="'+$(_this).attr("refUrl")+'" name="'+$(_this).attr('name')+'" needle="needle" msg="您必须要选择一项"><option value="">请选择</option>'+d+'</select>');
+			var o = $('<select order="'+$(_this).attr('order')+'" class="it-select 110" rel="'+$(_this).attr('name')+'_auto_rel'+'" step="'+(step+1)+'" id="'+$(_this).attr('name')+'_auto_'+(step+1)+'" valuefrom="'+$(_this).attr("valuefrom")+'" refUrl="'+$(_this).attr("refUrl")+'" name="'+$(_this).attr('name')+'" needle="needle" msg="您必须要选择一项"><option value="">请选择</option>'+d+'</select>');
 			if($(_this).attr('order') == '1')
 			$(_this).before(o);
 			else
@@ -993,12 +588,10 @@ function modalAjax(){
 		url = url.replace(eval("/{"+t[i]+"}/gi"),$('#'+t[i]).val());
 	}
 	$.get(url+'&'+Math.random(),function(data){
-		var c = m.children(".modal-body");
+		var c = m.children().find(".modal-body");
 		c.html(data);
-		c.find(".autoloaditem").each(function(){$(this).load($(this).attr('autoload')+"&current="+$(this).attr('current'));});
+		c.find(".autoloaditem").each(function(){if($(this).attr('autoload') && $(this).attr('autoload') != '');$(this).load($(this).attr('autoload')+"&current="+$(this).attr('current'));});
 		c.find("a.ajax").each(htmlajax);
-		c.find(".uploadbutton").each(flashupload);
-		c.find('.sortable').sortable();
 		c.find("form").on('submit',formsubmit);
 		c.find("select.combox").on("change",combox);
 		c.find(":input").attr("autocomplete","off");
@@ -1028,6 +621,7 @@ function initEditor(){
 		CKEDITOR.replace(_this,config).on("blur", function () {
 	        var _ = this;
 	        var p=[];
+	        $(_this).val(_.getData());
 			p.push(_.element.$.attributes.name.value);
 			p.push(_.getData());
 			p.push(Date.parse(new Date())/1000);
@@ -1118,18 +712,88 @@ function initdatepicker(){
 	$(_this).datetimepicker({"language":'zh-CN',"autoclose": 1,"minView":$(_this).attr('data-minview')?$(_this).attr('data-minview'):2});
 }
 
+function inituploader()
+{
+	var _this = this;
+	var ismul = false;
+	var petemplate = 'pe-template';
+	var petype = 'thumb';
+	var ftype = ['jpeg', 'jpg', 'gif', 'png'];
+	if($(_this).attr('attr-list') == 'true')ismul = true;
+	if($(_this).attr('attr-template') &&  $(_this).attr('attr-template') != '')petemplate = $(_this).attr('attr-template');
+	if($(_this).attr('attr-ftype') &&  $(_this).attr('attr-ftype') != '')ftype = $(_this).attr('attr-ftype').split(',');
+	switch($(_this).attr('attr-type'))
+	{
+		case 'thumb':
+		case 'list':
+		case 'files':
+		petype = $(_this).attr('attr-type');
+		break;
+
+		default:
+		petype = 'thumb';
+	}
+	return new qq.FineUploader({
+	    'element': _this,
+	    'multiple': ismul,
+	    'template': petemplate,
+	    'request': {
+	        'endpoint': 'index.php?document-api-fineuploader',
+	        'method': 'POST'
+	    },
+	    'thumbnails': {
+	        'placeholders': {
+	            'waitingPath': 'app/core/styles/images/loader.gif',
+	            'notAvailablePath': 'app/core/styles/img/noimage.gif'
+	        }
+	    },
+	    'validation': {
+	        'allowedExtensions': ftype
+	    },
+	    'deleteFile': {
+        	enabled: true
+        },
+	    'callbacks': {
+		    'onSubmit':  function(id,  fileName)  {
+		    	if(petype != 'list')
+		    	{
+		    		$(_this).find('.qq-upload-list-selector').html('');
+		    		$(_this).find('.qq-upload-list-selector').eq(1).remove();
+		    	}
+		    },
+		    'onProgress': function(id, fileName, loaded, total) {
+				if (loaded < total)
+				{
+					progress = Math.round(loaded / total * 100) + '%';
+					$(_this).find('.process').html(progress);
+				}
+				else
+				$(_this).find('.process').html('');
+	        },
+		    'onComplete': function(id,fileName,responseJSON) {
+		    	$(_this).find('[qq-file-id='+id+'] .qq-edit-filename-selector').val(responseJSON.thumb);
+		    	if(petype == 'list')
+		    	{
+		    		var tpl = $(_this).find('.listimg').first().html().replace(/\*name\*/g,$(_this).attr('attr-name'));
+		    		tpl = tpl.replace(/\*value\*/g,responseJSON.thumb);
+		    		$('#'+$(_this).attr('attr-box')).append(tpl);
+		    	}
+		    }
+	    }
+	});
+}
+
 $(function(){
-	$(".autoloaditem").each(function(){$(this).load($(this).attr('autoload')+"&current="+$(this).attr('current'));});
-	$(".uploadbutton").each(flashupload);
+	$(".autoloaditem").each(function(){
+		if($(this).attr('autoload') && $(this).attr('autoload') != '')
+		$(this).load($(this).attr('autoload')+"&current="+$(this).attr('current'));
+	});
 	$(".jckeditor").each(initEditor);
+	$('.datetimepicker').each(initdatepicker);
 	$(".randCode").on('click',function(){
 		$(this).attr('src',$(this).attr('src')+'&'+Math.random());
 	});
-	$('.datetimepicker').each(initdatepicker);
-	$(".randCode").each(function(){$(this).attr('src',$(this).attr('src')+'&'+Math.random());})
-	$('.sortable').sortable();
-	$('.sortable').disableSelection();
-	$("form").on('submit',formsubmit);
+	$("form").not('.dxform').on('submit',formsubmit);
 	$("a.ajax").each(htmlajax);
 	$("select.combox").on("change",combox);
 	$(":input").attr("autocomplete","off");
@@ -1140,6 +804,9 @@ $(function(){
 	$("a.catool").each(function(){openmenu(this);});
 	$("a.confirm").each(confirmDialog);
 	$('a.poproom').popover();
+	$('.sortable').sortable();
+	$('.fineuploader').each(inituploader);
+	$('body').delegate('.listimgselector','dblclick',function(){$(this).remove();});
 });
 
 function openmenu(_this){

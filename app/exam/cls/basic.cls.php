@@ -76,7 +76,7 @@ class basic_exam
 
 	public function getOpenBasicNumber($basicid)
 	{
-		$data = array("count(*) as number",'openbasics',array(array("AND","obbasicid = :obbasicid",'obbasicid',$basicid),array("AND","obendtime <= :obendtime",'obendtime',TIME)));
+		$data = array("count(*) as number",'openbasics',array(array("AND","obbasicid = :obbasicid",'obbasicid',$basicid),array("AND","obendtime >= :obendtime",'obendtime',TIME)));
 		$sql = $this->pdosql->makeSelect($data);
 		$r = $this->db->fetch($sql);
 		return $r['number'];

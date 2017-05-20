@@ -19,9 +19,9 @@ class alipay
 
     private function setDefaultConfig()
     {
-    	$this->config['partner'] = '2088202660912640';
+    	$this->config['partner'] = '2088421657592894';
 		//安全检验码，以数字和字母组成的32位字符
-		$this->config['key'] = 'ibojap3s7a7nm3v9t9i4zc18j9s9can2';
+		$this->config['key'] = 'ncp5kemkvl9fn9nk3y0g19bzgd5rnerb';
 		//签名方式 不需修改
 		$this->config['sign_type'] = strtoupper('MD5');
 		//字符编码格式 目前支持 gbk 或 utf-8
@@ -31,7 +31,7 @@ class alipay
 		//访问模式,根据自己的服务器是否支持ssl访问，若支持请选择https；若不支持请选择http
 		$this->config['transport'] = 'http';
 		//支付宝收款帐号
-		$this->config['account'] = 'lzjwql814@tom.com';
+		$this->config['account'] = '309395410@qq.com';
     }
 
     public function setConfig($config)
@@ -71,6 +71,7 @@ class alipay
 
         //付款金额
         $total_fee = $order['orderprice'];
+        //$total_fee = 0.01;
         //必填
 
         //订单描述
@@ -91,7 +92,7 @@ class alipay
 		//构造要请求的参数数组，无需改动
 		$parameter = array(
 				"service" => "create_direct_pay_by_user",
-				//"service" => "trade_create_by_buyer",
+				//"service" => "alipay.wap.create.direct.pay.by.user",
 				"partner" => trim($this->config['partner']),
 				"payment_type"	=> $payment_type,
 				"notify_url"	=> $notify_url,
@@ -99,9 +100,9 @@ class alipay
 				"seller_email"	=> $seller_email,
 				"out_trade_no"	=> $out_trade_no,
 				"subject"	=> $subject,
-				"logistics_type" => 'EXPRESS',
-				"logistics_fee" => 0,
-				"logistics_payment" => 'SELLER_PAY',
+				//"logistics_type" => 'EXPRESS',
+				//"logistics_fee" => 0,
+				//"logistics_payment" => 'SELLER_PAY',
 				//"total_fee"	=> $total_fee,
 				"price" => $total_fee,
 				"quantity" => 1,

@@ -25,6 +25,12 @@ class app
 		header("location:".'index.php?'.$this->G->app.'-app');
 	}
 
+	public function test2()
+	{
+		$strings = $this->G->make('strings');
+		echo $strings->parseDataImg(file_get_contents('aa.txt'));
+	}
+
 	public function test()
 	{
 		$page = intval($this->ev->get('page'));

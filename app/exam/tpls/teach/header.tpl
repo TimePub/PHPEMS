@@ -1,33 +1,25 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="title" content="无纸化模拟考试系统">
-<meta name="description" content="无纸化模拟考试系统">
-<meta name="keywords" content="无纸化模拟考试系统">
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<title>PHPEMS无纸化模拟考试系统</title>
-<!–[if lt IE9]>
-<script src="app/core/styles/js/html5.js"></script>
-<![endif]–>
-<!-- Le styles -->
-<link href="app/core/styles/css/bootstrap-combined.min.css" rel="stylesheet">
-<link href="app/core/styles/css/layoutit.css" rel="stylesheet">
-<link href="app/core/styles/css/plugin.css" rel="stylesheet">
-<link href="app/core/styles/css/datetimepicker.css" rel="stylesheet">
-<script type="text/javascript" src="app/core/styles/js/jquery.min.js"></script>
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-<script src="app/core/styles/js/html5shiv.js"></script>
-<script type="text/javascript" src="app/core/styles/js/jquery-1.9.1.min.js"></script>
-<![endif]-->
-<script type="text/javascript" src="app/core/styles/js/jquery-ui.js"></script>
-<script type="text/javascript" src="app/core/styles/js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src="app/core/styles/js/bootstrap.min.js"></script>
+    <meta charset="UTF-8">
+    <title>PHPEMS模拟考试系统后台管理</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="stylesheet" type="text/css" href="app/core/styles/css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="app/core/styles/css/datetimepicker.css" />
+	<link rel="stylesheet" type="text/css" href="app/core/styles/css/jquery-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="app/core/styles/css/peskin.css" />
+	<!--[if lt IE 9]>
+	<script src="app/core/styles/js/html5shiv.min.js"></script>
+	<script src="app/core/styles/js/respond.min.js"></script>
+	<![endif]-->
+	<script src="app/core/styles/js/jquery.min.js"></script>
+	<script src="app/core/styles/js/jquery-ui.min.js"></script>
+	<script src="app/core/styles/js/bootstrap.min.js"></script>
+	<script src="app/core/styles/js/bootstrap-datetimepicker.js"></script>
 
-<script type="text/javascript" src="app/core/styles/js/ckeditor/ckeditor.js"></script>
-<script type="text/javascript" src="app/core/styles/js/swfu/swfupload.js"></script>
-<script type="text/javascript" src="app/core/styles/js/plugin.js"></script>
+	<script src="app/core/styles/js/all.fine-uploader.min.js"></script>
+
+	<script src="app/core/styles/js/ckeditor/ckeditor.js"></script>
+	<script src="app/core/styles/js/plugin.js"></script>
 </head>

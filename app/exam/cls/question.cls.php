@@ -227,7 +227,7 @@ class question_exam
 					$par = 0;
 					foreach($number as $nkey => $t)
 					{
-						if(!$par)
+						if(!$par && ($t > 0))
 						{
 							$par++;
 							$trand = rand(1,4);
@@ -270,19 +270,54 @@ class question_exam
 								}
 							}
 						}
-						while($t)
+						$expqr = 0;
+						if($qrid)$expqr = $expqr.','.$qrid;
+						while($t > 0)
 						{
+							$expqr = trim($expqr,',');
+							if($expqr)
+							$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","NOT find_in_set(questionrows.qrid,:expqr)",'expqr',$expqr),array("AND","questionrows.qrlevel = :qrlevel",'qrlevel',$nkey),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t),array("AND","questionrows.qrnumber > 0")));
+							else
 							$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrlevel = :qrlevel",'qrlevel',$nkey),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t),array("AND","questionrows.qrnumber > 0")));
 							if(count($qrs))
 							{
 								$qrid = $qrs[array_rand($qrs,1)];
 								$questionrow[$key][] = $qrid;
 								$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
-								$t = intval($t - $qr['qrnumber']);
+								if($qr['qrnumber'])
+								{
+									$t = intval($t - $qr['qrnumber']);
+									$expqr = $expqr.','.$qrid;
+								}
 							}
 							else
 							break;
 						}
+						/**
+						if($t > 0)
+						{
+							if($expqr)
+							$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","NOT find_in_set(questionrows.qrid,:expqr)",'expqr',$expqr),array("AND","questionrows.qrnumber >= :qrnumber",'qrnumber',$t)));
+							else
+							{
+								$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber >= :qrnumber",'qrnumber',$t)));
+							}
+							if(count($qrs))
+							{
+								$qrid = $qrs[array_rand($qrs,1)];
+								$questionrow[$key][] = $qrid;
+								if($qrid)
+								{
+									$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
+									if($qr['qrnumber'])
+									{
+										$t = intval($t - $qr['qrnumber']);
+										$expqr = $expqr.','.$qrid;
+									}
+								}
+							}
+						}
+						**/
 					}
 				}
 				else
@@ -335,7 +370,8 @@ class question_exam
 						}
 					}
 					$expqr = 0;
-					while($t)
+					if($qrid)$expqr = $expqr.','.$qrid;
+					while($t > 0)
 					{
 						$expqr = trim($expqr,',');
 						if($expqr)
@@ -349,13 +385,39 @@ class question_exam
 							if($qrid)
 							{
 								$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
-								$t = intval($t - intval($qr['qrnumber']?$qr['qrnumber']:1));
-								$expqr = $expqr.','.$qrid;
+								if($qr['qrnumber'])
+								{
+									$t = intval($t - $qr['qrnumber']);
+									$expqr = $expqr.','.$qrid;
+								}
+								else
+								break;
 							}
 						}
 						else
 						break;
 					}
+					/**
+					if($t >= 0)
+					{
+						if($expqr)
+						$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","NOT find_in_set(questionrows.qrid,:expqr)",'expqr',$expqr),array("AND","questionrows.qrnumber >= :qrnumber",'qrnumber',$t)));
+						if(count($qrs))
+						{
+							$qrid = $qrs[array_rand($qrs,1)];
+							$questionrow[$key][] = $qrid;
+							if($qrid)
+							{
+								$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
+								if($qr['qrnumber'])
+								{
+									$t = intval($t - $qr['qrnumber']);
+									$expqr = $expqr.','.$qrid;
+								}
+							}
+						}
+					}
+					**/
 				}
 			}
 		}
@@ -428,13 +490,39 @@ class question_exam
 					}
 				}
 				$expqr = 0;
-				while($t)
+				if($qrid)$expqr = $expqr.','.$qrid;
+				while($t > 0)
 				{
 					$expqr = trim($expqr,',');
 					if($expqr)
-					$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","NOT find_in_set(questionrows.qrid,:expqr)",'expqr',$expqr),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
+					$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrlevel = :qrlevel",'qrlevel',$nkey),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","NOT find_in_set(questionrows.qrid,:expqr)",'expqr',$expqr),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
 					else
-					$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
+					$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrlevel = :qrlevel",'qrlevel',$nkey),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","questionrows.qrnumber <= :qrnumber",'qrnumber',$t)));
+					if(count($qrs))
+					{
+						$qrid = $qrs[array_rand($qrs,1)];
+						$questionrow[$key][] = $qrid;
+
+						if($qrid)
+						{
+							$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
+							if($qr['qrnumber'])
+							{
+								$t = intval($t - $qr['qrnumber']);
+								$expqr = $expqr.','.$qrid;
+							}
+							else
+							break;
+						}
+					}
+					else
+					break;
+				}
+				/**
+				if($t > 0)
+				{
+					if($expqr)
+					$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","NOT find_in_set(questionrows.qrid,:expqr)",'expqr',$expqr),array("AND","questionrows.qrnumber >= :qrnumber",'qrnumber',$t)));
 					if(count($qrs))
 					{
 						$qrid = $qrs[array_rand($qrs,1)];
@@ -442,14 +530,15 @@ class question_exam
 						if($qrid)
 						{
 							$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
-							//$t = intval($t - $qr['qrnumber']?$qr['qrnumber']:1);
-							$t = intval($t - intval($qr['qrnumber']?$qr['qrnumber']:1));
-							$expqr = $expqr.','.$qrid;
+							if($qr['qrnumber'])
+							{
+								$t = intval($t - $qr['qrnumber']);
+								$expqr = $expqr.','.$qrid;
+							}
 						}
 					}
-					else
-					break;
 				}
+				**/
 			}
 		}
 		return array('question'=>$question,'questionrow'=>$questionrow,'setting'=>$exam);
@@ -460,6 +549,7 @@ class question_exam
 		$knowsids = $knowsid;
 		foreach($qt as $key => $t)
 		{
+			$qrid = 0;
 			$par = 0;
 			if(!$par)
 			{
@@ -487,6 +577,7 @@ class question_exam
 						if($t <= 1)
 						{
 							$question[$key][] = $r[array_rand($r,1)];
+							$t--;
 						}
 						else
 						{
@@ -495,16 +586,19 @@ class question_exam
 							{
 								$question[$key][] = $r[$tmp];
 							}
+							$t = 0;
 						}
 					}
 					else
 					{
 						foreach($r as $tmp)
 						$question[$key][] = $tmp;
+						$t = $t - count($r);
 					}
 				}
 			}
 			$expqr = 0;
+			if($qrid)$expqr = $expqr.','.$qrid;
 			while($t)
 			{
 				$expqr = trim($expqr,',');
@@ -515,17 +609,43 @@ class question_exam
 				if(count($qrs))
 				{
 					$qrid = $qrs[array_rand($qrs,1)];
-					$questionrow[$key][] = $qrid;
 					if($qrid)
 					{
+						$questionrow[$key][] = $qrid;
 						$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
-						$t = intval($t - $qr['qrnumber']?$qr['qrnumber']:1);
-						$expqr = $expqr.','.$qrid;
+						if($qr['qrnumber'])
+						{
+							$t = intval($t - $qr['qrnumber']);
+							$expqr = $expqr.','.$qrid;
+						}
+						else
+						break;
 					}
 				}
 				else
 				break;
 			}
+			/**
+			if($t >= 0)
+			{
+				if($expqr)
+				$qrs = $this->getRandQuestionRowsList(array(array("AND","find_in_set(quest2knows.qkknowsid,:knowsids)",'knowsids',$knowsids),array("AND","questionrows.qrtype = :qrtype",'qrtype',$key),array("AND","NOT find_in_set(questionrows.qrid,:expqr)",'expqr',$expqr),array("AND","questionrows.qrnumber >= :qrnumber",'qrnumber',$t)));
+				if(count($qrs))
+				{
+					$qrid = $qrs[array_rand($qrs,1)];
+					$questionrow[$key][] = $qrid;
+					if($qrid)
+					{
+						$qr = $this->exam->getQuestionRowsByArgs(array(array("AND","qrid = :qrid",'qrid',$qrid)));
+						if($qr['qrnumber'])
+						{
+							$t = intval($t - $qr['qrnumber']);
+							$expqr = $expqr.','.$qrid;
+						}
+					}
+				}
+			}
+			**/
 		}
 		$r = array('question'=>$question,'questionrow'=>$questionrow);
 		return $r;

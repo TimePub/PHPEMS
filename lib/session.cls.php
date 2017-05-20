@@ -21,11 +21,28 @@ class session
     public function getSessionId()
     {
     	if(!$this->sessionid)
-    	$this->sessionid = $this->ev->getCookie('psid');
+    	{
+    		if($_SESSION['currentuser'])
+    		$this->sessionid = $_SESSION['currentuser']['sessionid'];
+    		else
+    		{
+    			$cookie = $this->strings->decode($this->ev->getCookie($this->sessionname));
+    			if($cookie)
+    			{
+    				$this->sessionid = $cookie['sessionid'];
+    			}
+    			else
+    			$this->sessionid = $this->ev->getCookie('psid');
+    		}
+    	}
     	if(!$this->sessionid)
     	{
-    		session_start();
     		$this->sessionid = session_id();
+    		$this->ev->setCookie('psid',$this->sessionid,3600*24);
+    	}
+    	if(!$this->sessionid)
+    	{
+    		$this->sessionid = md5(TIME.rand(1000,9999));
     		$this->ev->setCookie('psid',$this->sessionid,3600*24);
     	}
     	if(!$this->getSessionValue($this->sessionid))
@@ -103,6 +120,7 @@ class session
 	    	$sql = $this->pdosql->makeInsert($data);
 	    	$this->db->exec($sql);
 	    	$this->ev->setCookie($this->sessionname,$this->strings->encode($args),3600*24);
+	    	$_SESSION['currentuser'] = $args;
 	    	return true;
     	}
     }
@@ -131,32 +149,19 @@ class session
 			$this->sessionid = $this->ev->get(CH.'psid');
 			$cookie = $this->strings->decode($this->ev->get(CH.'currentuser'));
     	}
+    	if(!$cookie)
+    	{
+    		$cookie = $_SESSION['currentuser'];
+    		if($cookie)
+    		$this->ev->setCookie($this->sessionname,$this->strings->encode($cookie),3600*24);
+    	}
     	if($cookie['sessionuserid'])
     	{
-    		if(!$this->ev->getCookie('psid') || $this->ev->getCookie('psid') != $cookie['sessionid'])
-    		{
-    			return false;
-    		}
-    		//$this->ev->setCookie('psid',$cookie['sessionid'],3600*24);
     		$user = $this->getSessionValue();
     		if($cookie['sessionuserid'] == $user['sessionuserid'] && $cookie['sessionpassword'] == $user['sessionpassword'])
     		{
     			$this->sessionuser = $user;
     			return $user;
-    		}
-    		else
-    		{
-    			/**
-    			$user = $this->G->make('user','user')->getUserById($cookie['sessionuserid']);
-    			if($cookie['sessionpassword'] == $user['userpassword'])
-    			{
-					$this->sessionid = $cookie['sessionid'];
-    				$this->setSessionUser(array('sessionuserid'=>$user['userid'],'sessionpassword'=>$user['userpassword'],'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>$user['usergroupid'],'sessionlogintime'=>TIME,'sessionusername'=>$user['username']));
-    				$user = $this->getSessionValue();
-    				$this->sessionuser = $user;
-    				return $user;
-    			}
-    			**/
     		}
     	}
 		return false;
@@ -171,6 +176,14 @@ class session
 		$sql = $this->pdosql->makeDelete($data);
 		$this->db->exec($sql);
 		return true;
+    }
+
+    public function offOnlineUser($userid)
+    {
+    	$data = array('session',array(array('AND',"sessionuserid = :sessionuserid",'sessionuserid',$userid)));
+    	$sql = $this->pdosql->makeDelete($data);
+	    $this->db->exec($sql);
+    	return true;
     }
 
     //清除所有会话

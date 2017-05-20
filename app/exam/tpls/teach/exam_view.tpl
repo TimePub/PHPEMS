@@ -1,122 +1,179 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="title" content="{x2;$apps['exam']['appsetting']['seo']['title']}">
-<meta name="description" content="{x2;$apps['exam']['appsetting']['seo']['description']}">
-<meta name="keywords" content="{x2;$apps['exam']['appsetting']['seo']['keywords']}">
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<title>{x2;$sessionvars['examsession']}</title>
-<link href="{x2;c:WP}app/core/styles/css/bootstrap.css" rel="stylesheet">
-<link href="{x2;c:WP}app/core/styles/css/plugin.css" rel="stylesheet">
-<link href="{x2;c:WP}app/user/styles/css/theme.css" rel="stylesheet" type="text/css" />
-<link href="{x2;c:WP}app/core/styles/css/datepicker.css" rel="stylesheet">
-<script type="text/javascript" src="{x2;c:WP}app/core/styles/js/jquery-1.9.1.min.js"></script>
-<link rel="stylesheet" href="{x2;c:WP}app/exam/styles/css/mathquill.css" type="text/css">
-<script type="text/javascript" src="{x2;c:WP}app/core/styles/js/jquery-ui.js"></script>
-<script type="text/javascript" src="{x2;c:WP}app/core/styles/js/jquery.json.js"></script>
-<script type="text/javascript" src="{x2;c:WP}app/core/styles/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{x2;c:WP}app/core/styles/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="{x2;c:WP}app/core/styles/js/ckeditor/ckeditor.js"></script>
-<script type="text/javascript" src="{x2;c:WP}app/core/styles/js/swfu/swfupload.js"></script>
-<script type="text/javascript" src="{x2;c:WP}app/core/styles/js/plugin.js"></script>
+    <meta charset="UTF-8">
+    <title>PHPEMS模拟考试系统</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="stylesheet" type="text/css" href="app/core/styles/css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="app/core/styles/css/datetimepicker.css" />
+	<link rel="stylesheet" type="text/css" href="app/core/styles/css/jquery-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="app/core/styles/css/peskin.css" />
+	<!--[if lt IE 9]>
+	<script src="app/core/styles/js/html5shiv.min.js"></script>
+	<script src="app/core/styles/js/respond.min.js"></script>
+	<![endif]-->
+	<script src="app/core/styles/js/jquery.min.js"></script>
+	<script src="app/core/styles/js/jquery.json.js"></script>
+	<script src="app/core/styles/js/jquery-ui.min.js"></script>
+	<script src="app/core/styles/js/bootstrap.min.js"></script>
+	<script src="app/core/styles/js/bootstrap-datetimepicker.js"></script>
+
+	<script src="app/core/styles/js/all.fine-uploader.min.js"></script>
+
+	<script src="app/core/styles/js/ckeditor/ckeditor.js"></script>
+	<script src="app/core/styles/js/plugin.js"></script>
+	<script src="app/exam/styles/js/plugin.js"></script>
 </head>
-<body>
-<script src="{x2;c:WP}app/exam/styles/js/plugin.js"></script>
-<div class="row-fluid">
-	<div class="container examcontent">
-		<div class="exambox" id="datacontent" style="border:0px;">
-			<div class="examform" style="position:relative;">
-				<div class="scoreArea">{x2;$sessionvars['examsessionscore']}</div>
-				<h3 class="text-center">{x2;$sessionvars['examsession']}</h3>
-				<p class="text-center">姓名：{x2;$user['username']}&nbsp;&nbsp;考试时间：{x2;date:$eh['ehstarttime'],'Y-m-d'}</p>
-				{x2;eval: v:oid = 0}
-				{x2;tree:$questype,quest,qid}
-				{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
-				{x2;eval: v:oid++}
-				<div id="panel-type{x2;v:quest['questid']}" class="tab-pane{x2;if:(!$ctype && v:qid == 1) || ($ctype == v:quest['questid'])} active{x2;endif}">
-					<ul class="breadcrumb">
-						<li>
-							<h5>{x2;v:oid}、{x2;v:quest['questype']}</h5>
-						</li>
+<body data-spy="scroll" data-target="#myScrollspy">
+<div class="container-fluid" id="questioncontent">
+	<div class="row-fluid">
+		<div class="main box">
+			<div class="col-xs-3" id="questionbar">
+				<dl class="clear" style="width:270px;" data-spy="affix" data-offset-top="235">
+					<dt class="float_l"><h4>&nbsp;</h4></dt>
+					<ul class="nav nav-tabs" role="tablist">
+						{x2;eval: v:oid = 0}
+						{x2;tree:$sessionvars['examsessionsetting']['examsetting']['questypelite'],lite,qid}
+						{x2;if:v:lite}
+						{x2;eval: v:quest = v:key}
+						{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest] || $sessionvars['examsessionquestion']['questionrows'][v:quest]}
+						{x2;eval: v:oid++}
+						<li role="presentation"{x2;if:v:qid == 1} class="active"{x2;endif}><a href="#qt_{x2;v:quest}" aria-controls="home" role="tab" data-toggle="tab">{x2;$ols[v:oid]}</a></li>
+						{x2;endif}
+						{x2;endif}
+						{x2;endtree}
 					</ul>
-					{x2;eval: v:tid = 0}
-	                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest['questid']],question,qnid}
-	                {x2;eval: v:tid++}
-	                <div id="question_{x2;v:question['questionid']}" class="paperexamcontent decidediv">
-						<div class="media well">
-							<ul class="nav nav-tabs">
-								<li class="active">
-									<span class="badge badge-info questionindex">{x2;v:tid}</span></a>
-								</li>
-							</ul>
-							<div class="media-body well text-warning">
-								<a name="question_{x2;v:question['questionid']}"></a>{x2;realhtml:v:question['question']}
-							</div>
-							{x2;if:!v:quest['questsort']}
-							<div class="media-body well">
-		                    	{x2;realhtml:v:question['questionselect']}
-		                    </div>
-		                    {x2;endif}
-							<div class="media-body well">
-		                  		<p class="text-error">本题得分：{x2;$sessionvars['examsessionscorelist'][v:question['questionid']]}分</p>
-		                  	</div>
-							<div class="media-body well">
-		                    	<ul class="unstyled">
-		                        	<li class="text-error">正确答案：</li>
-		                            <li class="text-success">{x2;realhtml:v:question['questionanswer']}</li>
-		                        	<li class="text-info">考生答案：</li>
-		                            <li class="text-success">{x2;if:is_array($sessionvars['examsessionuseranswer'][v:question['questionid']])}{x2;eval: echo implode('',$sessionvars['examsessionuseranswer'][v:question['questionid']])}{x2;else}{x2;realhtml:$sessionvars['examsessionuseranswer'][v:question['questionid']]}{x2;endif}</li>
-		                        </ul>
-		                    </div>
-						</div>
-					</div>
-					{x2;endtree}
-					{x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest['questid']],questionrow,qrid}
-	                {x2;eval: v:tid++}
-	                <div id="questionrow_{x2;v:questionrow['qrid']}">
-						<div class="media well">
-							<ul class="nav nav-tabs">
-								<li class="active">
-									<span class="badge badge-info questionindex">{x2;v:tid}</span>
-								</li>
-							</ul>
-							<div class="media-body well">
-								{x2;realhtml:v:questionrow['qrquestion']}
-							</div>
-							{x2;tree:v:questionrow['data'],data,did}
-							<div class="paperexamcontent decidediv">
-								<ul class="nav nav-tabs">
-									<li class="active">
-										<span class="badge questionindex">{x2;v:did}</span></a>
-									</li>
-								</ul>
-								<div class="media-body well text-warning">
-									<a name="question_{x2;v:data['questionid']}"></a>{x2;realhtml:v:data['question']}
-								</div>
-								{x2;if:!v:quest['questsort']}
-								<div class="media-body well">
-			                    	{x2;realhtml:v:data['questionselect']}
-			                    </div>
-			                    {x2;endif}
-								<div class="media-body well">
-			                  		<p class="text-error">本题得分：{x2;$sessionvars['examsessionscorelist'][v:data['questionid']]}分</p>
-			                  	</div>
-								<div class="media-body well">
-									<ul class="unstyled">
-			                        	<li class="text-error">正确答案：</li>
-			                            <li class="text-success">{x2;realhtml:v:data['questionanswer']}</li>
-			                        	<li class="text-info">考生答案：</li>
-			                            <li class="text-success">{x2;if:is_array($sessionvars['examsessionuseranswer'][v:data['questionid']])}{x2;eval: echo implode('',$sessionvars['examsessionuseranswer'][v:data['questionid']])}{x2;else}{x2;realhtml:$sessionvars['examsessionuseranswer'][v:data['questionid']]}{x2;endif}</li>
-			                        </ul>
-								</div>
-							</div>
+					<div class="tab-content" style="margin-top:5px;" id="questionindex">
+						{x2;eval: v:oid = 0}
+						{x2;tree:$sessionvars['examsessionsetting']['examsetting']['questypelite'],lite,qid}
+						{x2;if:v:lite}
+						{x2;eval: v:quest = v:key}
+						{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest] || $sessionvars['examsessionquestion']['questionrows'][v:quest]}
+						{x2;eval: v:oid++}
+						<div role="tabpanel" class="tab-pane tableindex{x2;if:v:qid == 1} active{x2;endif}" id="qt_{x2;v:quest}">
+							{x2;eval: v:tid = 0}
+			                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest],question,qnid}
+			                {x2;eval: v:tid++}
+							<a id="sign_{x2;v:question['questionid']}" href="#question_{x2;v:question['questionid']}" class="btn btn-default">{x2;v:tid}</a>
 							{x2;endtree}
+							{x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest],questionrow,qrid}
+			                {x2;eval: v:tid++}
+			                {x2;tree:v:questionrow['data'],data,did}
+			                <a id="sign_{x2;v:data['questionid']}" href="#question_{x2;v:data['questionid']}" class="btn btn-default">{x2;v:tid}-{x2;v:did}</a>
+                			{x2;endtree}
+                			{x2;endtree}
 						</div>
+						{x2;endif}
+						{x2;endif}
+						{x2;endtree}
 					</div>
+				</dl>
+			</div>
+			<div class="col-xs-9 split pull-right" style="padding:0px;position:relative;">
+				<div class="scoreArea">{x2;$sessionvars['examsessionscore']}</div>
+				<div class="box itembox">
+					<h2 class="text-center tt">{x2;$sessionvars['examsession']}</h2>
+				</div>
+				{x2;eval: v:oid = 0}
+				{x2;tree:$sessionvars['examsessionsetting']['examsetting']['questypelite'],lite,qid}
+				{x2;if:v:lite}
+				{x2;eval: v:quest = v:key}
+				{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest] || $sessionvars['examsessionquestion']['questionrows'][v:quest]}
+				{x2;eval: v:oid++}
+				<hr />
+				<div class="box itembox">
+					<blockquote class="questype">{x2;$ols[v:oid]}、{x2;$questype[v:quest]['questype']}{x2;$sessionvars['examsessionsetting']['examsetting']['questype'][v:quest]['describe']}</blockquote>
+				</div>
+				{x2;eval: v:tid = 0}
+	            {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest],question,qnid}
+	            {x2;eval: v:tid++}
+				<div class="box itembox paperexamcontent">
+					<h4 class="title">
+						第{x2;v:tid}题
+						<span class="pull-right">
+							<a class="btn btn-primary qicon" onclick="javascript:favorquestion('{x2;v:question['questionid']}');"><i class="glyphicon glyphicon-heart-empty"></i></a>
+							<a name="question_{x2;v:question['questionid']}">
+							<input id="time_{x2;v:question['questionid']}" type="hidden" name="time[{x2;v:question['questionid']}]"/>
+						</span>
+					</h4>
+					<div class="choice">
+						</a>{x2;realhtml:v:question['question']}
+					</div>
+					{x2;if:!$questype[v:quest]['questsort']}
+					{x2;if:v:question['questionselect'] && $questype[v:quest]['questchoice'] != 5}
+					<div class="choice">
+	                	{x2;realhtml:v:question['questionselect']}
+	                </div>
+	                {x2;endif}
+	                {x2;endif}
+					<div class="decidediv" style="border-left:10px solid #CCCCCC;position:relative;">
+	                	{x2;if:$sessionvars['examsessionscorelist'][v:question['questionid']] && $sessionvars['examsessionscorelist'][v:question['questionid']] == $sessionvars['examsessionsetting']['examsetting']['questype'][v:quest]['score']}<div class="right"></div>{x2;else}<div class="wrong"></div>{x2;endif}
+	                	<table class="table table-hover table-bordered">
+            				<tr class="info">
+	                			<th colspan="2" style="border-top:0px;">本题得分：{x2;$sessionvars['examsessionscorelist'][v:question['questionid']]}分{x2;if:$sessionvars['examsessiontimelist'][v:question['questionid']]} &nbsp;&nbsp;做题时间：{x2;date:$sessionvars['examsessiontimelist'][v:question['questionid']],'Y-m-d H:i:s'}{x2;endif}</th>
+	                		</tr>
+	                		<tr>
+	                    		<td width="15%">正确答案：</td>
+	                    		<td>{x2;realhtml:v:question['questionanswer']}</td>
+	                    	</tr>
+	                    	<tr>
+	                    		<td>考生答案：</td>
+	                        	<td>{x2;if:is_array($sessionvars['examsessionuseranswer'][v:question['questionid']])}{x2;eval: echo implode('',$sessionvars['examsessionuseranswer'][v:question['questionid']])}{x2;else}{x2;realhtml:$sessionvars['examsessionuseranswer'][v:question['questionid']]}{x2;endif}</td>
+	                    	</tr>
+	                	</table>
+	                </div>
+				</div>
+				{x2;endtree}
+				{x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest],questionrow,qrid}
+	            {x2;eval: v:tid++}
+				<div class="box itembox paperexamcontent">
+					<h4 class="title">第{x2;v:tid}题</h4>
+					<div class="choice">
+						{x2;realhtml:v:questionrow['qrquestion']}
+					</div>
+					{x2;tree:v:questionrow['data'],data,did}
+	                {x2;eval: v:qcid++}
+	                <blockquote style="background:#FFFFFF;border-right:1px solid #CCCCCC;border-top:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;">
+					<h4 class="title">
+						第{x2;v:did}题
+						<span class="pull-right">
+							<a class="btn btn-primary qicon" onclick="javascript:favorquestion('{x2;v:data['questionid']}');"><i class="glyphicon glyphicon-heart-empty"></i></a>
+							<a name="question_{x2;v:data['questionid']}"></a>
+							<input id="time_{x2;v:data['questionid']}" type="hidden" name="time[{x2;v:data['questionid']}]"/>
+						</span>
+					</h4>
+					<div class="choice">
+						{x2;realhtml:v:data['question']}
+					</div>
+					{x2;if:!$questype[v:quest]['questsort']}
+					{x2;if:v:data['questionselect'] && $questype[v:quest]['questchoice'] != 5}
+					<div class="choice">
+	                	{x2;realhtml:v:data['questionselect']}
+	                </div>
+	                {x2;endif}
+	                {x2;endif}
+					<div class="decidediv" style="border-left:10px solid #EDEDED;position:relative;">
+	                	{x2;if:$sessionvars['examsessionscorelist'][v:data['questionid']] && $sessionvars['examsessionscorelist'][v:data['questionid']] == $sessionvars['examsessionsetting']['examsetting']['questype'][v:quest]['score']}<div class="right"></div>{x2;else}<div class="wrong"></div>{x2;endif}
+	                	<table class="table table-hover table-bordered">
+            				<tr class="info">
+	                			<th colspan="2" style="border-top:0px;">本题得分：{x2;$sessionvars['examsessionscorelist'][v:data['questionid']]}分{x2;if:$sessionvars['examsessiontimelist'][v:data['questionid']]} &nbsp;&nbsp;做题时间：{x2;date:$sessionvars['examsessiontimelist'][v:data['questionid']],'Y-m-d H:i:s'}{x2;endif}</th>
+	                		</tr>
+	                		<tr>
+	                    		<td width="15%">正确答案：</td>
+	                    		<td>{x2;realhtml:v:data['questionanswer']}</td>
+	                    	</tr>
+	                    	<tr>
+	                    		<td>考生答案：</td>
+	                        	<td>{x2;if:is_array($sessionvars['examsessionuseranswer'][v:data['questionid']])}{x2;eval: echo implode('',$sessionvars['examsessionuseranswer'][v:data['questionid']])}{x2;else}{x2;realhtml:$sessionvars['examsessionuseranswer'][v:data['questionid']]}{x2;endif}</td>
+	                    	</tr>
+	                	</table>
+	                </div>
+					</blockquote>
 					{x2;endtree}
 				</div>
+				{x2;endtree}
+				{x2;endif}
 				{x2;endif}
 				{x2;endtree}
 			</div>

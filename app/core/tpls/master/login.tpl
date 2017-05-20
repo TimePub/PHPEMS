@@ -1,1 +1,39 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="title" content="无纸化模拟考试系统"><meta name="description" content="无纸化模拟考试系统"><meta name="keywords" content="无纸化模拟考试系统"><meta name="apple-mobile-web-app-capable" content="yes" /><title>无纸化模拟考试系统</title><!–[if lt IE9]><script src="app/core/styles/js/html5.js"></script><![endif]–><!-- Le styles --><link href="app/core/styles/css/bootstrap.css" rel="stylesheet"><link href="app/core/styles/css/layoutit.css" rel="stylesheet"><link href="app/core/styles/css/plugin.css" rel="stylesheet"><!--<script type="text/javascript" src="app/core/styles/js/jquery.min.js"></script>--><!-- HTML5 shim, for IE6-8 support of HTML5 elements --><!--[if lt IE 9]><script src="app/core/styles/js/html5shiv.js"></script><![endif]--><script type="text/javascript" src="app/core/styles/js/jquery-1.9.1.min.js"></script><script type="text/javascript" src="app/core/styles/js/bootstrap.min.js"></script><script type="text/javascript" src="app/core/styles/js/jquery-ui.js"></script><script type="text/javascript" src="app/core/styles/js/ckeditor/ckeditor.js"></script><script type="text/javascript" src="app/core/styles/js/swfu/swfupload.js"></script><script type="text/javascript" src="app/core/styles/js/plugin.js"></script><link href="app/user/styles/css/theme.css" rel="stylesheet" type="text/css" /></head><body><div class="row-fluid top">	<div class="container">		<div class="span12"><h2><img src="app/user/styles/img/theme/logo.png" /> 后台管理</h2></div>		</div>	</div></div><div class="row-fluid">	<div class="container logcontent">		<div class="logbox">			<form class="form-horizontal logform" method="post" action="index.php?core-master-login">				<fieldset>					<legend>用户登录</legend>					<div class="logcontrol">						<div class="control-group">							<label class="control-label" for="inputEmail">用户名：</label>							<div class="controls">								<input class="input-xlarge" type="text" name="args[username]" datatype="userName" needle="needle" msg="请你输入用户名"/><span>请输入您的用户名</span>							</div>						</div>						<div class="control-group">							<label class="control-label" for="inputPassword">密码：</label>							<div class="controls">								<input class="input-xlarge" type="password" name="args[userpassword]" datatype="password" needle="needle" msg="请你输入密码"/><span>密码长度6位以上，数字、字母或其他字符</span>							</div>						</div>						<div class="control-group">							<label class="control-label" for="inputPassword">验证码：</label>							<div class="controls">								<input class="input-small" type="text" maxlength="4" name="randcode"/><span><img src="index.php?core-api-randcode" class="randCode img-rounded"/></span><span>验证码长度4位，数字或字母</span>							</div>						</div>						<div class="control-group">							<div class="controls">								<input type="hidden" value="1" name="userlogin"/>								<button class="btn btn-info logbtn" type="submit">登录</button>							</div>						</div>						<div class="control-group">							<div class="controls">								<p>请输入正确的用户名和密码登录　如果您还没有帐号，请在此<a href="index.php?user-app-register">注册</a></p>							</div>						</div>					</div>				</fieldset>			</form>		</div>		<div class="logbotm"></div>	</div></div><div class="row-fluid">	<div class="container logfooter">		<ul class="inline unstyled">			<li><a href="http://phpems.net">网站首页</a></li>			<li>|</li>			<li><a href="http://phpems.net/bbs/">用户须知</a></li>			<li>|</li>			<li><a href="http://phpems.net/bbs/">隐私协议</a></li>			<li>|</li>			<li><a href="http://phpems.net/bbs/">网站论坛</a></li>			<li>|</li>			<li>豫ICP备13016752号-1</li>		</ul>	</div></div></body></html>
+{x2;include:header}
+<body>
+{x2;include:nav}
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="main box">
+			<div class="col-xs-7" style="padding:15px;">
+				<img src="app/core/styles/img/login.jpg" />
+			</div>
+			<div class="col-xs-4 pull-right" style="margin:30px 30px 0px auto;background-color:#FFFFFF;">
+				<form class="col-xs-12" method="post" action="index.php?core-master-login">
+					<h4 class="title" style="line-height:3em;margin-bottom:40px;">管理员登录</h4>
+					<div class="form-group input-group">
+						<span class="input-group-addon" id="basic-addon1"><a class="glyphicon glyphicon-user" style="font-size:16px;"></a></span>
+						<input class="form-control" name="args[username]" datatype="userName" needle="needle" msg="请您输入正确的用户名" placeholder="请输入用户名" style="height:44px;line-height:24px;font-size:16px;">
+					</div>
+					<div class="form-group input-group">
+						<span class="input-group-addon" id="basic-addon1"><a class="glyphicon glyphicon-lock" style="font-size:16px;"></a></span>
+						<input class="form-control" name="args[userpassword]" datatype="password" needle="needle" msg="请您输入正确的密码" placeholder="请输入密码" type="password" style="height:44px;line-height:24px;font-size:16px;">
+					</div>
+					<div class="form-group">
+						<div class="col-sm-7" style="padding-left:0px;">
+							<div class="input-group">
+								<span class="input-group-addon" id="basic-addon1"><a class="glyphicon glyphicon-lock" style="font-size:16px;"></a></span>
+								<input class="form-control" type="text" maxlength="4" placeholder="请输入验证码" name="randcode" style="height:44px;line-height:24px;font-size:16px;width:130px;"/>
+							</div>
+						</div>
+						<label class="control-label col-sm-3" for="inputPassword"><img src="index.php?core-api-randcode" class="randCode img-rounded"/></label>
+					</div>
+					<input type="hidden" value="1" name="userlogin"/>
+					<button type="submit" class="btn btn-primary btn-block" style="height:44px;line-height:32px;font-size:16px;margin-top:80px;">登录</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{x2;include:footer}
+</body>
+</html>

@@ -70,6 +70,13 @@ class strings
 		else return false;
 	}
 
+	public function isCellphone($str)
+	{
+		$j = "/^1[3,4,5,7,8]\d{9}/i";
+		if(preg_match($j,$str))return $str;
+		else return false;
+	}
+
 	public function subString($str,$lenth,$start = 0)
 	{
 		if(strlen($str) < $lenth && !$start)return $str;
@@ -148,6 +155,37 @@ class strings
 	{
 		$str = str_replace(array('-','_'),array('+','/'),$str);
 		$str = base64_decode($str);
+		return $str;
+	}
+
+	public function parseDataImg($str)
+	{
+		$fl = $this->G->make('files');
+		$str = str_replace('<IMG','<img',$str);
+		$imgs = explode('<img',$str);
+		$pimgs = array();
+		$nimgs = array();
+		foreach($imgs as $img)
+		{
+			$img = str_replace('SRC','src',$img);
+			$img = explode('src="data',$img);
+			if($img[1])
+			{
+				$img = $img[1];
+				$img = explode('"',$img);
+				$img = $img[0];
+				$pimgs[] = 'data'.$img;
+				$img = explode("/",$img,2);
+				$img = explode(";",$img[1]);
+				$ext = $img[0];
+				$img = explode(',',$img[1]);
+				$cnt = base64_decode($img[1]);
+				$path = 'files/attach/files/content/'.date('Ymd').'/'.time().rand(1000,9999).'.'.$ext;
+				$fl->writeFile($path,$cnt);
+				$nimgs[] = $path;
+			}
+		}
+		$str = str_replace($pimgs,$nimgs,$str);
 		return $str;
 	}
 }

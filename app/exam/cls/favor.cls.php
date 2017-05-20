@@ -266,11 +266,10 @@ class favor_exam
 	//添加一个考试记录
 	public function addExamHistory($sessionid,$status = 1)
 	{
-		file_put_contents('aa.txt',print_r($status,true));
 		$exam = $this->exam->getExamSessionBySessionid($sessionid);
 		if(!$exam)return false;
-		$user = $this->session->getSessionUser();
 		$t = TIME - $exam['examsessionstarttime'];
+		$user = $this->G->make('user','user')->getUserById($exam['examsessionuserid']);
 		if($t >= $exam['examsessiontime']*60)$t = $exam['examsessiontime']*60;
 		$args = array(
 					'ehtype'=>$exam['examsessiontype'],
@@ -285,12 +284,12 @@ class favor_exam
 					'ehtime'=>$t,
 					'ehscore'=>$exam['examsessionscore'],
 					'ehscorelist'=>$exam['examsessionscorelist'],
-					'ehuserid'=>$user['sessionuserid'],
-					'ehusername'=>$user['sessionusername'],
+					'ehuserid'=>$exam['examsessionuserid'],
+					'ehusername'=>$user['username'],
 					'ehdecide' => intval($exam['examsessionsetting']['examdecide']),
-					'ehstatus' => $status
+					'ehstatus' => $status,
+					'ehispass' => $exam['examsessionscore'] >= $exam['examsessionsetting']['examsetting']['passscore']?1:0
 		);
-		file_put_contents('aab.txt',print_r($args,true));
 		/**
 		try
 		{
@@ -341,12 +340,11 @@ class favor_exam
 	{
 		$data = array(
 			'select' => false,
-			'table' => 'examhistory',
-			'query' => array(array("AND","ehbasicid = :ehbasicid",'ehbasicid',$basicid),array("AND","ehtype = 2"),array("AND","ehstatus = 1")),
-			'orderby' => 'ehscore DESC,ehid DESC',
-			'serial' => 'catmanager'
+			'table' => array('examhistory','user'),
+			'query' => array(array("AND","ehbasicid = :ehbasicid",'ehbasicid',$basicid),array("AND","ehtype = 2"),array("AND","ehuserid = userid"),array("AND","ehstatus = 1")),
+			'orderby' => 'ehscore DESC,ehid DESC'
 		);
-		return $this->db->listElements($page,20,$data);
+		return $this->db->listElements($page,10,$data);
 	}
 
 	public function getUserScoreIndex($basicid,$userid,$score)

@@ -26,122 +26,14 @@ class app
 			)));
 			else
 			{
-				header("location:index.php?user-app-login");
+				print_r($_user);
+				exit();
+				//header("location:index.php?user-app-login");
 				exit;
 			}
 		}
 		$this->attach = $this->G->make('attach','document');
 		$this->allowexts = $this->attach->getAllowAttachExts();
-	}
-
-	public function index()
-	{
-		header("location:".'index.php?'.$this->G->app.'-app');
-	}
-
-	public function dstatus()
-	{
-		$number = 3;
-		$a = array();
-		$a['status'] = 'succ';
-		$a['url'] = 'files/attach/images/content/20150117/14215094601346.mp3?';
-		echo json_encode($a);
-	}
-
-	public function upload()
-	{
-		$fn = $this->ev->get('CKEditorFuncNum');
-		$upfile = $this->ev->getFile('upload');
-		$path = 'files/attach/files/content/'.date('Ymd').'/';
-		if($upfile)
-		$fileurl = $this->files->uploadFile($upfile,$path,NULL,NULL,$this->allowexts);
-		if($fileurl)
-		{
-			$message = '上传成功!';
-			$args = array();
-			$args['attpath'] = $fileurl;
-			$args['atttitle'] = $upfile['name'];
-			$args['attext'] = $this->files->getFileExtName($upfile['name']);
-			$args['attsize'] = $upfile['size'];
-			$args['attuserid'] = $this->_user['sessionuserid'];
-			$args['attcntype'] = $upfile['type'];
-			$this->attach->addAttach($args);
-			$str = '<script type="text/javascript">window.parent.CKEDITOR.tools.callFunction('.$fn.', \''.WP.'/'.$fileurl.'\', \''.$message.'\');</script>';
-		}
-		else
-		{
-			$message = '上传失败，附件类型不符!';
-			$str = '<script type="text/javascript">window.parent.CKEDITOR.tools.callFunction('.$fn.',false, \''.$message.'\');</script>';
-		}
-		echo $str;
-	}
-
-	public function uploadfile()
-	{
-		$fn = $this->ev->get('CKEditorFuncNum');
-		$upfile = $this->ev->getFile('upload');
-		$path = 'files/attach/files/content/'.date('Ymd').'/';
-		if($upfile)
-		$fileurl = $this->files->uploadFile($upfile,$path,NULL,NULL,$this->allowexts);
-		if($fileurl)
-		{
-			$message = '上传成功!';
-			$args = array();
-			$args['attpath'] = $fileurl;
-			$args['atttitle'] = $upfile['name'];
-			$args['attext'] = $this->files->getFileExtName($upfile['name']);
-			$args['attsize'] = $upfile['size'];
-			$args['attuserid'] = $this->_user['sessionuserid'];
-			$args['attcntype'] = $upfile['type'];
-			$this->attach->addAttach($args);
-			$str = '<script type="text/javascript">window.parent.CKEDITOR.tools.callFunction('.$fn.', \''.WP.'/'.$fileurl.'\', \''.$message.'\');</script>';
-		}
-		else
-		{
-			$message = '上传失败，附件类型不符!';
-			$str = '<script type="text/javascript">window.parent.CKEDITOR.tools.callFunction('.$fn.',false, \''.$message.'\');</script>';
-		}
-		echo $str;
-	}
-
-	public function swfupload()
-	{
-		$path = 'files/attach/images/content/'.date('Ymd').'/';
-		$upfile = $this->ev->getFile('Filedata');
-		if($upfile)
-		$fileurl = $this->files->uploadFile($upfile,$path,NULL,NULL,$this->allowexts);
-		if($fileurl)
-		{
-			$args = array();
-			$args['attpath'] = $fileurl;
-			$args['atttitle'] = $upfile['name'];
-			$args['attext'] = $this->files->getFileExtName($upfile['name']);
-			$args['attsize'] = $upfile['size'];
-			$args['attuserid'] = $this->_user['sessionuserid'];
-			$args['attcntype'] = $upfile['type'];
-			$this->attach->addAttach($args);
-			if($this->ev->get('imgwidth') || $this->ev->get('imgheight'))
-			{
-				if($this->files->thumb($fileurl,$fileurl.'.png',$this->ev->get('imgwidth'),$this->ev->get('imgheight')))
-				$thumb = $fileurl.'.png';
-				else
-				$thumb = $fileurl;
-			}
-			else
-			$thumb = $fileurl;
-			exit(json_encode(array('status' => 'succ','thumb' => $thumb)));
-		}
-		else
-		{
-			exit(json_encode(array('status' => 'fail')));
-		}
-	}
-
-	public function swfuploadvideo()
-	{
-		$path = 'files/attach/images/content/'.date('Ymd').'/';
-		$fileurl = $this->files->uploadFile($this->ev->getFile('Filedata'),$path,NULL,NULL,$this->allowexts);
-		echo $fileurl;
 	}
 }
 

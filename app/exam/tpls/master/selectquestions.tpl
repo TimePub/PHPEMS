@@ -7,25 +7,31 @@
 		    	}
 		    	</script>
 		    	<form action="index.php?exam-master-exams-selectquestions" method="post" direct="modal-body">
-					<table class="table">
+					<table class="table form-inline">
 						<tr>
-							<td class="form-inline">
+							<td class="form-inline" colspan="2">
 								录入时间：
-								<input type="text" name="search[stime]" size="9" class="input-small datetimepicker" data-date="{x2;date:TIME,'Y-m-d'}" data-date-format="yyyy-mm-dd" id="stime" value="{x2;$search['stime']}"/> - <input class="input-small datetimepicker" data-date="{x2;date:TIME,'Y-m-d'}" data-date-format="yyyy-mm-dd" size="9" type="text" name="search[etime]" id="etime" value="{x2;$search['etime']}"/>
+								<input type="text" name="search[stime]" size="9"  class="form-control datetimepicker" data-date="{x2;date:TIME,'Y-m-d'}" data-date-format="yyyy-mm-dd" id="stime" value="{x2;$search['stime']}"/> - <input class="form-control datetimepicker" data-date="{x2;date:TIME,'Y-m-d'}" data-date-format="yyyy-mm-dd" size="9" type="text" name="search[etime]" id="etime" value="{x2;$search['etime']}"/>
+							</td>
+							<td>
 								关键字：
-								<input name="search[keyword]" class="input-small" size="8" type="text" value="{x2;$search['keyword']}"/>
+								<input name="search[keyword]" class="form-control" size="8" type="text" value="{x2;$search['keyword']}"/>
 							</td>
 						</tr>
 						<tr>
 							<td class="form-inline">
-								<select name="search[questionisrows]" class="input-medium">
-						  		<option value="0">普通试题</option>
-								<option value="1"{x2;if:$search['questionisrows']} selected{x2;endif}>题帽题</option>
+								<select name="search[questionisrows]" class="form-control">
+							  		<option value="0">普通试题</option>
+									<option value="1"{x2;if:$search['questionisrows']} selected{x2;endif}>题帽题</option>
 						  		</select>
+						  	</td>
+						  	<td>
 								<input type="hidden" name="search[questiontype]" value="{x2;$search['questiontype']}">
 								<input type="hidden" name="search[questionsubjectid]" value="{x2;$search['questionsubjectid']}">
-				        		录入人：<input name="search[username]" class="input-mini" size="5" type="text" value="{x2;$search['username']}"/>
-								<select name="search[questionlevel]" class="combox input-medium">
+				        		录入人：<input name="search[username]" class="form-control" size="5" type="text" value="{x2;$search['username']}"/>
+				        	</td>
+				        	<td>
+								难度：<select name="search[questionlevel]" class="combox form-control">
 							  		<option value="0">难度不限</option>
 									<option value="1">易</option>
 									<option value="2">中</option>
@@ -34,8 +40,8 @@
 							</td>
 				        </tr>
 				        <tr>
-							<td class="form-inline">
-						  		<select name="search[questionsectionid]" class="combox input-medium" id="sectionselect" target="knowsselect" refUrl="?exam-master-questions-ajax-getknowsbysectionid&sectionid={value}">
+							<td>
+						  		知识点：<select name="search[questionsectionid]" class="combox form-control" id="sectionselect" target="knowsselect" refUrl="?exam-master-questions-ajax-getknowsbysectionid&sectionid={value}">
 							  		<option value="">选择章节</option>
 							  		{x2;if:$sections}
 							  		{x2;tree:$sections,section,sid}
@@ -43,7 +49,9 @@
 							  		{x2;endtree}
 							  		{x2;endif}
 						  		</select>
-						  		<select name="search[questionknowsid]" id="knowsselect" class="input-medium">
+						  	</td>
+						  	<td>
+						  		<select name="search[questionknowsid]" id="knowsselect" class="form-control">
 							  		<option value="">选择知识点</option>
 							  		{x2;if:$knows}
 							  		{x2;tree:$knows,know,kid}
@@ -51,6 +59,8 @@
 							  		{x2;endtree}
 							  		{x2;endif}
 						  		</select>
+						  	</td>
+						  	<td>
 								<button class="btn btn-primary" type="submit">检索</button>
 							</td>
 						</tr>
@@ -58,9 +68,9 @@
 				</form>
 				<div class="input"></div>
 				{x2;if:$search['questionisrows']}
-				<table class="table table-hover">
+				<table class="table table-hover table-bordered">
 					<thead>
-						<tr>
+						<tr class="info">
 					        <th><input type="checkbox" onclick="javascript:selectall(this,'iselectrowsquestions_{x2;$search['questiontype']}','ialreadyselectnumber_{x2;$search['questiontype']}');"/></th>
 					        <th>试题内容</th>
 					        <th>小题量</th>
@@ -89,9 +99,9 @@
 		    		});
 		    	</script>
 				{x2;else}
-				<table class="table table-hover">
+				<table class="table table-hover table-bordered">
 					<thead>
-						<tr>
+						<tr class="info">
 					        <th width="50"><input type="checkbox" onclick="javascript:selectall(this,'iselectquestions_{x2;$search['questiontype']}','ialreadyselectnumber_{x2;$search['questiontype']}');"/></th>
 					        <th width="100">试题类型</th>
 					        <th>试题内容</th>
@@ -111,9 +121,9 @@
 				        {x2;endtree}
 					</tbody>
 				</table>
-				<div class="pagination pagination-right">
-	            	<ul>{x2;$questions['pages']}</ul>
-		        </div>
+				<ul class="pagination pull-right">
+	            	{x2;$questions['pages']}
+		        </ul>
 		    	<script type="text/javascript">
 		    		jQuery(function($) {
 						markSelectedQuestions('ids[]','iselectquestions_{x2;$search['questiontype']}');

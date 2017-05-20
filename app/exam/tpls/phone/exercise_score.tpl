@@ -1,34 +1,51 @@
-{x2;include:header}
-<body>
-{x2;include:nav}
-<div class="row-fluid">
-	<div class="container-fluid examcontent">
-		<div class="exambox" id="datacontent">
-			<form class="examform form-horizontal" id="form1" name="form1" action="index.php?exam-phone-exampaper-makescore">
-				<ul class="breadcrumb">
-					<li>
-						<span class="icon-home"></span> <a href="index.php?exam-phone">考场选择</a> <span class="divider">/</span>
-					</li>
-					<li>
-						<a href="index.php?exam-phone-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
-					</li>
-					<li class="active">
-						成绩单
-					</li>
-				</ul>
-				<legend class="text-center"><h3>{x2;$sessionvars['examsession']}</h3></legend>
-                <div>
-                	<div class="span12">
-                		<div class="boardscore">
-                			<h1 class="text-center">{x2;$sessionvars['examsessionscore']}分</h1>
-                		</div>
-                        <div class="text-center"><a href="index.php?exam-phone-history-view&ehid={x2;$ehid}" class="btn btn-info">查看答案和解析</a></div>
-                	</div>
-                </div>
+		<header class="container-fluid" style="background-color:#337AB7;">
+			<h5 class="text-center">
+				<em style="font-size:2rem;" class="pull-left glyphicon glyphicon-chevron-left" onclick="javascript:$.goPrePage();"></em>
+				强化训练
+				<em style="font-size:2rem;" class="pull-right glyphicon glyphicon-home" onclick="javascript:$.goPage($('#page1'));"></em>
+			</h5>
+		</header>
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div style="clear:both;overflow:hidden;background:#FFFFFF;margin-top:0.5rem;padding:0.5rem;">
+					<legend class="text-center"><h3>{x2;$sessionvars['examsession']}</h3></legend>
+					<div class="col-xs-12">
+	            		<div class="boardscore">
+	            			<h1 class="text-center text-danger">{x2;$sessionvars['examsessionscore']} 分</h1>
+	            		</div>
+	            	</div>
+	            	<div class="col-xs-12">
+	            		<div><b class="text-info">考试详情：</b></div>
+	          			<p>总分：<b class="text-warning">100</b>分 合格分数线：<b class="text-warning">60</b>分 答卷耗时：<b class="text-warning">{x2;if:$sessionvars['examsessiontime'] >= 60}{x2;if:$sessionvars['examsessiontime']%60}{x2;eval: echo intval($sessionvars['examsessiontime']/60)+1}{x2;else}{x2;eval: echo intval($sessionvars['examsessiontime']/60)}{x2;endif}分钟{x2;else}{x2;$sessionvars['examsessiontime']}秒{x2;endif}</b></p>
+	              		<table class="table table-hover table-bordered">
+	                      <tr class="success">
+	                        <th>题型</th>
+	                        <th>总题数</th>
+	                        <th>答对题数</th>
+	                        <th>总分</th>
+	                        <th>得分</th>
+	                      </tr>
+	                      {x2;tree:$number,num,nid}
+	                      {x2;if:v:num}
+	                      <tr>
+	                        <td>{x2;$questype[v:key]['questype']}</td>
+	                        <td>{x2;v:num}</td>
+	                        <td>{x2;$right[v:key]}</td>
+	                        <td>{x2;eval: echo number_format(v:num*1,1)}</td>
+	                        <td>{x2;eval: echo number_format($score[v:key],1)}</td>
+	                      </tr>
+	                      {x2;endif}
+	                      {x2;endtree}
+	                      <tr>
+	                        <td colspan="5" align="left">本次考试共<b class="text-warning">{x2;$allnumber}</b>道题，总分<b class="text-warning">100</b>分，您做对<b class="text-warning">{x2;$allright}</b>道题，得到<b class="text-warning">{x2;$sessionvars['examsessionscore']}</b>分</td>
+	                      </tr>
+	                   </table>
+	                   {x2;if:$data['currentbasic']['basicexam']['model'] != 2}
+	                   <div class="text-center">
+	                   		<a data-target="views" data-page="views" href="index.php?exam-phone-history-view&ehid={x2;$ehid}" class="ajax btn btn-primary">查看答案和解析</a>&nbsp;&nbsp;&nbsp;&nbsp;
+	                   		<a data-target="history" data-page="history" href="index.php?exam-phone-history" class="ajax btn btn-info">进入我的考试记录</a></div>
+	            	   {x2;endif}
+	            	</div>
+	            </div>
 			</div>
 		</div>
-	</div>
-</div>
-{x2;include:foot}
-</body>
-</html>

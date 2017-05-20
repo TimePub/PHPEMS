@@ -1,139 +1,73 @@
 {x2;include:header}
 <body>
 {x2;include:nav}
-<div class="row-fluid">
-	<div class="container-fluid examcontent">
-		<div class="exambox" id="datacontent">
-			<div class="examform">
-				<ul class="breadcrumb">
-					<li>
-						<span class="icon-home"></span> <a href="index.php?exam">考场选择</a> <span class="divider">/</span>
-					</li>
-					<li class="active">
-						{x2;$data['currentbasic']['basic']}
-					</li>
-				</ul>
-				<ul class="nav nav-tabs">
-					<li class="active">
-						<a href="#" data-toggle="tab">学习考试</a>
-					</li>
-				</ul>
-				<ul class="thumbnails">
-					{x2;if:!$data['currentbasic']['basicexam']['model'] || $data['currentbasic']['basicexam']['model'] == 1}
-					<li class="span2">
-						<div class="thumbnail">
-							<img src="app/core/styles/images/icons/colors.png"/>
-							<div class="caption">
-								<p class="text-center">
-									<a class="btn btn-primary" href="index.php?exam-app-lesson">课后练习</a>
-								</p>
-							</div>
-						</div>
-					</li>
-					<li class="span2">
-						<div class="thumbnail">
-							<img src="app/core/styles/images/icons/Pensils.png"/>
-							<div class="caption">
-								<p class="text-center">
-									<a class="btn btn-primary" href="index.php?exam-app-exercise">强化训练</a>
-								</p>
-							</div>
-						</div>
-					</li>
-					<li class="span2">
-						<div class="thumbnail">
-							<img src="app/core/styles/images/icons/Clipboard.png"/>
-							<div class="caption">
-								<p class="text-center">
-									<a class="btn btn-primary" href="index.php?exam-app-exampaper">模拟考试</a>
-								</p>
-							</div>
-						</div>
-					</li>
-					{x2;endif}
-					{x2;if:!$data['currentbasic']['basicexam']['model'] || $data['currentbasic']['basicexam']['model'] == 2}
-					<li class="span2">
-						<div class="thumbnail">
-							<img src="app/core/styles/images/icons/Watches.png"/>
-							<div class="caption">
-								<p class="text-center">
-									<a class="btn btn-primary" href="index.php?exam-app-exam">正式考试</a>
-								</p>
-							</div>
-						</div>
-					</li>
-					{x2;if:$sessionvars}
-					{x2;if:$data['currentbasic']['basicexam']['opentime']['start'] && $data['currentbasic']['basicexam']['opentime']['end']}
-						 {x2;if: $data['currentbasic']['basicexam']['opentime']['start'] <= TIME && $data['currentbasic']['basicexam']['opentime']['end'] >= TIME}
-						 <li class="span2">
-							<div class="thumbnail">
-								<img src="app/core/styles/images/icons/Compas.png"/>
-								<div class="caption">
-									<p class="text-center">
-										<a class="ajax btn btn-primary" href="index.php?exam-app-recover">意外续考</a>
-									</p>
-								</div>
-							</div>
-						 </li>
-						 {x2;endif}
-					{x2;else}
-					<li class="span2">
-						<div class="thumbnail">
-							<img src="app/core/styles/images/icons/Compas.png"/>
-							<div class="caption">
-								<p class="text-center">
-									<a class="ajax btn btn-primary" href="index.php?exam-app-recover">意外续考</a>
-								</p>
-							</div>
-						</div>
-					</li>
-					{x2;endif}
-					{x2;endif}
-					{x2;endif}
-				</ul>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="main">
+			<div class="box itembox" style="margin-bottom:0px;">
+				<div class="col-xs-12">
+					<ol class="breadcrumb">
+					  <li><a href="index.php">首页</a></li>
+					  <li><a href="index.php?exam-app">考试</a></li>
+					  <li class="active">{x2;$data['currentbasic']['basic']}</li>
+					</ol>
+				</div>
+			</div>
+			<div class="box itembox">
+				<h4 class="title">学习考试</h4>
 				{x2;if:!$data['currentbasic']['basicexam']['model'] || $data['currentbasic']['basicexam']['model'] == 1}
-				<ul class="nav nav-tabs">
-					<li class="active">
-						<a href="#" data-toggle="tab">改错复习</a>
-					</li>
-				</ul>
-				<ul class="thumbnails">
-					<li class="span2">
-						<div class="thumbnail">
-							<img src="app/core/styles/images/icons/Map.png"/>
-							<div class="caption">
-								<p class="text-center">
-									<a class="btn btn-primary" href="index.php?exam-app-history">考试记录</a>
-								</p>
-							</div>
-						</div>
-					</li>
-					<li class="span2">
-						<div class="thumbnail">
-							<img src="app/core/styles/images/icons/Pocket.png"/>
-							<div class="caption">
-								<p class="text-center">
-									<a class="btn btn-primary" href="index.php?exam-app-favor">习题收藏</a>
-								</p>
-							</div>
-						</div>
-					</li>
-					<li class="span2">
-						<div class="thumbnail">
-							<img src="app/core/styles/images/icons/Retina-Ready.png"/>
-							<div class="caption">
-								<p class="text-center">
-									<a class="btn btn-primary" href="index.php?exam-app-score">成绩单</a>
-								</p>
-							</div>
-						</div>
-					</li>
-				</ul>
+				<div class="col-xs-3" style="width:20%">
+					<a href="index.php?exam-app-lesson" class="thumbnail" style="border:0px;">
+						<img src="app/core/styles/img/t1.png" alt="" width="100%">
+					</a>
+					<h5 class="text-center">课后练习</h5>
+				</div>
+				<div class="col-xs-3" style="width:20%">
+					<a href="index.php?exam-app-exercise" class="thumbnail" style="border:0px;">
+						<img src="app/core/styles/img/t4.png" alt="" width="100%">
+					</a>
+					<h5 class="text-center">强化训练</h5>
+				</div>
+				<div class="col-xs-3" style="width:20%">
+					<a href="index.php?exam-app-exampaper" class="thumbnail" style="border:0px;">
+						<img src="app/core/styles/img/t2.png" alt="" width="100%">
+					</a>
+					<h5 class="text-center">模拟考试</h5>
+				</div>
 				{x2;endif}
+				{x2;if:!$data['currentbasic']['basicexam']['model'] || $data['currentbasic']['basicexam']['model'] == 2}
+				<div class="col-xs-3" style="width:20%">
+					<a href="index.php?exam-app-exam" class="thumbnail" style="border:0px;">
+						<img src="app/core/styles/img/t3.png" alt="" width="100%">
+					</a>
+					<h5 class="text-center">正式考试</h5>
+				</div>
+				{x2;endif}
+			</div>
+			<div class="box itembox">
+				<h4 class="title">改错复习</h4>
+				<div class="col-xs-3" style="width:20%">
+					<a href="index.php?exam-app-history" class="thumbnail" style="border:0px;">
+						<img src="app/core/styles/img/t5.png" alt="" width="100%">
+					</a>
+					<h5 class="text-center">考试记录</h5>
+				</div>
+				<div class="col-xs-3" style="width:20%">
+					<a href="index.php?exam-app-favor" class="thumbnail" style="border:0px;">
+						<img src="app/core/styles/img/t6.png" alt="" width="100%">
+					</a>
+					<h5 class="text-center">习题收藏</h5>
+				</div>
+				<div class="col-xs-3" style="width:20%">
+					<a href="index.php?exam-app-score" class="thumbnail" style="border:0px;">
+						<img src="app/core/styles/img/t8.png" alt="" width="100%">
+					</a>
+					<h5 class="text-center">成绩单</h5>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
-{x2;include:foot}
+{x2;include:footer}
 </body>
 </html>

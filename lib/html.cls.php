@@ -31,9 +31,11 @@ class html
 	    	$tmp['type'] = $field['fieldhtmltype'];
 	    	$tmp['describe'] = $field['fielddescribe'];
     		if(is_array($values))
-    		$tmp['html'] = $this->$field['fieldhtmltype'](array('pars'=>$field['fieldhtmlproperty'],'values'=>$field['fieldvalues'],'default'=>$values[$field['field']]));
+    		//$tmp['html'] = $this->$field['fieldhtmltype'](array('pars'=>$field['fieldhtmlproperty'],'values'=>$field['fieldvalues'],'default'=>$values[$field['field']]));
+    		$tmp['html'] = call_user_func(array($this,$field['fieldhtmltype']),array('pars'=>$field['fieldhtmlproperty'],'values'=>$field['fieldvalues'],'default'=>$values[$field['field']]));
     		else
-    		$tmp['html'] = $this->$field['fieldhtmltype'](array('pars'=>$field['fieldhtmlproperty'],'values'=>$field['fieldvalues'],'default'=>$field['fielddefault']));
+    		//$tmp['html'] = $this->$field['fieldhtmltype'](array('pars'=>$field['fieldhtmlproperty'],'values'=>$field['fieldvalues'],'default'=>$field['fielddefault']));
+    		$tmp['html'] = call_user_func(array($this,$field['fieldhtmltype']),array('pars'=>$field['fieldhtmlproperty'],'values'=>$field['fieldvalues'],'default'=>$field['fielddefault']));
     		$forms[] = $tmp;
     	}
     	return $forms;
@@ -141,8 +143,8 @@ class html
 
     public function _radio($pars,$value,$default,$index)
     {
-    	//$str = "<label><input type=\"radio\" ";
-    	$str = "<input type=\"radio\" ";
+    	$str = "<label class=\"radio-line\"><input type=\"radio\" ";
+    	//$str = "<input type=\"radio\" ";
     	if(is_array($pars))
     	{
 	    	foreach($pars as $key => $p)
@@ -157,11 +159,11 @@ class html
 	    	}
     	}
     	if($value['value'] == $default)
-    	//$str .= "value=\"{$value['value']}\" checked/> {$value['key']}</label>&nbsp;&nbsp;";
-    	$str .= "value=\"{$value['value']}\" checked/> {$value['key']}&nbsp;&nbsp;";
+    	$str .= "value=\"{$value['value']}\" checked/> {$value['key']}</label>&nbsp;&nbsp;";
+    	//$str .= "value=\"{$value['value']}\" checked/> {$value['key']}&nbsp;&nbsp;";
     	else
-    	//$str .= "value=\"{$value['value']}\" /> {$value['key']}</label>&nbsp;&nbsp;";
-    	$str .= "value=\"{$value['value']}\" /> {$value['key']}&nbsp;&nbsp;";
+    	$str .= "value=\"{$value['value']}\" /> {$value['key']}</label>&nbsp;&nbsp;";
+    	//$str .= "value=\"{$value['value']}\" /> {$value['key']}&nbsp;&nbsp;";
     	return $str;
     }
 
@@ -173,39 +175,6 @@ class html
     	{
     		$str .= $this->_radio($args['pars'],$p,$args['default'],$key);
     	}
-    	return $str;
-    }
-
-    public function thumbtext($args)
-    {
-    	$str = "<input type=\"text\" ";
-    	$id = NULL;
-    	$classinfo = false;
-    	if(is_array($args['pars']))
-    	{
-	    	foreach($args['pars'] as $p)
-	    	{
-	    		if($p['key'] == 'id')
-				$id = $p['value'];
-	    		if($p['key'] == "class")
-	    		{
-	    			$str .= "{$p['key']}=\"inline uploadimg\" ";
-	    			$classinfo = true;
-	    		}
-	    		else
-	    		$str .= "{$p['key']}=\"{$p['value']}\" ";
-	    	}
-	    	if(!$classinfo)
-	    	{
-	    		$str .= 'class="inline uploadimg" ';
-	    	}
-	    	if(!$id)
-	    	{
-	    		$id = 'up'.md5($str);
-	    		$str .= 'id="'.$id.'" ';
-	    	}
-    	}
-    	$str .= "thumb=\"true\"/>\n<span class=\"button\"><a id=\"{$id}_button\"></a></span>\n<a class=\"viewsup button\" href=\"javascript:;\" onclick=\"javascript:if($('#{$id}').val() && $('#{$id}').val() != '')$.zoombox.open($('#{$id}').val());\">查看图片</a>\n<span id=\"{$id}_msg\">&nbsp;</span>";
     	return $str;
     }
 
@@ -224,9 +193,36 @@ class html
 	    	}
 	    	if(!$id)
 	    	$id = 'form'.$name;
-	    	if(!$value)$value = 'app/core/styles/images/noimage.gif';
+	    	if(!$value)$value = 'app/core/styles/img/noimage.gif';
     	}
-    	$str = "<div class=\"thumbuper pull-left\"><div class=\"thumbnail\"><a href=\"javascript:;\" class=\"second label\"><em class=\"uploadbutton\" id=\"{$id}\" exectype=\"thumb\"></em></a><a href=\"javascript:;\" onclick=\"javascript:$('#{$id}_view').attr('src','app/core/styles/images/noimage.gif');$('#{$id}_value').val('');\" class=\"second2 label\" title=\"重置\"><em class=\"icon-remove\"></em></a><div class=\"first\" id=\"{$id}_percent\"></div><div class=\"boot\"><img src=\"{$value}\" id=\"{$id}_view\"/><input type=\"hidden\" name=\"{$name}\" value=\"{$value}\" id=\"{$id}_value\"/></div></div></div>";
+    	$str = <<<EOF
+    	<script type="text/template" id="pe-template-$id">
+    		<div class="qq-uploader-selector" style="width:30%" qq-drop-area-text="可将图片拖拽至此处上传" style="clear:both;">
+            	<div class="qq-upload-button-selector" style="clear:both;">
+                	<ul class="qq-upload-list-selector list-unstyled" aria-live="polite" aria-relevant="additions removals" style="clear:both;">
+		                <li class="text-center">
+		                    <div class="thumbnail">
+								<img class="qq-thumbnail-selector" alt="点击上传新图片">
+								<input type="hidden" class="qq-edit-filename-selector" name="$name" tabindex="0">
+							</div>
+		                </li>
+		            </ul>
+		            <ul class="qq-upload-list-selector list-unstyled" aria-live="polite" aria-relevant="additions removals" style="clear:both;">
+			            <li class="text-center">
+			                <div class="thumbnail">
+								<img class="qq-thumbnail-selector" src="$value" alt="点击上传新图片">
+								<input type="hidden" class="qq-edit-filename-selector" name="$name" tabindex="0" value="$value">
+                			</div>
+			            </li>
+			        </ul>
+                </div>
+            </div>
+        </script>
+        <div class="fineuploader" attr-type="thumb" attr-template="pe-template-$id"></div>
+EOF;
+		/**
+    	$str = "<div class=\"thumbuper pull-left\"><div class=\"thumbnail\"><a href=\"javascript:;\" class=\"second label\"><em class=\"uploadbutton\" id=\"{$id}\" exectype=\"thumb\"></em></a><a href=\"javascript:;\" onclick=\"javascript:$('#{$id}_view').attr('src','app/core/styles/images/noimage.gif');$('#{$id}_value').val('');\" class=\"second2 label\" title=\"重置\"><em style=\"color:#000000;\" class=\"glyphicon glyphicon-remove icon-remove\"></em></a><div class=\"first\" id=\"{$id}_percent\"></div><div class=\"boot\"><img src=\"{$value}\" id=\"{$id}_view\"/><input type=\"hidden\" name=\"{$name}\" value=\"{$value}\" id=\"{$id}_value\"/></div></div></div>";
+    	**/
     	return $str;
     }
 
@@ -245,26 +241,83 @@ class html
 	    	}
 	    	if(!$id)
 	    	$id = 'form'.$name.'[]';
-	    	//$values = explode(',',$values);
 	    	$values = unserialize($values);
     	}
-    	$str = "<div class=\"thumbuper pull-left\"><div class=\"thumbnail\"><a href=\"javascript:;\" class=\"second label\"\"><em class=\"uploadbutton\" id=\"{$id}\" exectype=\"rows\"></em></a><div class=\"first\" id=\"{$id}_percent\"></div><div class=\"boot\"><img src=\"app/core/styles/images/noimage.gif\" id=\"{$id}_view\"/></div></div></div>";
-    	$str .= "<div class=\"sortable\" id=\"{$id}_range\">";
+    	$str = "<div class=\"sortable\" id=\"{$id}-range\">";
     	if(is_array($values))
     	{
 	    	foreach($values as $value)
 	    	{
 	    		if($value)
-	    		$str .= "<div class=\"thumbuper pull-left\"><div class=\"thumbnail\"><a href=\"javascript:;\" onclick=\"javascript:$.removeUploadedImage(this);\" class=\"second label\"><em class=\"icon-remove\"></em></a><div class=\"boot\"><img src=\"{$value}\"><input name=\"{$name}\" value=\"{$value}\" type=\"hidden\"></div></div></div>";
+	    		$str .= <<<EOF
+	    		<div class="thumbnail col-xs-3 listimgselector">
+					<img class="qq-thumbnail-selector" alt="点击上传新图片" src="$value">
+					<input type="hidden" class="qq-edit-filename-selector" name="$name" tabindex="0" value="$value">
+				</div>
+EOF;
 	    	}
     	}
-    	return $str.'</div>';
+    	$str .= "</div>";
+    	$str .= <<<EOF
+		<script type="text/template" id="pe-template-$id">
+    		<div class="qq-uploader-selector" qq-drop-area-text="可将图片拖拽至此处上传" style="clear:both;">
+            	<div class="qq-upload-list-selector hide" aria-live="polite" aria-relevant="additions removals">
+					<span></span>
+				</div>
+				<div class="listimg hide">
+					<div class="thumbnail col-xs-3 listimgselector">
+						<img class="qq-thumbnail-selector" alt="点击上传新图片" src="*value*">
+						<input type="hidden" class="qq-edit-filename-selector" name="*name*" tabindex="0" value="*value*">
+					</div>
+				</div>
+				<div class="qq-upload-button-selector qq-upload-button" style="clear:both;">
+                    <a class="btn btn-primary">添加文件</a>
+                </div>
+            </div>
+        </script>
+        <div class="fineuploader" attr-box="$id-range" attr-name="$name" attr-type="list" attr-list="true" attr-template="pe-template-$id"></div>
+EOF;
+    	return $str;
     }
 
     public function videotext($args)
     {
-    	$str = "<input type=\"text\" ";
-    	$id = NULL;
+    	if(is_array($args['pars']))
+    	{
+	    	foreach($args['pars'] as $p)
+	    	{
+				if($p['key'] == 'id')
+				$id = $p['value'];
+	    		if($p['key'] == "name")
+	    		$name = $p['value'];
+				if($p['key'] == 'value')
+				$v = $p['value'];
+	    	}
+    	}
+    	$str = <<<EOF
+    	<script type="text/template" id="pe-template-$id">
+    		<div class="qq-uploader-selector" qq-drop-area-text="可将图片拖拽至此处上传" style="clear:both;">
+            	<ul class="qq-upload-list-selector list-unstyled pull-left" aria-live="polite" aria-relevant="additions removals" style="clear:both;">
+	                <li class="text-center">
+						<input size="45" class="form-control qq-edit-filename-selector" type="text" name="$name" tabindex="0" value="">
+	                </li>
+	            </ul>
+	            <ul class="qq-upload-list-selector list-unstyled pull-left" aria-live="polite" aria-relevant="additions removals" style="clear:both;">
+	                <li class="text-center">
+	                    <input size="45" class="form-control qq-edit-filename-selector" type="text" name="$name" tabindex="0" value="$v">
+	                </li>
+	            </ul>
+            	<div class="qq-upload-button-selector col-xs-3">
+					<button class="btn btn-primary">上传文件<span class="process"></span></button>
+                </div>
+            </div>
+        </script>
+        <div class="fineuploader" attr-type="files" attr-template="pe-template-$id" attr-ftype="mp4"></div>
+EOF;
+/**
+    	$str = "<span class=\"input-append\">";
+		$istr = '';
+		$id = NULL;
     	$classinfo = false;
     	if(is_array($args['pars']))
     	{
@@ -272,25 +325,28 @@ class html
 	    	{
 	    		if($p['key'] == 'id')
 				$id = $p['value'];
+				if($p['key'] == 'value')
+				$v = $p['value'];
 	    		if($p['key'] == "class")
 	    		{
-	    			$str .= "{$p['key']}=\"inline uploadvideo\" ";
+	    			$istr .= "{$p['key']}=\"inline uploadbutton\" ";
 	    			$classinfo = true;
 	    		}
 	    		else
-	    		$str .= "{$p['key']}=\"{$p['value']}\" ";
+	    		$istr .= "{$p['key']}=\"{$p['value']}\" ";
 	    	}
 	    	if(!$classinfo)
 	    	{
-	    		$str .= 'class="inline uploadvideo" ';
+	    		$istr .= 'class="inline uploadbutton" ';
 	    	}
 	    	if(!$id)
 	    	{
 	    		$id = 'up'.md5($str);
-	    		$str .= 'id="'.$id.'" ';
 	    	}
     	}
-    	$str .= "thumb=\"true\"/>\n<span class=\"button\"><a id=\"{$id}_button\"></a></span>\n<span id=\"{$id}_msg\">&nbsp;</span>";
+    	$str .= "<input type=\"text\" name=\"args[{$id}]\" id=\"{$id}_value\" value=\"{$v}\" class=\"inline uploadvideo\"/>";
+		$str .= "<span id=\"{$id}_percent\" class=\"add-on\">0.00%</span></span>&nbsp;";
+		$str .= "<span class=\"btn\"><a {$istr} exectype=\"upfile\">选择文件</a></span>";**/
     	return $str;
     }
 
@@ -343,7 +399,7 @@ class html
 
     public function _checkBox($args,$isArray = false)
     {
-    	$str = "<label class=\"checkbox inline\"><input type=\"checkbox\" ";
+    	$str = "<label class=\"checkbox-inline checkbox inline\"><input type=\"checkbox\" ";
     	$v = '';
     	if(is_array($args['pars']))
     	{

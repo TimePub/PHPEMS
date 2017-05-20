@@ -21,7 +21,7 @@ class app
 		{
 			if($this->ev->get('userhash'))
 			exit(json_encode(array(
-				'statusCode' => 300,
+				'statusCode' => 301,
 				"message" => "请您重新登录",
 			    "callbackType" => 'forward',
 			    "forwardUrl" => "index.php?user-phone-login"
@@ -65,6 +65,7 @@ class app
 		$this->tpl->assign('_user',$this->user->getUserById($this->_user['sessionuserid']));
 		$this->tpl->assign('userhash',$this->ev->get('userhash'));
 	}
+	/**
 
 	public function basics()
 	{
@@ -570,7 +571,6 @@ class app
 			}
 			break;
 
-			/**
 			case 'selectquestions':
 			$knowsid = $this->ev->get('knowsid');
 			$knows = $this->section->getKnowsByArgs("knowsid = '{$knowsid}'");
@@ -651,7 +651,7 @@ class app
 			$this->tpl->assign('sections',$sections);
 			$this->tpl->assign('knows',$knows);
 			$this->tpl->display('exercise');
-			**/
+
 			default:
 			$questype = $this->basic->getQuestypeList();
 			if($this->ev->get('setExecriseConfig'))
@@ -672,7 +672,6 @@ class app
 					$args['knowsid'] .= intval($key).",";
 					$args['knowsid'] = trim($args['knowsid']," ,");
 				}
-				/**
 				arsort($args['number']);
 				$snumber = 0;
 				foreach($args['number'] as $key => $v)
@@ -689,7 +688,6 @@ class app
 				}
 				$dt = key($args['number']);
 				$questionids = $this->question->selectQuestionsByKnows($args['knowsid'],$args['number'],$dt);
-				**/
 				$args['number'] = array($args['questid'] => 10);
 				$questionids = $this->question->selectQuestionsByKnows($args['knowsid'],$args['number']);
 				$questions = array();
@@ -1049,6 +1047,7 @@ class app
 			break;
 		}
 	}
+	**/
 }
 
 ?>

@@ -12,6 +12,7 @@ class app
 		$this->tpl = $this->G->make('tpl');
 		$this->ev = $this->G->make('ev');
 	}
+	/**
 
 	public function randcode()
 	{
@@ -45,6 +46,7 @@ class app
 			echo 'console.log("ok")';
 		}
 	}
+	**/
 }
 
 ?>
