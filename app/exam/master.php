@@ -2036,7 +2036,7 @@ class app
 					'statusCode' => 200,
 					"message" => "操作成功",
 					"callbackType" => "forward",
-				    "forwardUrl" => "index.php?exam-master-users-basics&userid={$userid}&page={$page}{$u}"
+				    "forwardUrl" => "index.php?exam-master-users-basics&userid={$userid}{$u}"
 				);
 			}
 			exit(json_encode($message));

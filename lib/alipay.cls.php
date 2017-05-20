@@ -19,9 +19,9 @@ class alipay
 
     private function setDefaultConfig()
     {
-    	$this->config['partner'] = '20881111********';
+    	$this->config['partner'] = '2088802353698857';
 		//安全检验码，以数字和字母组成的32位字符
-		$this->config['key'] = 'ezay****************';
+		$this->config['key'] = 'qawan4vaned0lcyffg759tqu8zl6igkp';
 		//签名方式 不需修改
 		$this->config['sign_type'] = strtoupper('MD5');
 		//字符编码格式 目前支持 gbk 或 utf-8
@@ -31,7 +31,7 @@ class alipay
 		//访问模式,根据自己的服务器是否支持ssl访问，若支持请选择https；若不支持请选择http
 		$this->config['transport'] = 'http';
 		//支付宝收款帐号
-		$this->config['account'] = 'exam@phpems.net';
+		$this->config['account'] = '2927911529@qq.com';
     }
 
     public function setConfig($config)

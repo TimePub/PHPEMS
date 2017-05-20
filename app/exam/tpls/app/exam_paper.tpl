@@ -1,5 +1,6 @@
 {x2;include:head}
 <body onbeforeunload="javascript:saveanswer(false);">
+<style>label.inline{width:24px;}</style>
 {x2;include:nav}
 <div id="main">
 	<!--主体左侧-->

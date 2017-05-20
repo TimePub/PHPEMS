@@ -19,7 +19,7 @@
                 	<img src="app/exam/styles/image/exam_tit.jpg" alt="考试须知" />
                   </h2>
        	    	<h1>{x2;$sessionvars['examsession']}</h1>
-                <h5>总分：<span class="orange">100</span>分 合格分数线：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['passscore']}</span>分 考试时间：<span class="orange">{x2;$sessionvars['examsessiontime']}</span>分钟 来源：东奥会计在线</h5>
+                <h5>总分：<span class="orange">100</span>分 合格分数线：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['passscore']}</span>分 考试时间：<span class="orange">{x2;$sessionvars['examsessiontime']}</span>分钟</h5>
                 {x2;eval: v:oid = 0}
                 {x2;tree:$questype,quest,qid}
                 {x2;eval: v:wrongnumber = 0}

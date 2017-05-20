@@ -1,128 +1,0 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="title" content="无纸化模拟考试系统">
-<meta name="description" content="无纸化模拟考试系统">
-<meta name="keywords" content="无纸化模拟考试系统">
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<title>无纸化模拟考试系统</title>
-<!–[if lt IE9]>
-<script src="app/core/styles/js/html5.js"></script>
-<![endif]–>
-<!-- Le styles -->
-<link href="app/core/styles/css/bootstrap-combined.min.css" rel="stylesheet">
-<link href="app/core/styles/css/layoutit.css" rel="stylesheet">
-<link href="app/core/styles/css/plugin.css" rel="stylesheet">
-<link href="app/core/styles/css/datepicker.css" rel="stylesheet">
-<script type="text/javascript" src="app/core/styles/js/jquery.min.js"></script>
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-<script src="app/core/styles/js/html5shiv.js"></script>
-<script type="text/javascript" src="app/core/styles/js/jquery-1.9.1.min.js"></script>
-<![endif]-->
-<script type="text/javascript" src="app/core/styles/js/jquery-ui.js"></script>
-<script type="text/javascript" src="app/core/styles/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="app/core/styles/js/bootstrap.min.js"></script>
-
-<script type="text/javascript" src="app/core/styles/js/ckeditor/ckeditor.js"></script>
-<script type="text/javascript" src="app/core/styles/js/swfu/swfupload.js"></script>
-<script type="text/javascript" src="app/core/styles/js/plugin.js"></script>
-</head><body>
-<div class="navbar navbar-inverse">	<div class="navbar-inner">		<div class="container-fluid">			<button data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar" type="button"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>			<a href="index.php" target="_blank" class="brand"><img src="app/core/styles/images/favicon.png">系统管理平台<span class="label">BETA</span></a>			<div class="nav-collapse navbar-responsive-collapse collapse">				<ul class="nav">					<li>						<a href="index.php?core-master">全局</a>					</li>					<li class="dropdown">						<a data-toggle="dropdown" class="dropdown-toggle" href="#">模块<strong class="caret"></strong></a>						<ul class="dropdown-menu">																					<li>								<a href="index.php?user-master">用户模块</a>							</li>																												<li>								<a href="index.php?exam-master">考试模块</a>							</li>																												<li>								<a href="index.php?core-master">全局</a>							</li>																																										<li>								<a href="index.php?content-master">内容模块</a>							</li>																				</ul>					</li>				</ul>				<ul class="nav pull-right">					<li>						<a href="index.php">网站首页</a>					</li>					<li class="divider-vertical">					</li>					<li class="dropdown">						<a data-toggle="dropdown" class="dropdown-toggle" href="#">peadmin<strong class="caret"></strong></a>						<ul class="dropdown-menu">							<!--							<li>								<a href="index.php?user-app-privatement">个人中心</a>							</li>							<li class="divider">							</li>							-->							<li>								<a href="index.php?core-master-logout">退出管理</a>							</li>						</ul>					</li>				</ul>			</div>		</div>	</div></div><div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span2">
-			<ul class="nav nav-tabs nav-stacked">	<li>		<a href="index.php?content-master">首页</a>	</li>	<li>		<a href="index.php?content-master-category">分类管理</a>	</li>	<li>		<a href="index.php?content-master-contents">内容管理</a>	</li>	<li>		<a href="index.php?content-master-module">模型管理</a>	</li>	<li class="active">		<a href="index.php?content-master-blocks">标签管理</a>	</li></ul>		</div>
-		<div class="span10" id="datacontent">
-			<ul class="breadcrumb">
-				<li><a href="index.php?content-master">内容模块</a> <span class="divider">/</span></li>
-				<li><a href="index.php?content-master-blocks&page=">标签管理</a> <span class="divider">/</span></li>
-				<li class="active">标签修改</li>
-			</ul>
-			<ul class="nav nav-tabs">
-				<li class="active">
-					<a href="#">标签修改</a>
-				</li>
-				<li class="pull-right">
-					<a href="index.php?content-master-blocks&page=">标签管理</a>
-				</li>
-			</ul>
-						<form action="?content-master-blocks-modify" method="post" class="form-horizontal">
-		        <div class="control-group">
-		            <label for="block" class="control-label">名称：</label>
-		            <div class="controls">
-		            	<input id="block" type="text" name="args[block]" needle="needle" msg="您必须输入名称" max="40" value="产品库">
-		        	</div>
-		        </div>
-		        <div class="control-group">
-		            <label for="blockposition" class="control-label">位置：</label>
-		            <div class="controls">
-		            	<input id="blockposition" type="text" name="args[blockposition]" needle="needle" msg="您必须输入内容所在位置" max="40" value="首页">
-		        	</div>
-		        </div>
-		        <div class="control-group">
-		            <label for="blockcontent_app" class="control-label">选择应用：</label>
-		            <div class="controls">
-		            	<select id="blockcontent_app" name="args[blockcontent][app]" needle="needle" msg="您必须选择应用">
-			            	<option value="">请选择应用</option>
-			            				            	<option value="user">用户模块</option>
-			            				            	<option value="exam">考试模块</option>
-			            				            	<option value="core">全局</option>
-			            				            	<option value="document">文件模块</option>
-			            				            	<option value="content" selected>内容模块</option>
-			            				            </select>
-		        	</div>
-		        </div>
-		        <div class="control-group">
-		            <label for="blockcontent_catid" class="control-label">分类ID：</label>
-		            <div class="controls">
-		            	<input id="blockcontent_catid" type="text" name="args[blockcontent][catid]" datatype="number" needle="needle" msg="您必须输入调用分类的ID" value="4">
-		        		<div class="intro">请在分类列表里查看分类ID</div>
-		        	</div>
-		        </div>
-		        <div class="control-group">
-		            <label for="blockcontent_query" class="control-label">查询条件：</label>
-		            <div class="controls">
-		            	<textarea class="input-xxlarge" id="blockcontent_query" name="args[blockcontent][query]" rows="7" cols="4">contentid &gt; '1'</textarea>
-		            	<div class="intro">每行一个条件</div>
-		        	</div>
-		        </div>
-		        <div class="control-group">
-		            <label for="blockcontent_number" class="control-label">调用数量：</label>
-            		<div class="controls">
-		            	<input id="blockcontent_number" type="text" name="args[blockcontent][number]" value="4" needle="needle" datatype="number">
-		        	</div>
-		        </div>
-		        <div class="control-group">
-		            <label for="blockcontent_template" class="control-label">模板：</label>
-            		<div class="controls">
-		            	<textarea class="input-xxlarge" id="blockcontent_template" name="args[blockcontent][template]" rows="7" needle="needle" cols="4" msg="您必须输入模板内容">&lt;h3 class=&quot;themetitle&quot;&gt;
-					&lt;b class=&quot;icon-picture&quot;&gt;&lt;/b&gt; {x2;v:blockcat['catname']}
-				&lt;/h3&gt;
-				&lt;ul class=&quot;thumbnails&quot;&gt;
-					{x2;tree:v:blockdata,content,cid}
-					&lt;li class=&quot;span3&quot;&gt;
-						&lt;div class=&quot;thumbnail&quot;&gt;
-							&lt;a href=&quot;index.php?content-app-content&amp;contentid={x2;v:content['contentid']}&quot;&gt;&lt;img alt=&quot;300x200&quot; src=&quot;{x2;v:content['contentthumb']}&quot; /&gt;&lt;/a&gt;
-						&lt;/div&gt;
-					&lt;/li&gt;
-					{x2;endtree}
-				&lt;/ul&gt;</textarea>
-		        	</div>
-		        </div>
-		        <div class="control-group">
-		            <div class="controls">
-		            	<button class="btn btn-primary" type="submit">提交</button>
-			            <input type="hidden" name="blockid" value="5">
-			            <input type="hidden" name="page" value="">
-			            <input type="hidden" name="modifyblock" value="1">
-		            </div>
-		        </div>
-		    </form>
-					</div>
-	</div>
-</div>
-</body>
-</html>
