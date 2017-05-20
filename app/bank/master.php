@@ -37,7 +37,7 @@ class app
 		$this->tpl->assign('localapps',$localapps);
 		$this->tpl->assign('apps',$apps);
 		$this->orders = $this->G->make('orders','bank');
-		$orderstatus = array(1=>'待付款',2=>'已完成',3=>'待发货',4=>'待收货',99=>'已撤单');
+		$orderstatus = array(1=>'待付款',2=>'已完成',99=>'已撤单');
 		$this->tpl->assign('orderstatus',$orderstatus);
 	}
 

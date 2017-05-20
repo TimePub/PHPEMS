@@ -1,151 +1,135 @@
-{x2;include:head}
+{x2;include:header}
 <body>
-<!--导航-->
+<script src="app/exam/styles/js/plugin.js"></script>
 {x2;include:nav}
-<div id="main">
-	<!--主体左侧-->
-	{x2;include:left}
-	<!--主体左侧 结束-->
-	<!--主体右侧 -->
-	<div id="right_760" class="right_760">
-    	{x2;include:bread}
-    	<div class="bor_top"></div>
-    	<div class="bor_mid">
-    		<div id="hide_left"><a href="javascript:pr()"></a></div>
-            <div id="exam_paper">
-            <form action="?exam-app-exampaper-score" id="form1" name="form1" method="post">
-            	<h2 class="page_title">
-                	<img src="app/exam/styles/image/exam_tit.jpg" alt="考试须知" />
-                    <!--分数-->
-                    <div id="fenshu">
-                        {x2;if:$sessionvars['examsessionscore'] >= 100}
-                        <div class="n{x2;eval: echo intval($sessionvars['examsessionscore']/100%10)}"></div>
-                        {x2;endif}
-                        {x2;if:$sessionvars['examsessionscore'] >= 10}
-                        <div class="n{x2;eval: echo intval($sessionvars['examsessionscore']/10%10)}"></div>
-                        {x2;endif}
-                        <div class="n{x2;eval: echo intval($sessionvars['examsessionscore']%10)}"></div>
-                        {x2;if:$sessionvars['examsessionscore']*10%10 > 0}
-                        <div class="ndot"></div>
-                        <div style="display:none;" class="n{x2;eval: echo intval($sessionvars['examsessionscore']*10%10)}"></div>
-                        {x2;endif}
-                    </div>
-                    <!--分数 结束-->
-                  </h2>
-       	    	<h1>{x2;$sessionvars['examsession']}</h1>
-                <h5>总分：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['score']}</span>分 合格分数线：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['passscore']}</span>分 考试时间：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['examtime']}</span>分钟 来源：{x2;$sessionvars['examsessionsetting']['examsetting']['comfrom']}</h5>
-                {x2;eval: v:oid = 0}
-                {x2;tree:$questype,quest,qid}
-                {x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
-                {x2;eval: v:oid++}
-                <h4 class="qu_type">{x2;$ols[v:oid]}、{x2;v:quest['questype']}（{x2;$sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['describe']}）</h4>
-                {x2;eval: v:tid = 0}
-                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest['questid']],question,qnid}
-                {x2;eval: v:tid++}
-                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'">
-                	<h3><span class="float_l">{x2;v:tid}、</span>{x2;eval: echo html_entity_decode(v:question['question'])}</h3>
-                    <ul>
-                    	{x2;realhtml:v:question['questionselect']}
-                    </ul>
-                    <span class="examquestionform" name="formquestion_{x2;v:question['questionid']}" id="formquestion_{x2;v:question['questionid']}" rel="nodo">
-                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
-                        <div class="float_r ml_10{x2;if:$sessionvars['examsessionscorelist'][v:question['questionid']] == $sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['score']} answer_icon_r{x2;else} answer_icon_w{x2;endif}"></div>
-                        {x2;if:v:quest['questsort']}
-                        <span class="font_12 float_r cz">【<a href="javascript:favorquestion('{x2;v:question['questionid']}');">收藏</a>】</span>
-                        <p class=" float_l">本题得分：{x2;$sessionvars['examsessionscorelist'][v:question['questionid']]}</p>
-                        <div class="clear"></div>
-                        {x2;else}
-                        <span class="font_12 float_r cz">【<a href="javascript:favorquestion('{x2;v:question['questionid']}');">收藏</a>】</span>
-						<div class="option_single" id="radio">
-                        	<p class=" float_l">本题得分：{x2;$sessionvars['examsessionscorelist'][v:question['questionid']]}</p>
-                        </div>
-                        <div class="clear"></div>
-                        {x2;endif}
-                    </div>
-                    <div class="answer">
-                    	<ul>
-                        	<li class="red">【正确答案】{x2;realhtml:v:question['questionanswer']}</li>
-                        	<li><span class="blue">【您的答案】</span>{x2;if:is_array($sessionvars['examsessionuseranswer'][v:question['questionid']])}{x2;eval: echo implode('',$sessionvars['examsessionuseranswer'][v:question['questionid']])}{x2;else}{x2;realhtml:$sessionvars['examsessionuseranswer'][v:question['questionid']]}{x2;endif}</li>
-                        	<li>【所在章】{x2;tree:v:question['questionknowsid'],knowsid,kid}&nbsp;&nbsp;{x2;$globalsections[$globalknows[v:knowsid['knowsid']]['knowssectionid']]['section']}&nbsp;{x2;endtree}</li>
-                        	<li>【知识点】{x2;tree:v:question['questionknowsid'],knowsid,kid}&nbsp;&nbsp;{x2;$globalknows[v:knowsid['knowsid']]['knows']}&nbsp;{x2;endtree}</li>
-                        	<li>【答案解析】</li>
-                        	<li class="ml_10">{x2;realhtml:v:question['questiondescribe']}</li>
-                        </ul>
-                    </div>
-                    </span>
-                </div>
-                {x2;endtree}
-                {x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest['questid']],questionrow,qrid}
-                {x2;eval: v:tid++}
-                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'">
-                	<h3>{x2;v:tid}、{x2;eval: echo html_entity_decode(v:questionrow['qrquestion'])}</h3>
-                	{x2;tree:v:questionrow['data'],data,did}
-                	<h3>({x2;v:did}){x2;eval: echo html_entity_decode(v:data['question'])}</h3>
-                    <div>
-                    	{x2;realhtml:v:data['questionselect']}
-                    </div>
-                    <span class="examquestionform" name="formquestion_{x2;v:data['questionid']}" id="formquestion_{x2;v:data['questionid']}" rel="nodo">
-                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
-    					<div class="float_r ml_10{x2;if:$sessionvars['examsessionscorelist'][v:data['questionid']] == $sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['score']} answer_icon_r{x2;else} answer_icon_w{x2;endif}"></div>
-                        {x2;if:v:quest['questsort']}
-                        <span class="font_12 float_r cz">【<a href="javascript:favorquestion('{x2;v:data['questionid']}');">收藏</a>】</span>
-                        <p class=" float_l">本题得分：{x2;$sessionvars['examsessionscorelist'][v:data['questionid']]}</p>
-                        <div class="clear"></div>
-                        {x2;else}
-                        <span class="font_12 float_r cz">【<a href="javascript:favorquestion('{x2;v:data['questionid']}');">收藏</a>】</span>
-						<div class="option_single" id="radio">
-                        	<p class=" float_l">本题得分：{x2;$sessionvars['examsessionscorelist'][v:data['questionid']]}</p>
-                        </div>
-                        <div class="clear"></div>
-                        {x2;endif}
-                    </div>
-                    <div class="answer">
-                    	<ul>
-                        	<li class="red">【正确答案】</li>
-                            <li class="ml_10 mb_10">{x2;realhtml:v:data['questionanswer']}</li>
-                        	<li class="blue">【您的答案】</li>
-                            <li class="ml_10 mb_10">{x2;if:is_array($sessionvars['examsessionuseranswer'][v:data['questionid']])}{x2;eval: echo implode('',$sessionvars['examsessionuseranswer'][v:data['questionid']])}{x2;else}{x2;realhtml:$sessionvars['examsessionuseranswer'][v:data['questionid']]}{x2;endif}</li>
-                        	<li>【所在章】{x2;tree:v:questionrow['qrknowsid'],knowsid,kid}&nbsp;&nbsp;{x2;$globalsections[$globalknows[v:knowsid['knowsid']]['knowssectionid']]['section']}&nbsp;{x2;endtree}</li>
-                        	<li>【知识点】{x2;tree:v:questionrow['qrknowsid'],knowsid,kid}&nbsp;&nbsp;{x2;$globalknows[v:knowsid['knowsid']]['knows']}&nbsp;{x2;endtree}</li>
-                        	<li>【答案解析】</li>
-                        	<li class="ml_10">{x2;realhtml:v:data['questiondescribe']}</li>
-                        </ul>
-                    </div>
-                    </span>
-                    {x2;endtree}
-                </div>
-                {x2;endtree}
-                {x2;endif}
-                {x2;endtree}
-            </form>
-          	</div>
-    	</div>
-    	<div class="bor_bottom"></div>
-    </div>
-	<!--主体右侧 结束-->
-	<!--尾部-->
-    {x2;include:foot}
-	<!--尾部 结束-->
-    <!--返回顶部-->
-    <div id="roll">
-      <div id="roll_top"></div>
-    </div>
-    <!--返回顶部 结束-->
+<div class="row-fluid">
+	<div class="container examcontent">
+		<div class="exambox" id="datacontent">
+			<div class="examform" style="position:relative;">
+				<div class="scoreArea">{x2;$sessionvars['examsessionscore']}</div>
+				<ul class="breadcrumb">
+					<li>
+						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+					</li>
+					<li>
+						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
+					</li>
+					<li>
+						<a href="index.php?exam-app-exampaper">模拟考试</a> <span class="divider">/</span>
+					</li>
+					<li class="active">
+						答案与解析
+					</li>
+				</ul>
+				<h3 class="text-center">{x2;$sessionvars['examsession']}</h3>
+				{x2;eval: v:oid = 0}
+				{x2;tree:$questype,quest,qid}
+				{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
+				{x2;eval: v:oid++}
+				<div id="panel-type{x2;v:quest['questid']}" class="tab-pane{x2;if:(!$ctype && v:qid == 1) || ($ctype == v:quest['questid'])} active{x2;endif}">
+					<ul class="breadcrumb">
+						<li>
+							<h5>{x2;v:oid}、{x2;v:quest['questype']}</h5>
+						</li>
+					</ul>
+					{x2;eval: v:tid = 0}
+	                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest['questid']],question,qnid}
+	                {x2;eval: v:tid++}
+	                <div id="question_{x2;v:question['questionid']}" class="paperexamcontent decidediv">
+						{x2;if:$sessionvars['examsessionscorelist'][v:question['questionid']] && $sessionvars['examsessionscorelist'][v:question['questionid']] == $sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['score']}<div class="right"></div>{x2;else}<div class="wrong"></div>{x2;endif}
+						<div class="media well">
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<span class="badge badge-info questionindex">{x2;v:tid}</span></a>
+								</li>
+								<li class="btn-group pull-right">
+									<button class="btn" type="button" onclick="javascript:favorquestion('{x2;v:question['questionid']}');"><em class="icon-heart" title="收藏"></em></button>
+								</li>
+							</ul>
+							<div class="media-body well text-warning">
+								<a name="question_{x2;v:question['questionid']}"></a>{x2;realhtml:v:question['question']}
+							</div>
+							{x2;if:!v:quest['questsort']}
+							<div class="media-body well">
+		                    	{x2;realhtml:v:question['questionselect']}
+		                    </div>
+		                    {x2;endif}
+							<div class="media-body well">
+		                  		<p class="text-error">本题得分：{x2;$sessionvars['examsessionscorelist'][v:question['questionid']]}分</p>
+		                  	</div>
+							<div class="media-body well">
+		                    	<ul class="unstyled">
+		                        	<li class="text-error">正确答案：</li>
+		                            <li class="text-success">{x2;realhtml:v:question['questionanswer']}</li>
+		                        	<li class="text-info">您的答案：</li>
+		                            <li class="text-success">{x2;if:is_array($sessionvars['examsessionuseranswer'][v:question['questionid']])}{x2;eval: echo implode('',$sessionvars['examsessionuseranswer'][v:question['questionid']])}{x2;else}{x2;realhtml:$sessionvars['examsessionuseranswer'][v:question['questionid']]}{x2;endif}</li>
+		                        	<li><span class="text-info">所在章：</span>{x2;tree:v:question['questionknowsid'],knowsid,kid}&nbsp;&nbsp;{x2;$globalsections[$globalknows[v:knowsid['knowsid']]['knowssectionid']]['section']}&nbsp;{x2;endtree}</li>
+		                        	<li class="text-success"><span class="text-info">知识点：</span>{x2;tree:v:question['questionknowsid'],knowsid,kid}&nbsp;&nbsp;{x2;$globalknows[v:knowsid['knowsid']]['knows']}&nbsp;{x2;endtree}</li>
+		                        	<li class="text-info">答案解析：</li>
+		                        	<li class="text-success">{x2;realhtml:v:question['questiondescribe']}</li>
+		                        </ul>
+		                    </div>
+						</div>
+					</div>
+					{x2;endtree}
+					{x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest['questid']],questionrow,qrid}
+	                {x2;eval: v:tid++}
+	                <div id="questionrow_{x2;v:questionrow['qrid']}">
+						<div class="media well">
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<span class="badge badge-info questionindex">{x2;v:tid}</span>
+								</li>
+							</ul>
+							<div class="media-body well">
+								{x2;realhtml:v:questionrow['qrquestion']}
+							</div>
+							{x2;tree:v:questionrow['data'],data,did}
+							<div class="paperexamcontent decidediv">
+								{x2;if:$sessionvars['examsessionscorelist'][v:data['questionid']] && $sessionvars['examsessionscorelist'][v:data['questionid']] == $sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['score']}<div class="right"></div>{x2;else}<div class="wrong"></div>{x2;endif}
+								<ul class="nav nav-tabs">
+									<li class="active">
+										<span class="badge questionindex">{x2;v:did}</span></a>
+									</li>
+									<li class="btn-group pull-right">
+										<button class="btn" type="button" onclick="javascript:favorquestion('{x2;v:data['questionid']}');"><em class="icon-heart" title="收藏"></em></button>
+									</li>
+								</ul>
+								<div class="media-body well text-warning">
+									<a name="question_{x2;v:data['questionid']}"></a>{x2;realhtml:v:data['question']}
+								</div>
+								{x2;if:!v:quest['questsort']}
+								<div class="media-body well">
+			                    	{x2;realhtml:v:data['questionselect']}
+			                    </div>
+			                    {x2;endif}
+								<div class="media-body well">
+			                  		<p class="text-error">本题得分：{x2;$sessionvars['examsessionscorelist'][v:data['questionid']]}分</p>
+			                  	</div>
+								<div class="media-body well">
+									<ul class="unstyled">
+			                        	<li class="text-error">正确答案：</li>
+			                            <li class="text-success">{x2;realhtml:v:data['questionanswer']}</li>
+			                        	<li class="text-info">您的答案：</li>
+			                            <li class="text-success">{x2;if:is_array($sessionvars['examsessionuseranswer'][v:data['questionid']])}{x2;eval: echo implode('',$sessionvars['examsessionuseranswer'][v:data['questionid']])}{x2;else}{x2;realhtml:$sessionvars['examsessionuseranswer'][v:data['questionid']]}{x2;endif}</li>
+			                        	<li><span class="text-info">所在章：</span>{x2;tree:v:questionrow['qrknowsid'],knowsid,kid}&nbsp;&nbsp;{x2;$globalsections[$globalknows[v:knowsid['knowsid']]['knowssectionid']]['section']}&nbsp;{x2;endtree}</li>
+			                        	<li><span class="text-info">知识点：</span>{x2;tree:v:questionrow['qrknowsid'],knowsid,kid}&nbsp;&nbsp;{x2;$globalknows[v:knowsid['knowsid']]['knows']}&nbsp;{x2;endtree}</li>
+			                        	<li class="text-info">答案解析：</li>
+		                        		<li class="text-success">{x2;realhtml:v:data['questiondescribe']}</li>
+			                        </ul>
+								</div>
+							</div>
+							{x2;endtree}
+						</div>
+					</div>
+					{x2;endtree}
+				</div>
+				{x2;endif}
+				{x2;endtree}
+			</div>
+		</div>
+	</div>
 </div>
-<script type="text/javascript">
-$(document).ready(function(){
-		$('#roll').hide();
-		$(window).scroll(function() {
-			if($(window).scrollTop() >= 100){
-				$('#roll').fadeIn(400);
-		    }
-		    else
-		    {
-		    $('#roll').fadeOut(200);
-		    }
-		 });
-		 $('#roll_top').click(function(){$('html,body').animate({scrollTop: '0px'}, 800);});
-	});
-</script>
+{x2;include:foot}
 </body>
 </html>

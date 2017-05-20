@@ -72,6 +72,14 @@
 				        {x2;endtree}
 					</tbody>
 				</table>
+				<div class="pagination pagination-right">
+	            	<ul>{x2;$questions['pages']}</ul>
+		        </div>
+		    	<script type="text/javascript">
+		    		jQuery(function($) {
+						markSelectedQuestions('ids[]','iselectrowsquestions_{x2;$search['questiontype']}');
+		    		});
+		    	</script>
 				{x2;else}
 				<table class="table table-hover">
 					<thead>
@@ -95,14 +103,12 @@
 				        {x2;endtree}
 					</tbody>
 				</table>
-				{x2;endif}
 				<div class="pagination pagination-right">
 	            	<ul>{x2;$questions['pages']}</ul>
 		        </div>
-		    </div>
-    	</div>
-    	<script type="text/javascript">
-    		jQuery(function($) {
-				markSelectedQuestions('ids[]','iselectquestions_{x2;$search['questiontype']}');
-    		});
-    	</script>
+		    	<script type="text/javascript">
+		    		jQuery(function($) {
+						markSelectedQuestions('ids[]','iselectquestions_{x2;$search['questiontype']}');
+		    		});
+		    	</script>
+				{x2;endif}

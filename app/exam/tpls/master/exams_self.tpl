@@ -44,7 +44,7 @@
 				<div class="control-group">
 					<label class="control-label">考试科目：</label>
 				  	<div class="controls">
-					  	<select class="combox" id="selectedsubjectid" needle="needle" min="1" name="args[examsubject]" onchange="javascript:$('#examrulesbox').loadUrl('?exam-master-exams-ajax&subjectid='+$(this).find('option:selected').val());">
+					  	<select class="combox" id="selectedsubjectid" needle="needle" min="1" name="args[examsubject]">
 						  	{x2;tree:$subjects,subject,sid}
 						  	<option value="{x2;v:subject['subjectid']}">{x2;v:subject['subject']}</option>
 						  	{x2;endtree}

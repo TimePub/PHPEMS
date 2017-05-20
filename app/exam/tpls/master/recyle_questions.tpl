@@ -54,7 +54,7 @@
 						<td>
 							<div class="btn-group">
 	                    		<a class="btn ajax" href="index.php?exam-master-questions-backquestion&page={x2;$page}&questionid={x2;v:question['questionid']}{x2;$u}" title="恢复本题将会恢复本题下所有已删除子题"><em class="icon-edit"></em></a>
-								<a class="btn ajax" href="index.php?exam-master-recyle-finaldelquestion&questionparent=0&page={x2;$page}&questionid={x2;v:question['questionid']}{x2;$u}" title="彻底删除"><em class="icon-remove"></em></a>
+								<a class="btn confirm" href="index.php?exam-master-recyle-finaldelquestion&questionparent=0&page={x2;$page}&questionid={x2;v:question['questionid']}{x2;$u}" title="彻底删除"><em class="icon-remove"></em></a>
 	                    	</div>
 						</td>
 			        </tr>

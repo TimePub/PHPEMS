@@ -216,7 +216,7 @@ class app
 				$message = array(
 					'statusCode' => 200,
 					"message" => "操作成功！".$errmsg,
-				    "forwardUrl" => "index.php?exam-master-basic-point&sectionid={$args['knowssectionid']}&page={$page}"
+				    "forwardUrl" => "index.php?exam-master-basic-point&sectionid={$args['knowssectionid']}"
 				);
 				exit(json_encode($message));
 			}
@@ -291,7 +291,7 @@ class app
 				"statusCode" => 200,
 				"message" => "操作成功！",
 				"callbackType" => "forward",
-			    "forwardUrl" => "index.php?exam-master-basic-point&sectionid={$sectionid}&page={$page}{$u}"
+			    "forwardUrl" => "reload"
 			);
 			exit(json_encode($message));
 			break;
@@ -583,6 +583,8 @@ class app
 				{
 					$args['basicsection'][] = $key;
 				}
+				$args['basicexam']['opentime']['start'] = strtotime($args['basicexam']['opentime']['start']);
+				$args['basicexam']['opentime']['end'] = strtotime($args['basicexam']['opentime']['end']);
 				$args['basicsection'] = $this->ev->addSlashes(serialize($args['basicsection']));
 				$args['basicknows'] = $this->ev->addSlashes(serialize($args['basicknows']));
 				$args['basicexam'] = $this->ev->addSlashes(serialize($args['basicexam']));
@@ -2038,7 +2040,7 @@ class app
 					'statusCode' => 200,
 					"message" => "操作成功",
 					"callbackType" => "forward",
-				    "forwardUrl" => "index.php?exam-master-users-basics&userid={$userid}&page={$page}{$u}"
+				    "forwardUrl" => "index.php?exam-master-users-basics&userid={$userid}{$u}"
 				);
 			}
 			exit(json_encode($message));

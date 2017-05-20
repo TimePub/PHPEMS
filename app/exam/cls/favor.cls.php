@@ -176,7 +176,7 @@ class favor_exam
 	//根据用户和科目获取考试记录列表
 	public function getAllExamHistoryByArgs($args = array(),$fields = false)
 	{
-		$data = array($fields,'examhistory',$args,false,"ehscore DESC");
+		$data = array($fields,'examhistory',$args,false,"ehscore DESC",false);
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetchAll($sql);
 	}
@@ -208,9 +208,9 @@ class favor_exam
 	}
 
 	//获取记录数量
-	public function getExamHistoryNumber($userid,$subjectid,$type = 0)
+	public function getExamHistoryNumber($userid,$basicid,$type = 0)
 	{
-		$data = array('count(*) AS number',"examhistory",array("ehuserid = '{$userid}'","ehsubjectid = '{$subjectid}'","ehtype = '{$type}'"));
+		$data = array('count(*) AS number',"examhistory",array("ehuserid = '{$userid}'","ehbasicid = '{$basicid}'","ehtype = '{$type}'"));
 		$sql = $this->sql->makeSelect($data);
 		$r = $this->db->fetch($sql);
 		return $r['number'];
@@ -232,10 +232,14 @@ class favor_exam
 	public function addExamHistory($status = 1)
 	{
 		$exam = $this->exam->getExamSessionBySessionid();
+		if($exam['examsessionissave'])return false;
+		$args['examsessionissave'] = 1;
+		$this->exam->modifyExamSession($args);
 		$user = $this->session->getSessionUser();
 		$args = array(
 					'ehtype'=>$exam['examsessiontype'],
 					'ehexam'=>$exam['examsession'],
+					'ehexamid'=>$exam['examsessionkey'],
 					'ehbasicid'=>$exam['examsessionbasic'],
 					'ehquestion'=>$this->ev->addSlashes(serialize($exam['examsessionquestion'])),
 					'ehsetting'=>$this->ev->addSlashes(serialize($exam['examsessionsetting'])),
@@ -261,6 +265,49 @@ class favor_exam
 		$sql = $this->sql->makeSelect($data);
 		$r = $this->db->fetch($sql);
 		return $r['avgscore'];
+	}
+
+	public function getExamUseNumber($userid,$examid,$basicid,$type = 2)
+	{
+		$data = array('count(*) AS number',"examhistory",array("ehuserid = '{$userid}'","ehexamid = '{$examid}'","ehbasicid = '{$basicid}'","ehtype = '{$type}'"));
+		$sql = $this->sql->makeSelect($data);
+		$r = $this->db->fetch($sql);
+		return $r['number'];
+	}
+
+	public function getExamScoreListByBasicId($basicid,$page)
+	{
+		$data = array(
+			'select' => false,
+			'table' => 'examhistory',
+			'query' => array("ehbasicid = '{$basicid}'","ehtype = 2","ehstatus = 1"),
+			'orderby' => 'ehscore DESC,ehid DESC',
+			'serial' => 'catmanager'
+		);
+		return $this->db->listElements($page,20,$data);
+	}
+
+	public function getUserScoreIndex($basicid,$userid,$score)
+	{
+		$data = array("count(*) as number",'examhistory',array("ehbasicid = '{$basicid}'","ehscore > '{$score}'"),false,false,false);
+		$sql = $this->sql->makeSelect($data);
+		$r = $this->db->fetch($sql);
+		return $r['number'] + 1;
+	}
+
+	public function getUserTopScore($basicid,$userid)
+	{
+		$data = array("max(ehscore) as ehscore",'examhistory',array("ehbasicid = '{$basicid}'","ehuserid = '{$userid}'","ehtype = 2"),false,false,false);
+		$sql = $this->sql->makeSelect($data);
+		$r = $this->db->fetch($sql);
+		if($r['ehscore'] > 0)$s = array('score' => $r['ehscore']);
+		else
+		$s = array('score' => 0);
+		$data = array("count(*) as number",'examhistory',array("ehbasicid = '{$basicid}'","ehscore > '{$s['score']}'","ehtype = 2"),false,false,false);
+		$sql = $this->sql->makeSelect($data);
+		$r = $this->db->fetch($sql);
+		$s['index'] = $r['number'] + 1;
+		return $s;
 	}
 }
 

@@ -29,7 +29,7 @@
 							<td colspan="3"><p class="text-right">应付款：￥{x2;$order['orderprice']}</p></td>
 						</tr>
 					</table>
-					<p class="text-right">{x2;if:$order['orderstatus'] == 1}<a class="btn btn-danger" href="{x2;$payforurl}" target="_blank">去支付（测试功能，请勿付款）</a>{x2;else} <a class="btn">{x2;$orderstatus[$order['orderstatus']]}</a>{x2;endif}</p>
+					<p class="text-right">{x2;if:$order['orderstatus'] == 1}<a class="btn btn-danger" href="{x2;$payforurl}" target="_blank">去支付（测试使用，进入后请勿付款）</a>{x2;else} <a class="btn">{x2;$orderstatus[$order['orderstatus']]}</a>{x2;endif}</p>
 				</div>
 			</div>
 		</div>

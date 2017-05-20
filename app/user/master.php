@@ -189,6 +189,7 @@ class app
 					$strings = $this->G->make('strings');
 					while ($data = fgetcsv($handle,200))
 					{
+
 					    if($data[0] && $data[1])
 					    {
 						    $args = array();

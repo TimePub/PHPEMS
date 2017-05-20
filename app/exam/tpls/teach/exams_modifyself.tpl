@@ -42,7 +42,7 @@
 				<div class="control-group">
 					<label class="control-label">考试时间：</label>
 			  		<div class="controls">
-			  			<input type="text" name="args[examsetting][examtime]" value="60" size="4" needle="needle" class="inline" value="{x2;$exam['examsetting']['examtime']}"/> 分钟
+			  			<input type="text" name="args[examsetting][examtime]" size="4" needle="needle" class="inline" value="{x2;$exam['examsetting']['examtime']}"/> 分钟
 			  		</div>
 				</div>
 				<div class="control-group">

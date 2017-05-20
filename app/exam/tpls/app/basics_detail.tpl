@@ -1,24 +1,35 @@
 {x2;if:!$userhash}
-{x2;include:head}
+{x2;include:header}
 <body>
-<!--导航-->
 {x2;include:nav}
-<div id="main">
-	<!--主体右侧 -->
-	<div id="right_970" class="right_970">
-    	{x2;include:bread}
-    	<div class="bor_top"></div>
-    	<div class="bor_mid">
-            <div id="notice">
-            	<h2 class="page_title"><img src="app/exam/styles/image/exam_notice_basic.jpg" alt="开通考场" /></h2>
-            </div>
-            <div class="container-fluid" id="datacontent">
+<div class="row-fluid">
+	<div class="container examcontent">
+		<div class="exambox" id="datacontent">
 {x2;endif}
+			<div class="examform">
+				<ul class="breadcrumb">
+					<li>
+						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+					</li>
+					<li>
+						<a href="index.php?exam-app-basics-open">开通考场</a> <span class="divider">/</span>
+					</li>
+					<li class="active">
+						{x2;$basic['basic']}
+					</li>
+				</ul>
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#" data-toggle="tab">开通考场</a>
+					</li>
+				</ul>
 				<div class="row-fluid">
-					<div class="span6">
+					<div class="span1"></div>
+					<div class="span3">
 						<div class="thumbnail"><img alt="300x200" src="{x2;if:$basic['basicthumb']}{x2;$basic['basicthumb']}{x2;else}app/exam/styles/image/paper.png{x2;endif}" /></div>
 					</div>
-					<div class="span6">
+					<div class="span1"></div>
+					<div class="span7">
 						<div class="caption">
 							<h3>{x2;$basic['basic']}</h3>
 							<p>&nbsp;</p>
@@ -33,7 +44,7 @@
 							{x2;if:!$basic['basicdemo']}
 								{x2;if:$price}
 								<p>
-									<select name="opentype" class="input-medium">
+									<select name="opentype" class="input-large">
 										{x2;tree:$price,p,pid}
 										<option value="{x2;v:key}">{x2;v:p['price']}积分兑换{x2;v:p['time']}天</option>
 										{x2;endtree}
@@ -65,15 +76,10 @@
 				<div class="pagination pagination-right">
 					<ul>{x2;$basics['pages']}</ul>
 		        </div>
-{x2;if:!$userhash}
 			</div>
-    	</div>
-    	<div class="bor_bottom"></div>
-    </div>
-	<!--主体右侧 结束-->
-	<!--尾部-->
-	{x2;include:foot}
-    <!--尾部 结束-->
+{x2;if:!$userhash}
+		</div>
+	</div>
 </div>
 <form aria-hidden="true" id="myModal" method="post" class="modal hide fade" role="dialog" aria-labelledby="#myModalLabel" action="index.php?exam-app-basics-coupon">
 	<div class="modal-header">
@@ -95,6 +101,7 @@
 		 <button class="btn" type="submit">充值</button>
 	</div>
 </form>
+{x2;include:foot}
 </body>
 </html>
 {x2;endif}

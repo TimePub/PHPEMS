@@ -402,13 +402,19 @@ class app
 				$args = $this->ev->get('args');
 				$page = $this->ev->get('page');
 				$this->category->addCategory($args);
+				if($args['catparent'])
+				{
+					$parent = $this->category->getCategoryById($args['catparent']);
+					$parent = intval($parent['catparent']);
+				}
+				else $parent = 0;
 				$message = array(
 					'statusCode' => 200,
 					"message" => "操作成功",
 				    "target" => "",
 				    "rel" => "",
 				    "callbackType" => "forward",
-				    "forwardUrl" => "index.php?content-master-category&parent={$args['catparent']}&page={$page}"
+				    "forwardUrl" => "index.php?content-master-category&parent={$parent}&page={$page}"
 				);
 				exit(json_encode($message));
 			}
@@ -455,6 +461,15 @@ class app
 					);
 					exit(json_encode($message));
 				}
+				break;
+
+				case 'getchilddata':
+				$catid = $this->ev->get('catid');
+				$child = $this->category->getCategoriesByArgs("catparent = '{$catid}'");
+				exit(json_encode($child));
+				$this->tpl->assign('child',$child);
+				$this->tpl->assign('catid',$catid);
+				$this->tpl->display('category_ajax_data');
 				break;
 
 				default:

@@ -62,7 +62,7 @@ class category
 			$args[] = $p;
 			$args[] = "catapp = '".$this->G->app."'";
 		}
-		$data = array(false,'category',$args,false,false,false);
+		$data = array(false,'category',$args,false,"catlite DESC,catid DESC",false);
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetchAll($sql,'catid','catmanager');
 	}
@@ -80,7 +80,8 @@ class category
 		$data = array(
 			'table' => 'category',
 			'value' => $args,
-			'query' => "catid = '{$id}'"
+			'query' => "catid = '{$id}'",
+			'orderby' => 'catlite DESC,catid DESC'
 		);
 		return $this->db->updateElement($data);
 	}
@@ -89,7 +90,7 @@ class category
 	{
 		if($this->categories === NULL)
 		{
-			$data = array(false,'category',"catapp = '".$this->G->app."'",false,false,false);
+			$data = array(false,'category',"catapp = '".$this->G->app."'",false,"catlite DESC,catid DESC",false);
 			$sql = $this->sql->makeSelect($data);
 			$this->categories = $this->db->fetchAll($sql,'catid','catmanager');
 			$this->tidyCategory();
@@ -99,7 +100,7 @@ class category
 
 	public function getAllCategoryByApp($app)
 	{
-		$data = array(false,'category',"catapp = '".$app."'",false,false,false);
+		$data = array(false,'category',"catapp = '".$app."'",false,"catlite DESC,catid DESC",false);
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetchAll($sql,'catid','catmanager');
 	}

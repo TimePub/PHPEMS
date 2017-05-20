@@ -17,7 +17,7 @@ class strings
 
 	public function isEmail($str)
 	{
-		$j = "/^\w+@\w+.\w+/i";
+		$j = "/^[\w|\.]+@\w+\.\w+/i";
 		if(preg_match($j,$str))return $str;
 		else return false;
 	}

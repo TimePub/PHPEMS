@@ -32,7 +32,7 @@
 				<div class="control-group">
 					<label class="control-label" for="content">考试科目：</label>
 				  	<div class="controls">
-					  	<select class="combox" needle="needle" min="1" name="args[examsubject]" onchange="javascript:$('#examrulesbox').loadUrl('?exam-teach-exams-ajax&subjectid='+$(this).find('option:selected').val());">
+					  	<select class="combox" needle="needle" min="1" name="args[examsubject]" onchange="javascript:$('#examrulesbox').loadUrl('index.php?exam-teach-exams-ajax&subjectid='+$(this).find('option:selected').val());">
 						  	{x2;tree:$subjects,subject,sid}
 						  	<option value="{x2;v:subject['subjectid']}">{x2;v:subject['subject']}</option>
 						  	{x2;endtree}

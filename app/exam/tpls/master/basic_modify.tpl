@@ -37,7 +37,7 @@
 							<div class="thumbnail">
 								<a href="javascript:;" class="second label""><em class="uploadbutton" id="catimg" exectype="thumb"></em></a>
 								<div class="first" id="catimg_percent"></div>
-								<div class="boot"><img src="app/core/styles/images/noimage.gif" id="catimg_view"/><input type="hidden" name="args[basicthumb]" value="{x2;$basic['basicthumb']}" id="catimg_value"/></div>
+								<div class="boot"><img src="{x2;if:$basic['basicthumb']}{x2;$basic['basicthumb']}{x2;else}app/core/styles/images/noimage.gif{x2;endif}" id="catimg_view"/><input type="hidden" name="args[basicthumb]" value="{x2;$basic['basicthumb']}" id="catimg_value"/></div>
 							</div>
 						</div>
 					</div>

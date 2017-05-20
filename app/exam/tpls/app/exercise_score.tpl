@@ -1,27 +1,36 @@
-{x2;include:head}
+{x2;include:header}
 <body>
-<!--导航-->
 {x2;include:nav}
-<div id="main">
-	<!--主体左侧-->
-	{x2;include:left}
-	<!--主体左侧 结束-->
-	<!--主体右侧 -->
-	<div id="right_760" class="right_760">
-    	{x2;include:bread}
-    	<div class="bor_top"></div>
-    	<div class="bor_mid">
-            <div id="hide_left"><a href="javascript:pr()"></a></div>
-  	  	  <div id="result">
-            <h2 class="page_title"><img src="app/exam/styles/image/result_tit.jpg" alt="成绩单" /></h2>
-            <h1>{x2;$sessionvars['examsession']}</h1>
-            <div id="result_box">
-            <h3>{x2;$sessionvars['examsessionscore']}分</h3>
-            <div id="result_con">
-           	  <div class="mb_10"><b class="blue">考试详情：</b></div>
-              <p class="mb_10">总分：<b class="orange">{x2;$sessionvars['examsessiontime']}</b>分 合格分数线：<b class="orange">60</b>分 答卷耗时：<b class="orange">{x2;$sessionvars['examsessiontime']}</b>分钟</p>
-                  <table width="100%">
-                          <tr>
+<div class="row-fluid">
+	<div class="container examcontent">
+		<div class="exambox" id="datacontent">
+			<form class="examform form-horizontal" id="form1" name="form1" action="index.php?exam-app-exampaper-makescore">
+				<ul class="breadcrumb">
+					<li>
+						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+					</li>
+					<li>
+						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
+					</li>
+					<li>
+						<a href="index.php?exam-app-exercise">强化训练</a> <span class="divider">/</span>
+					</li>
+					<li class="active">
+						成绩单
+					</li>
+				</ul>
+				<legend class="text-center"><h3>{x2;$sessionvars['examsession']}</h3></legend>
+                <div>
+                	<div class="span4">
+                		<div class="boardscore">
+                			<h1 class="text-center">{x2;$sessionvars['examsessionscore']}分</h1>
+                		</div>
+                	</div>
+                	<div class="span8">
+                		<div><b class="text-info">考试详情：</b></div>
+              			<p>总分：<b class="text-warning">100</b>分 合格分数线：<b class="text-warning">60</b>分 答卷耗时：<b class="text-warning">{x2;$sessionvars['examsessiontime']}</b>分钟</p>
+                  		<table class="table table-hover table-bordered">
+                          <tr class="success">
                             <th>题型</th>
                             <th>总题数</th>
                             <th>答对题数</th>
@@ -34,26 +43,22 @@
                             <td>{x2;$questype[v:key]['questype']}</td>
                             <td>{x2;v:num}</td>
                             <td>{x2;$right[v:key]}</td>
-                            <td>{x2;eval: echo number_format(v:num*100/$allnumber,1)}</td>
-                            <td>{x2;eval: echo number_format($score[v:key]*100/$allnumber,1)}</td>
+                            <td>{x2;eval: echo number_format(v:num*$sessionvars['examsessionsetting']['examsetting']['questype'][v:key]['score'],1)}</td>
+                            <td>{x2;eval: echo number_format($score[v:key],1)}</td>
                           </tr>
                           {x2;endif}
                           {x2;endtree}
                           <tr>
-                            <td colspan="5" align="left">本次考试共<b class="orange">{x2;$allnumber}</b>道题，总分<b class="orange">100</b>分，您做对<b class="orange">{x2;$allright}</b>道题，得到<b class="orange">{x2;$sessionvars['examsessionscore']}</b>分</td>
+                            <td colspan="5" align="left">本次考试共<b class="text-warning">{x2;$allnumber}</b>道题，总分<b class="text-warning">100</b>分，您做对<b class="text-warning">{x2;$allright}</b>道题，得到<b class="text-warning">{x2;$sessionvars['examsessionscore']}</b>分</td>
                           </tr>
                        </table>
-                       <div id="result_btn"><a href="?exam-app-exercise-view">查看答案和解析</a><a href="?exam-app-record">进入我的错题</a></div>
-                 </div>
-            </div>
-            </div>
-    	</div>
-    	<div class="bor_bottom"></div>
-    </div>
-	<!--主体右侧 结束-->
-	<!--尾部-->
-	{x2;include:foot}
-    <!--尾部 结束-->
+                       <div class="text-center"><a href="index.php?exam-app-exercise-view" class="btn btn-info">查看答案和解析</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="index.php?exam-app-history" class="btn btn-info">进入我的考试记录</a></div>
+                	</div>
+                </div>
+			</div>
+		</div>
+	</div>
 </div>
+{x2;include:foot}
 </body>
 </html>

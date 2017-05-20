@@ -124,7 +124,7 @@
 								<div class="btn-group">
 									<a class="btn" href="index.php?exam-master-basic-setexamrange&page={x2;$page}&basicid={x2;v:basic['basicid']}{x2;$u}" title="考试范围"><em class="icon-cog"></em></a>
 									<a class="btn" href="index.php?exam-master-basic-modifybasic&page={x2;$page}&basicid={x2;v:basic['basicid']}{x2;$u}" title="修改"><em class="icon-edit"></em></a>
-									<a class="btn ajax" href="index.php?exam-master-basic-delbasic&basicid={x2;v:basic['basicid']}&page={x2;$page}{x2;$u}" title="删除"><em class="icon-remove"></em></a>
+									<a class="btn confirm" href="index.php?exam-master-basic-delbasic&basicid={x2;v:basic['basicid']}&page={x2;$page}{x2;$u}" title="删除"><em class="icon-remove"></em></a>
 								</div>
 							</td>
 				        </tr>

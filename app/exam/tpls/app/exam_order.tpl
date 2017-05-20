@@ -63,5 +63,6 @@ $.get('?exam-app-index-ajax-lefttime&rand'+Math.random(),function(data){
 	});
 });
 </script>
+{x2;include:foot}
 </body>
 </html>

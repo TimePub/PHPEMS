@@ -20,13 +20,13 @@
 				</li>
 			</ul>
 			<form action="index.php?exam-teach-users-makescore" method="post" class="form-horizontal">
-{x2;eval: v:oid = 0}
-{x2;tree:$questype,quest,qid}
-		{x2;eval: v:oid++}
-	{x2;if:v:quest['questsort']}
-		{x2;if:$sessionvars['ehquestion']['questions'][v:quest['questid']] || $sessionvars['ehquestion']['questionrows'][v:quest['questid']]}
-		<h4 class="qu_type">{x2;$ols[v:oid]}、{x2;v:quest['questype']}</h4>
-		{x2;eval: v:tid = 0}
+			{x2;eval: v:oid = 0}
+			{x2;tree:$questype,quest,qid}
+			{x2;eval: v:oid++}
+			{x2;if:v:quest['questsort']}
+			{x2;if:$sessionvars['ehquestion']['questions'][v:quest['questid']] || $sessionvars['ehquestion']['questionrows'][v:quest['questid']]}
+			<h4 class="qu_type">{x2;$ols[v:oid]}、{x2;v:quest['questype']}</h4>
+			{x2;eval: v:tid = 0}
 			{x2;tree:$sessionvars['ehquestion']['questions'][v:quest['questid']],question,qnid}
 			{x2;eval: v:tid++}
 			<table class="table">

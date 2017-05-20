@@ -58,7 +58,8 @@ class app
 		$this->selectorder = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N');
 		$this->tpl->assign('ols',array(1=>'一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'));
 		$this->tpl->assign('selectorder',$this->selectorder);
-		$this->tpl->assign('data',&$this->data);
+		//$this->tpl->assign('data',&$this->data);
+		$this->tpl->assign('data',$this->data);
 		$this->tpl->assign('questypes',$this->questypes);
 		$this->tpl->assign('subjects',$this->subjects);
 		$this->tpl->assign('globalsections',$this->section->getSectionListByArgs("sectionsubjectid = '{$this->data['currentbasic']['basicsubjectid']}'"));
@@ -82,7 +83,7 @@ class app
 					'statusCode' => 300,
 					"message" => "操作失败，此考场不存在"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			$userid = $this->_user['sessionuserid'];
 			if($this->basic->getOpenBasicByUseridAndBasicid($userid,$basicid))
@@ -125,7 +126,7 @@ class app
 						'statusCode' => 300,
 						"message" => "操作失败，您的积分不够"
 					);
-					exit(json_encode($message));
+					$this->G->R($message);
 				}
 				else
 				{
@@ -141,7 +142,7 @@ class app
 				"callbackType" => "forward",
 			    "forwardUrl" => "index.php?exam-app"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'coupon':
@@ -177,7 +178,7 @@ class app
 				'statusCode' => 300,
 				"message" => "操作失败"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'detail':
@@ -235,8 +236,29 @@ class app
 
 			default:
 			if(!$this->data['openbasics'])exit(header("location:index.php?exam-app"));
+			$sessionvars = $this->exam->getExamSessionBySessionid();
+			if($sessionvars && $sessionvars['examsessionbasic']== $this->_user['sessioncurrent'] && $sessionvars['examsessionstatus'] < 2 && $sessionvars['examsessiontype'] == 2 && ($sessionvars['examsessionstarttime']+$sessionvars['examsessiontime']*60 - TIME))
+			$this->tpl->assign('sessionvars',$sessionvars);
 			$this->tpl->display('basics');
 		}
+	}
+
+	public function recover()
+	{
+		$sessionvars = $this->exam->getExamSessionBySessionid();
+		if($sessionvars && $sessionvars['examsessionbasic']== $this->_user['sessioncurrent'] && $sessionvars['examsessionstatus'] < 2 && $sessionvars['examsessiontype'] == 2 && ($sessionvars['examsessionstarttime']+$sessionvars['examsessiontime']*60 - TIME))
+		$message = array(
+			'statusCode' => 200,
+			"message" => "恢复成功，正在转向考试页面",
+		    "callbackType" => 'forward',
+		    "forwardUrl" => "index.php?exam-app-exam-paper"
+		);
+		else
+		$message = array(
+			'statusCode' => 300,
+			"message" => "回复失败，考试已经结束"
+		);
+		$this->G->R($message);
 	}
 
 	//首页
@@ -254,7 +276,7 @@ class app
 			    "callbackType" => 'forward',
 			    "forwardUrl" => "index.php?exam-app-basics"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			case 'ajax':
@@ -305,7 +327,7 @@ class app
 				$args['examsessionsign'] = $sessionvars['examsessionsign'];
 				if($questionid && !$args['examsessionsign'][$questionid])
 				{
-					$args['examsessionsign'][$questionid] = $url;
+					$args['examsessionsign'][$questionid] = 1;
 					$args['examsessionsign'] = $this->ev->addSlashes(serialize($args['examsessionsign']));
 					$this->exam->modifyExamSession($args);
 					exit('1');
@@ -330,46 +352,17 @@ class app
 		}
 	}
 
-	public function login()
+	public function score()
 	{
-		if($this->ev->get('userlogin'))
-		{
-			$args = $this->ev->get('args');
-			$user = $this->user->getUserByUserName($args['username']);
-			if($user['userid'])
-			{
-				if($user['userpassword'] == md5($args['userpassword']))
-				{
-					$this->session->setSessionUser(array('sessionuserid'=>$user['userid'],'sessionpassword'=>$user['userpassword'],'sessionip'=>$this->ev->getClientIp(),'sessiongroupid'=>$user['usergroupid'],'sessionlogintime'=>TIME,'sessionusername'=>$user['username']));
-					$message = array(
-						'statusCode' => 200,
-						"message" => "操作成功",
-					    "target" => "",
-					    "rel" => "",
-					    "callbackType" => 'forward',
-					    "forwardUrl" => "index.php?{$this->G->app}-app"
-					);
-					exit(json_encode($message));
-				}
-			}
-			$message = array(
-				'statusCode' => 300,
-				'errorinput' => 'args[username]',
-				"message" => "操作失败"
-			);
-			exit(json_encode($message));
-		}
-		else
-		{
-			$this->tpl->display('login');
-		}
-	}
-
-	public function logout()
-	{
-		$this->session->clearSessionUser();
-		header("location:index.php?exam-app-login");
-		exit;
+		$page = $this->ev->get('page');
+		$page = $page < 1?1:$page;
+		$scores = $this->favor->getExamScoreListByBasicId($this->data['currentbasic']['basicid'],$page);
+		$s = $this->favor->getUserTopScore($this->data['currentbasic']['basicid'],$this->_user['sessionuserid']);
+		$scores = $this->favor->getExamScoreListByBasicId($this->data['currentbasic']['basicid'],$page);
+		$this->tpl->assign('s',$s);
+		$this->tpl->assign('page',$page);
+		$this->tpl->assign('scores',$scores);
+		$this->tpl->display('scores');
 	}
 
 	//强化训练
@@ -453,7 +446,7 @@ class app
 			if($sessionvars['examsessiontype'])
 			{
 				if($sessionvars['examsessiontype'] == 1)
-				header("location:?exam-app-exampaper-view");
+				header("location:index.php?exam-app-exampaper-view");
 				else
 				header("location:index.php?exam-app-exam-view");
 				exit;
@@ -490,8 +483,6 @@ class app
 				$this->exam->modifyExamSession($args);
 				if(!$sessionvars['examsessionissave'])
 				{
-					$sargs['examsessionissave'] = 1;
-					$this->exam->modifyExamSession($sargs);
 					$this->favor->addExamHistory();
 				}
 				if($this->ev->get('direct'))
@@ -507,15 +498,13 @@ class app
 					    "callbackType" => 'forward',
 					    "forwardUrl" => "index.php?exam-app-exercise-makescore"
 					);
-					exit(json_encode($message));
+					$this->G->R($message);
 				}
 			}
 			else
 			{
 				if(!$sessionvars['examsessionissave'])
 				{
-					$sargs['examsessionissave'] = 1;
-					$this->exam->modifyExamSession($sargs);
 					$this->favor->addExamHistory();
 				}
 				$questype = $this->basic->getQuestypeList();
@@ -714,13 +703,13 @@ class app
 					    "forwardUrl" => "index.php?exam-app-exercise-score"
 					);
 				}
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
 				if($sessionvars['examsessionstatus'] == 2)
 				{
-					header("location:?exam-app-exercise-makescore");
+					header("location:index.php?exam-app-exercise-makescore");
 					exit;
 				}
 				else
@@ -738,7 +727,7 @@ class app
 			$questype = $this->basic->getQuestypeList();
 			if($sessionvars['examsessionstatus'] == 2)
 			{
-				header("location:?exam-app-exercise-makescore&makescore=1&direct=1");
+				header("location:index.php?exam-app-exercise-makescore&makescore=1&direct=1");
 				exit;
 			}
 			elseif($sessionvars['examsessionstatus'] == 1)
@@ -760,7 +749,7 @@ class app
 			case 'selectquestions':
 			$knowsid = $this->ev->get('knowsid');
 			$knows = $this->section->getKnowsByArgs("knowsid = '{$knowsid}'");
-			if(!$knows['knowsid'])header("location:?exam-app-exercise");
+			if(!$knows['knowsid'])header("location:index.php?exam-app-exercise");
 			$args = array('score'=>100,'examtime'=>60,'title'=>date('Y-m-d').$knows['knows']."知识点强化训练");
 			$args['knowsid'] = $knowsid;
 			$sessionvars = $this->exam->getExamSessionBySessionid();
@@ -821,7 +810,7 @@ class app
 			$this->exam->modifyExamSession($sargs);
 			else
 			$this->exam->insertExamSession($sargs);
-			header("location:?exam-app-exercise-paper");
+			header("location:index.php?exam-app-exercise-paper");
 			break;
 
 			//强化训练考试页面
@@ -914,7 +903,7 @@ class app
 				    "callbackType" => 'forward',
 				    "forwardUrl" => "index.php?exam-app-exercise-paper"
 				);
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -929,6 +918,7 @@ class app
 				{
 					$numbers[$p['questid']] = intval(ceil($this->exam->getQuestionNumberByQuestypeAndKnowsid($p['questid'],$knowids)));
 				}
+				$this->tpl->assign('basicnow',$this->data['currentbasic']);
 				$this->tpl->assign('sections',$sections);
 				$this->tpl->assign('questype',$questype);
 				$this->tpl->assign('numbers',$numbers);
@@ -1039,8 +1029,6 @@ class app
 				$this->exam->modifyExamSession($args);
 				if(!$sessionvars['examsessionissave'])
 				{
-					$sargs['examsessionissave'] = 1;
-					$this->exam->modifyExamSession($sargs);
 					$this->favor->addExamHistory();
 				}
 				if($this->ev->get('direct'))
@@ -1056,7 +1044,7 @@ class app
 					    "callbackType" => 'forward',
 					    "forwardUrl" => "index.php?exam-app-exampaper-makescore"
 					);
-					exit(json_encode($message));
+					$this->G->R($message);
 				}
 			}
 			else
@@ -1249,7 +1237,6 @@ class app
 					if($sessionvars['examsessionsetting']['examdecide'])
 					{
 						$args['examsessionstatus'] = 2;
-						$args['examsessionissave'] = 1;
 						$this->exam->modifyExamSession($args);
 						$this->favor->addExamHistory(0);
 						$message = array(
@@ -1271,13 +1258,13 @@ class app
 						);
 					}
 				}
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
 				if($sessionvars['examsessionstatus'] == 2)
 				{
-					header("location:?exam-app-exampaper-makescore");
+					header("location:index.php?exam-app-exampaper-makescore");
 					exit;
 				}
 				else
@@ -1318,64 +1305,124 @@ class app
 			case 'selectquestions':
 			$sessionvars = $this->exam->getExamSessionBySessionid();
 			$examid = $this->ev->get('examid');
-			if(!$examid)
+			$r = $this->exam->getExamSettingById($examid);
+			if(!$r['examid'])
 			{
-				header("location:?exam-app-exampaper");
-				exit;
+				$message = array(
+					'statusCode' => 300,
+					"message" => "参数错误，尝试退出后重新进入"
+				);
+				$this->G->R($message);
 			}
 			else
 			{
-				$questionids = $this->question->selectQuestions($examid,$this->data['currentbasic']);
-				$questions = array();
-				$questionrows = array();
-				foreach($questionids['question'] as $key => $p)
+				if($r['examtype'] == 1)
 				{
-					$ids = "";
-					if(count($p))
+					$questionids = $this->question->selectQuestions($examid,$this->data['currentbasic']);
+					$questions = array();
+					$questionrows = array();
+					foreach($questionids['question'] as $key => $p)
 					{
-						foreach($p as $t)
-						{
-							$ids .= $t.',';
-						}
-						$ids = trim($ids," ,");
-						if(!$ids)$ids = 0;
-						$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$ids})");
-					}
-				}
-				foreach($questionids['questionrow'] as $key => $p)
-				{
-					$ids = "";
-					if(is_array($p))
-					{
+						$ids = "";
 						if(count($p))
 						{
 							foreach($p as $t)
+							{
+								$ids .= $t.',';
+							}
+							$ids = trim($ids," ,");
+							if(!$ids)$ids = 0;
+							$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$ids})");
+						}
+					}
+					foreach($questionids['questionrow'] as $key => $p)
+					{
+						$ids = "";
+						if(is_array($p))
+						{
+							if(count($p))
+							{
+								foreach($p as $t)
+								{
+									$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
+								}
+							}
+						}
+						else $questionrows[$key][$p] = $this->exam->getQuestionRowsByArgs("qrid = '{$p}'");
+					}
+					$sargs['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questionids'=>$questionids,'questions'=>$questions,'questionrows'=>$questionrows)));
+					$sargs['examsessionsetting'] = $this->ev->addSlashes(serialize($questionids['setting']));
+					$sargs['examsessionstarttime'] = TIME;
+					$sargs['examsession'] = $questionids['setting']['exam'];
+					$sargs['examsessiontime'] = $questionids['setting']['examsetting']['examtime']>0?$questionids['setting']['examsetting']['examtime']:60;
+					$sargs['examsessionstatus'] = 0;
+					$sargs['examsessiontype'] = 1;
+					$sargs['examsessionsign'] = NULL;
+					$sargs['examsessionuseranswer'] = NULL;
+					$sargs['examsessionbasic'] = $this->data['currentbasic']['basicid'];
+					$sargs['examsessionkey'] = $examid;
+					$sargs['examsessionissave'] = 0;
+					$sargs['examsessionsign'] = '';
+					if($sessionvars['examsessionid'])
+					$this->exam->modifyExamSession($sargs);
+					else
+					$this->exam->insertExamSession($sargs);
+					$message = array(
+						'statusCode' => 200,
+						"message" => "抽题完毕，转入试卷页面",
+					    "callbackType" => 'forward',
+					    "forwardUrl" => "index.php?exam-app-exampaper-paper"
+					);
+					$this->G->R($message);
+				}
+				else
+				{
+					$sessionvars = $this->exam->getExamSessionBySessionid();
+					$questions = array();
+					$questionrows = array();
+					foreach($r['examquestions'] as $key => $p)
+					{
+						$qids = '';
+						$qrids = '';
+						if($p['questions'])$qids = trim($p['questions']," ,");
+						if($qids)
+						$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$qids})");
+						if($p['rowsquestions'])$qrids = trim($p['rowsquestions']," ,");
+						if($qrids)
+						{
+							$qrids = explode(",",$qrids);
+							foreach($qrids as $t)
 							{
 								$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
 							}
 						}
 					}
-					else $questionrows[$key][$p] = $this->exam->getQuestionRowsByArgs("qrid = '{$p}'");
+					$args['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questions'=>$questions,'questionrows'=>$questionrows)));
+					$args['examsessionsetting'] = $this->ev->addSlashes(serialize($r));
+					$args['examsessionstarttime'] = TIME;
+					$args['examsession'] = $r['exam'];
+					$args['examsessionscore'] = 0;
+					$args['examsessionuseranswer'] = NULL;
+					$args['examsessionscorelist'] = NULL;
+					$args['examsessionsign'] = NULL;
+					$args['examsessiontime'] = $r['examsetting']['examtime'];
+					$args['examsessionstatus'] = 0;
+					$args['examsessiontype'] = 1;
+					$args['examsessionkey'] = $r['examid'];
+					$args['examsessionissave'] = 0;
+					$args['examsessionbasic'] = $this->data['currentbasic']['basicid'];
+					if($sessionvars['examsessionid'])
+					$this->exam->modifyExamSession($args);
+					else
+					$this->exam->insertExamSession($args);
+					$message = array(
+						'statusCode' => 200,
+						"message" => "抽题完毕，转入试卷页面",
+					    "callbackType" => 'forward',
+					    "forwardUrl" => "index.php?exam-app-exampaper-paper"
+					);
+					$this->G->R($message);
 				}
-				$sargs['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questionids'=>$questionids,'questions'=>$questions,'questionrows'=>$questionrows)));
-				$sargs['examsessionsetting'] = $this->ev->addSlashes(serialize($questionids['setting']));
-				$sargs['examsessionstarttime'] = TIME;
-				$sargs['examsession'] = $questionids['setting']['exam'];
-				$sargs['examsessiontime'] = $questionids['setting']['examsetting']['examtime']>0?$questionids['setting']['examsetting']['examtime']:60;
-				$sargs['examsessionstatus'] = 0;
-				$sargs['examsessiontype'] = 1;
-				$sargs['examsessionsign'] = NULL;
-				$sargs['examsessionuseranswer'] = NULL;
-				$sargs['examsessionbasic'] = $this->data['currentbasic']['basicid'];
-				$sargs['examsessionkey'] = $examid;
-				$sargs['examsessionissave'] = 0;
-				$sargs['examsessionsign'] = '';
-				if($sessionvars['examsessionid'])
-				$this->exam->modifyExamSession($sargs);
-				else
-				$this->exam->insertExamSession($sargs);
-				header("location:?exam-app-exampaper-paper");
-				exit;
 			}
 			break;
 
@@ -1384,7 +1431,7 @@ class app
 			$page = $this->ev->get('page');
 			$ids = trim($this->data['currentbasic']['basicexam']['auto'].','.$this->data['currentbasic']['basicexam']['train'],', ');
 			if(!$ids)$ids = 0;
-			$exams = $this->exam->getExamSettingList($page,20,array("examid IN ({$ids})","examtype = 1"));
+			$exams = $this->exam->getExamSettingList($page,20,array("examid IN ({$ids})"));
 			$this->tpl->assign('exams',$exams);
 			$this->tpl->display('exampaper');
 		}
@@ -1393,6 +1440,11 @@ class app
 	public function exam()
 	{
 		$action = $this->ev->url(3);
+		if($this->data['currentbasic']['basicexam']['opentime']['start'] && $this->data['currentbasic']['basicexam']['opentime']['end'])
+		{
+			if($this->data['currentbasic']['basicexam']['opentime']['start'] > TIME ||  $this->data['currentbasic']['basicexam']['opentime']['end'] < TIME)
+			$action = 'index';
+		}
 		switch($action)
 		{
 			//重新抽题
@@ -1483,13 +1535,11 @@ class app
 				$this->exam->modifyExamSession($args);
 				if(!$sessionvars['examsessionissave'])
 				{
-					$sargs['examsessionissave'] = 1;
-					$this->exam->modifyExamSession($sargs);
 					$this->favor->addExamHistory();
 				}
 				if($this->ev->get('direct'))
 				{
-					header("location:?exam-app-exam-makescore");
+					header("location:index.php?exam-app-exam-makescore");
 					exit;
 				}
 				else
@@ -1500,7 +1550,7 @@ class app
 					    "callbackType" => 'forward',
 					    "forwardUrl" => "index.php?exam-app-exam-makescore"
 					);
-					exit(json_encode($message));
+					$this->G->R($message);
 				}
 			}
 			else
@@ -1694,7 +1744,6 @@ class app
 					if($sessionvars['examsessionsetting']['examdecide'])
 					{
 						$args['examsessionstatus'] = 2;
-						$args['examsessionissave'] = 1;
 						$this->exam->modifyExamSession($args);
 						$this->favor->addExamHistory(0);
 						$message = array(
@@ -1708,7 +1757,7 @@ class app
 					{
 						$args['examsessionstatus'] = 1;
 						$this->exam->modifyExamSession($args);
-						$this->favor->addExamHistory(1);
+						//$this->favor->addExamHistory(1);
 						$message = array(
 							'statusCode' => 200,
 							"message" => "操作成功",
@@ -1717,7 +1766,7 @@ class app
 						);
 					}
 				}
-				exit(json_encode($message));
+				$this->G->R($message);
 			}
 			else
 			{
@@ -1761,6 +1810,7 @@ class app
 			break;
 
 			//试题列表
+			/**
 			case 'sign':
 			$sessionvars = $this->exam->getExamSessionBySessionid();
 			$questype = $this->basic->getQuestypeList();
@@ -1768,50 +1818,137 @@ class app
 			$this->tpl->assign('sessionvars',$sessionvars);
 			$this->tpl->display('exam_sign');
 			break;
+			**/
 
 			case 'selectquestions':
-			$examid = $this->ev->get('examid');
 			$sessionvars = $this->exam->getExamSessionBySessionid();
-			$r = $this->exam->getExamSettingById($examid);
-			$questions = array();
-			$questionrows = array();
-			foreach($r['examquestions'] as $key => $p)
+			if($this->data['currentbasic']['basicexam']['selectrule'])
 			{
-				$qids = '';
-				$qrids = '';
-				if($p['questions'])$qids = trim($p['questions']," ,");
-				if($qids)
-				$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$qids})");
-				if($p['rowsquestions'])$qrids = trim($p['rowsquestions']," ,");
-				if($qrids)
+				$ids = explode(',',trim($this->data['currentbasic']['basicexam']['self'],', '));
+				$p = rand(0,count($ids)-1);
+				$examid = $ids[$p];
+			}
+			else
+			$examid = $this->ev->get('examid');
+			$r = $this->exam->getExamSettingById($examid);
+			if(!$r['examid'])
+			{
+				$message = array(
+					'statusCode' => 300,
+					"message" => "参数错误，尝试退出后重新进入"
+				);
+				$this->G->R($message);
+			}
+			else
+			{
+				if($r['examtype'] == 1)
 				{
-					$qrids = explode(",",$qrids);
-					foreach($qrids as $t)
+					$questionids = $this->question->selectQuestions($examid,$this->data['currentbasic']);
+					$questions = array();
+					$questionrows = array();
+					foreach($questionids['question'] as $key => $p)
 					{
-						$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
+						$ids = "";
+						if(count($p))
+						{
+							foreach($p as $t)
+							{
+								$ids .= $t.',';
+							}
+							$ids = trim($ids," ,");
+							if(!$ids)$ids = 0;
+							$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$ids})");
+						}
 					}
+					foreach($questionids['questionrow'] as $key => $p)
+					{
+						$ids = "";
+						if(is_array($p))
+						{
+							if(count($p))
+							{
+								foreach($p as $t)
+								{
+									$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
+								}
+							}
+						}
+						else $questionrows[$key][$p] = $this->exam->getQuestionRowsByArgs("qrid = '{$p}'");
+					}
+					$sargs['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questionids'=>$questionids,'questions'=>$questions,'questionrows'=>$questionrows)));
+					$sargs['examsessionsetting'] = $this->ev->addSlashes(serialize($questionids['setting']));
+					$sargs['examsessionstarttime'] = TIME;
+					$sargs['examsession'] = $questionids['setting']['exam'];
+					$sargs['examsessiontime'] = $questionids['setting']['examsetting']['examtime']>0?$questionids['setting']['examsetting']['examtime']:60;
+					$sargs['examsessionstatus'] = 0;
+					$sargs['examsessiontype'] = 2;
+					$sargs['examsessionsign'] = NULL;
+					$sargs['examsessionuseranswer'] = NULL;
+					$sargs['examsessionbasic'] = $this->data['currentbasic']['basicid'];
+					$sargs['examsessionkey'] = $examid;
+					$sargs['examsessionissave'] = 0;
+					$sargs['examsessionsign'] = '';
+					if($sessionvars['examsessionid'])
+					$this->exam->modifyExamSession($sargs);
+					else
+					$this->exam->insertExamSession($sargs);
+					$message = array(
+						'statusCode' => 200,
+						"message" => "抽题完毕，转入试卷页面",
+					    "callbackType" => 'forward',
+					    "forwardUrl" => "index.php?exam-app-exam-paper"
+					);
+					$this->G->R($message);
+				}
+				else
+				{
+					$sessionvars = $this->exam->getExamSessionBySessionid();
+					$questions = array();
+					$questionrows = array();
+					foreach($r['examquestions'] as $key => $p)
+					{
+						$qids = '';
+						$qrids = '';
+						if($p['questions'])$qids = trim($p['questions']," ,");
+						if($qids)
+						$questions[$key] = $this->exam->getQuestionListByArgs("questionid IN ({$qids})");
+						if($p['rowsquestions'])$qrids = trim($p['rowsquestions']," ,");
+						if($qrids)
+						{
+							$qrids = explode(",",$qrids);
+							foreach($qrids as $t)
+							{
+								$questionrows[$key][$t] = $this->exam->getQuestionRowsByArgs("qrid = '{$t}'");
+							}
+						}
+					}
+					$args['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questions'=>$questions,'questionrows'=>$questionrows)));
+					$args['examsessionsetting'] = $this->ev->addSlashes(serialize($r));
+					$args['examsessionstarttime'] = TIME;
+					$args['examsession'] = $r['exam'];
+					$args['examsessionscore'] = 0;
+					$args['examsessionuseranswer'] = NULL;
+					$args['examsessionscorelist'] = NULL;
+					$args['examsessionsign'] = NULL;
+					$args['examsessiontime'] = $r['examsetting']['examtime'];
+					$args['examsessionstatus'] = 0;
+					$args['examsessiontype'] = 2;
+					$args['examsessionkey'] = $r['examid'];
+					$args['examsessionissave'] = 0;
+					$args['examsessionbasic'] = $this->data['currentbasic']['basicid'];
+					if($sessionvars['examsessionid'])
+					$this->exam->modifyExamSession($args);
+					else
+					$this->exam->insertExamSession($args);
+					$message = array(
+						'statusCode' => 200,
+						"message" => "抽题完毕，转入试卷页面",
+					    "callbackType" => 'forward',
+					    "forwardUrl" => "index.php?exam-app-exam-paper"
+					);
+					$this->G->R($message);
 				}
 			}
-			$args['examsessionquestion'] = $this->ev->addSlashes(serialize(array('questions'=>$questions,'questionrows'=>$questionrows)));
-			$args['examsessionsetting'] = $this->ev->addSlashes(serialize($r));
-			$args['examsessionstarttime'] = TIME;
-			$args['examsession'] = $r['exam'];
-			$args['examsessionscore'] = 0;
-			$args['examsessionuseranswer'] = NULL;
-			$args['examsessionscorelist'] = NULL;
-			$args['examsessionsign'] = NULL;
-			$args['examsessiontime'] = $r['examsetting']['examtime'];
-			$args['examsessionstatus'] = 0;
-			$args['examsessiontype'] = 2;
-			$args['examsessionkey'] = $r['examid'];
-			$args['examsessionissave'] = 0;
-			$args['examsessionbasic'] = $this->data['currentbasic']['basicid'];
-			if($sessionvars['examsessionid'])
-			$this->exam->modifyExamSession($args);
-			else
-			$this->exam->insertExamSession($args);
-			header("location:?exam-app-exam-paper");
-			exit;
 			break;
 
 			//显示考试须知等信息
@@ -1819,44 +1956,21 @@ class app
 			$page = $this->ev->get('page');
 			$ids = trim($this->data['currentbasic']['basicexam']['self'],', ');
 			if(!$ids)$ids = '0';
-			$exams = $this->exam->getExamSettingList($page,20,array("examid IN ({$ids})","examtype = 2"));
+			$exams = $this->exam->getExamSettingList($page,20,array("examid IN ({$ids})"));
+			$number = array();
+			if($ids)
+			{
+				$ids = explode(',',$ids);
+				foreach($ids as $t)
+				{
+					$num = $this->favor->getExamUseNumber($this->_user['sessionuserid'],$t,$this->data['currentbasic']['basicid']);
+					$number['child'][$t] = $num;
+					$number['all'] = intval($number['all'])+$num;
+				}
+			}
+			$this->tpl->assign('number',$number);
 			$this->tpl->assign('exams',$exams);
 			$this->tpl->display('exam');
-		}
-	}
-
-	public function text()
-	{
-		$action = $this->ev->url(3);
-		switch($action)
-		{
-			//公告等信息正文
-			case 'text':
-			$infoid = $this->ev->get('infoid');
-			$info = $this->info->getInfoById($infoid);
-			$this->tpl->assign('info',$info);
-			$this->tpl->display('gg');
-			break;
-
-			//公告列表页
-			case 'textlist':
-			$page = $this->ev->get('page');
-			$page = $page > 0?$page : 1;
-			$area = array();
-			foreach($this->userexams as $p)
-			{
-				$area[] = $p['areaid'];
-			}
-			$areaids = trim(implode(',',$area)," ,");
-			$areaids = "28,".$areaids;
-			if(!$areaids)$areaids = 0;
-			$this->tpl->assign('annous',$this->info->getInfoList($page,20,array("infoareaid IN ({$areaids})","infocategoryid = 24")));
-			$this->tpl->display('gglist');
-			break;
-
-			default:
-			$this->index();
-			break;
 		}
 	}
 
@@ -1907,46 +2021,7 @@ class app
 
 			//错题记录列表
 			default:
-			$page = $this->ev->get('page');
-			$ehtype = intval($this->ev->get('ehtype'));
-			$page = $page > 0?$page:1;
-			$questype = $this->basic->getQuestypeList();
-			$basicid = $this->data['currentbasic']['basicid'];
-			$args = array("ehuserid = '".$this->_user['sessionuserid']."'","ehbasicid = '{$basicid}'","ehtype = '{$ehtype}'","ehstatus = 1");
-			$exams = $this->favor->getExamHistoryListByArgs($page,10,$args);
-			foreach($exams['data'] as $key => $p)
-			{
-				$exams['data'][$key]['errornumber'] = 0;
-				$questions = unserialize($p['ehquestion']);
-				$scorelist = unserialize($p['ehscorelist']);
-				$examsetting = unserialize($p['ehsetting']);
-				if(is_array($questions['questions']) && is_array($scorelist))
-				{
-					foreach($questions['questions'] as $nkey => $q)
-					{
-						if(is_array($q))
-						foreach($q as $qid => $t)
-						if($p['ehtype'] == 0)
-						{
-							if($scorelist[$qid] != 1)$exams['data'][$key]['errornumber']++;
-						}
-						elseif($p['ehtype'] == 1)
-						{
-							if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
-						}
-						else
-						{
-							if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
-						}
-					}
-				}
-			}
-			$avgscore = floatval($this->favor->getAvgScore($args));
-			$this->tpl->assign('ehtype',$ehtype);
-			$this->tpl->assign('page',$page);
-			$this->tpl->assign('exams',$exams);
-			$this->tpl->assign('avgscore',$avgscore);
-			$this->tpl->display('record');
+			header("location:index.php?exam-app-history");
 			break;
 		}
 	}
@@ -2054,7 +2129,7 @@ class app
 			    "callbackType" => 'forward',
 			    "forwardUrl" => "?exam-app-history&ehtype={$ehtype}&page={$page}"
 			);
-			exit(json_encode($message));
+			$this->G->R($message);
 			break;
 
 			//批量删除强化训练历史记录
@@ -2062,7 +2137,7 @@ class app
 			$exercise = $this->ev->get('exercise');
 			foreach($exercise as $p)
 			$this->favor->delExamHistory($p,$this->_user['sessionuserid']);
-			header("location:?exam-app-history");
+			header("location:index.php?exam-app-history");
 			exit;
 			break;
 
@@ -2071,7 +2146,7 @@ class app
 			$exam = $this->ev->get('exam');
 			foreach($exam as $p)
 			$this->favor->delExamHistory($p,$this->_user['sessionuserid']);
-			header("location:?exam-app-history");
+			header("location:index.php?exam-app-history");
 			exit;
 			break;
 
@@ -2083,6 +2158,7 @@ class app
 			$sessionvars = array('examsession'=>$eh['ehexam'],'examsessionscore'=>$eh['ehscore'],'examsessionscorelist'=>$eh['ehscorelist'],'examsessionsetting'=>$eh['ehsetting'],'examsessionquestion'=>$eh['ehquestion'],'examsessionuseranswer'=>$eh['ehuseranswer']);
 			$this->tpl->assign('sessionvars',$sessionvars);
 			$this->tpl->assign('questype',$questype);
+			$this->tpl->assign('ehtype',$eh['ehtype']);
 			if($eh['ehtype'] == 2)
 			$this->tpl->display('history_examview');
 			elseif($eh['ehtype'] == 1)
@@ -2111,9 +2187,51 @@ class app
 			case 'redo':
 			$ehid = $this->ev->get('ehid');
 			$eh = $this->favor->getExamHistoryById($ehid);
+			/**
+			if($eh['ehtype'] == 2)
+			{
+				$basic = $this->data['currentbasic'];
+				if(($basic['basicexam']['opentime']['start'] && $basic['basicexam']['opentime']['end']) && ($basic['basicexam']['opentime']['start'] > TIME || $basic['basicexam']['opentime']['end'] < TIME))
+				{
+					$message = array(
+						'statusCode' => 300,
+						"message" => "现在不是考试时间哦，请在考试时间来"
+					);
+					$this->G->R($message);
+				}
+				if($basic['basicexam']['examnumber'])
+				{
+					$ids = trim($this->data['currentbasic']['basicexam']['self'],', ');
+					if(!$ids)$ids = '0';
+					$number = array();
+					if($ids)
+					{
+						foreach($ids as $t)
+						{
+							$num = $this->favor->getExamUseNumber($this->_user['sessionuserid'],$t,$this->data['currentbasic']['basicid']);
+							$number['child'][$t] = $num;
+							$number['all'] = intval($number['all'])+$num;
+						}
+					}
+					if($basic['basicexam']['selectrule'])
+					{
+						if($number['all'] >= $basic['basicexam']['examnumber'])
+						{
+							$message = array(
+								'statusCode' => 300,
+								"message" => "您的考试次数已经用完"
+							);
+							$this->G->R($message);
+						}
+					}
+					else
+					{}
+				}
+			}
+			**/
 			$args = array(
 							'examsession' => $eh['ehexam'].'重做',
-							'examsessiontype'=>$eh['ehtype'],
+							'examsessiontype'=>$eh['ehtype'] == 2?1:$eh['ehtype'],
 							'examsessionsetting'=>$this->ev->addSlashes(serialize($eh['ehsetting'])),
 							'examsessionbasic'=>$eh['ehbasicid'],
 							'examsessionquestion'=>$this->ev->addSlashes(serialize($eh['ehquestion'])),
@@ -2135,12 +2253,27 @@ class app
 				$this->exam->insertExamSession($args);
 			}
 			if($eh['ehtype'] == 1)
-			header("location:?exam-app-exampaper-paper&act=history&examid={$eh['ehkey']}");
+			$message = array(
+				'statusCode' => 200,
+				"message" => "试题加载成功，即将进入考试页面",
+			    "callbackType" => 'forward',
+			    "forwardUrl" => "index.php?exam-app-exampaper-paper&act=history&examid={$eh['ehkey']}"
+			);
 			elseif($eh['ehtype'] == 2)
-			header("location:?exam-app-exam-paper&act=history&examid={$eh['ehkey']}");
+			$message = array(
+				'statusCode' => 200,
+				"message" => "试题加载成功，即将进入考试页面",
+			    "callbackType" => 'forward',
+			    "forwardUrl" => "index.php?exam-app-exampaper-paper&act=history&examid={$eh['ehkey']}"
+			);
 			else
-			header("location:?exam-app-exercise-paper&act=history&knowsid={$eh['ehkey']}");
-			exit;
+			$message = array(
+				'statusCode' => 200,
+				"message" => "试题加载成功，即将进入考试页面",
+			    "callbackType" => 'forward',
+			    "forwardUrl" => "index.php?exam-app-exercise-paper&act=history&examid={$eh['ehkey']}"
+			);
+			$this->G->R($message);
 			break;
 
 			//答题记录列表
@@ -2150,6 +2283,33 @@ class app
 			$page = $page > 0?$page:1;
 			$basicid = $this->data['currentbasic']['basicid'];
 			$exams = $this->favor->getExamHistoryListByArgs($page,10,array("ehuserid = '".$this->_user['sessionuserid']."'","ehbasicid = '{$basicid}'","ehtype = '{$ehtype}'"));
+			foreach($exams['data'] as $key => $p)
+			{
+				$exams['data'][$key]['errornumber'] = 0;
+				$questions = unserialize($p['ehquestion']);
+				$scorelist = unserialize($p['ehscorelist']);
+				$examsetting = unserialize($p['ehsetting']);
+				if(is_array($questions['questions']) && is_array($scorelist))
+				{
+					foreach($questions['questions'] as $nkey => $q)
+					{
+						if(is_array($q))
+						foreach($q as $qid => $t)
+						if($p['ehtype'] == 0)
+						{
+							if($scorelist[$qid] != 1)$exams['data'][$key]['errornumber']++;
+						}
+						elseif($p['ehtype'] == 1)
+						{
+							if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+						}
+						else
+						{
+							if($scorelist[$qid] != $examsetting['examsetting']['questype'][$nkey]['score'])$exams['data'][$key]['errornumber']++;
+						}
+					}
+				}
+			}
 			$avgscore = floatval($this->favor->getAvgScore(array("ehuserid = '".$this->_user['sessionuserid']."'","ehbasicid = '{$basicid}'","ehtype = '{$ehtype}'")));
 			$this->tpl->assign('ehtype',$ehtype);
 			$this->tpl->assign('page',$page);
@@ -2220,7 +2380,7 @@ class app
 			{
 				$this->answer->delAsksById($id);
 			}
-			header("location:?exam-app-answer");
+			header("location:index.php?exam-app-answer");
 			exit;
 			break;
 
@@ -2233,7 +2393,7 @@ class app
 				$questionid = $this->ev->get('questionid');
 				if(!$questionid)
 				{
-					header("location:?exam-app-answer");
+					header("location:index.php?exam-app-answer");
 					exit;
 				}
 				else
@@ -2283,7 +2443,7 @@ class app
 				$args['answeraskid'] = $ask['askid'];
 				$args['answerasktime'] = TIME;
 				$this->answer->insertAnswer($args);
-				header('location:?exam-app-answer-ask&askid='.$ask['askid']);
+				header('location:index.php?exam-app-answer-ask&askid='.$ask['askid']);
 				exit;
 			}
 			break;

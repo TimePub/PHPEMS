@@ -44,17 +44,16 @@
 				<div class="control-group">
 					<label class="control-label">考试科目：</label>
 				  	<div class="controls">
-					  	<select class="combox" needle="needle" min="1" name="args[examsubject]" onchange="javascript:$('#examrulesbox').loadUrl('?exam-master-exams-ajax&subjectid='+$(this).find('option:selected').val());" id="selectedsubjectid">
-						  	{x2;tree:$subjects,subject,sid}
-						  	<option value="{x2;v:subject['subjectid']}"{x2;if:v:subject['subjectid'] == $exam['examsubject']} selected{x2;endif}>{x2;v:subject['subject']}</option>
-						  	{x2;endtree}
-					  	</select>
+					  	<label class="radio inline">
+						  	<input type="hidden" name="args[examsubject]" value="{x2;$exam['examsubject']}" />
+						  	{x2;$subjects[$exam['examsubject']]['subject']}
+					  	</label>
 			  		</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label">考试时间：</label>
 			  		<div class="controls">
-			  			<input type="text" name="args[examsetting][examtime]" value="60" size="4" needle="needle" class="inline" value="{x2;$exam['examsetting']['examtime']}"/> 分钟
+			  			<input type="text" name="args[examsetting][examtime]" size="4" needle="needle" class="inline" value="{x2;$exam['examsetting']['examtime']}"/> 分钟
 			  		</div>
 				</div>
 				<div class="control-group">

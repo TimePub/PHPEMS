@@ -58,10 +58,34 @@
 							 <input type="hidden" name="payforit" value="1" />
 						</fieldset>
 					</form>
+					<fieldset>
+						 <legend>代金券充值</legend>
+						 <a href="#myModal" class="btn" role="button" data-toggle="modal">代金券充值</a>
+					</fieldset>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+<form aria-hidden="true" id="myModal" method="post" class="modal hide fade" role="dialog" aria-labelledby="#myModalLabel" action="index.php?exam-app-basics-coupon">
+	<div class="modal-header">
+		<button aria-hidden="true" class="close" type="button" data-dismiss="modal">×</button>
+		<h3 id="myModalLabel">
+			代金券充值
+		</h3>
+	</div>
+	<div class="modal-body" id="modal-body">
+		<div class="control-group">
+			<label class="control-label" for="content">代金券号码：</label>
+	  		<div class="controls">
+	  			<input type="text" name="couponsn" value="" needle="needle" msg="请输入16位代金券号码"/>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		 <input name="coupon" type="hidden" value="1">
+		 <button class="btn" type="submit">充值</button>
+	</div>
+</form>
 </body>
 </html>

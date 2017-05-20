@@ -257,7 +257,7 @@ class exam_exam
 	//批量导入试题
 	//参数：批量试题内容字符串，知识点ID
 	//返回值：true
-	public function importQuestionBat($uploadfile,$knowsid,$questionparent = 0)
+	public function importQuestionBat($uploadfile,$tknowsid,$questionparent = 0)
 	{
 		$handle = fopen($uploadfile,"r");
 		while ($data = fgetcsv($handle))
@@ -272,10 +272,10 @@ class exam_exam
 				$args['questionselectnumber'] = intval(trim($question[3]," \n\t"));
 				$args['questionanswer'] = $this->ev->addSlashes(htmlspecialchars(iconv("GBK","UTF-8",trim($question[4]," \n\t"))));
 				$args['questiondescribe'] = $this->ev->addSlashes(htmlspecialchars(iconv("GBK","UTF-8",trim($question[5]," \n\t"))));
-				if(!$knowsid)
+				if(!$tknowsid)
 				$questionknowsid = trim($question[6]," \n\t");
 				else
-				$questionknowsid = $knowsid;
+				$questionknowsid = $tknowsid;
 				if($questionknowsid)
 				{
 					$questionknowsid = explode(',',$questionknowsid);

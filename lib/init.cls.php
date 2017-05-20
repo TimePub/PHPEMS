@@ -118,6 +118,25 @@ class ginkgo
 			if(isset($lang))$this->lang[$this->app] = $lang;
 		}
 	}
+
+	public function R($message)
+	{
+		$ev = $this->make('ev');
+		if($ev->get('userhash'))
+		exit(json_encode($message));
+		else
+		{
+			if($message['callbackType'] == 'forward')
+			{
+				if($message['forwardUrl'])
+				exit("<script>alert('{$message['message']}');window.location = '{$message['forwardUrl']}';</script>");
+				else
+				exit("<script>alert('{$message['message']}');window.location = document.referrer+'&'+Math.random();</script>");
+			}
+			else
+			exit("<script>alert('{$message['message']}');window.location = document.referrer+'&'+Math.random();</script>");
+		}
+	}
 }
 
 ?>

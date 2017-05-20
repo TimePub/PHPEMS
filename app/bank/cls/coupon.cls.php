@@ -47,7 +47,7 @@ class coupon_bank
 
 	public function getAllOKCoupon($stime,$etime)
 	{
-		$data = array('couponsn','coupon',array("couponaddtime >= '{$stime}'","couponaddtime <= '{$etime}'","couponstatus = 0"));
+		$data = array('couponsn','coupon',array("couponaddtime >= '{$stime}'","couponaddtime <= '{$etime}'","couponstatus = 0"),false,false,false);
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetchAll($sql);
 	}

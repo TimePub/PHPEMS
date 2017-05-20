@@ -130,7 +130,7 @@
 			                    <td class="actions">
 			                    	<div class="btn-group">
 			                    		<a class="btn" href="index.php?content-master-contents-edit&catid={x2;v:content['contentcatid']}&contentid={x2;v:content['contentid']}&page={x2;$page}{x2;$u}" title="修改"><em class="icon-edit"></em></a>
-										<a class="btn ajax" href="index.php?content-master-contents-del&catid={x2;v:content['cncatid']}&contentid={x2;v:content['contentid']}&page={x2;$page}{x2;$u}" title="删除"><em class="icon-remove"></em></a>
+										<a class="btn confirm" href="index.php?content-master-contents-del&catid={x2;v:content['cncatid']}&contentid={x2;v:content['contentid']}&page={x2;$page}{x2;$u}" title="删除"><em class="icon-remove"></em></a>
 			                    	</div>
 			                    </td>
 			                </tr>

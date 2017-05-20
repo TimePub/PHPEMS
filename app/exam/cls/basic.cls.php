@@ -57,7 +57,7 @@ class basic_exam
 
 	public function getOpenBasicByUseridAndBasicid($userid,$basicid)
 	{
-		$data = array(false,'openbasics',array("obuserid = '{$userid}'","obbasicid = '{$basicid}'"));
+		$data = array(false,'openbasics',array("obuserid = '{$userid}'","obbasicid = '{$basicid}'","obendtime > ".TIME));
 		$sql = $this->sql->makeSelect($data);
 		return $this->db->fetch($sql);
 	}

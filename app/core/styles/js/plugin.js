@@ -1,9 +1,16 @@
+String.prototype.replaceAll = function(s1,s2) {
+    return this.replace(new RegExp(s1,"gm"),s2);
+}
 jQuery.extend({'zoombox':(function(){
 	var m = $("<div class=\"modal hide fade\"></div>");
 	var cnt = "";
-	return {'show':function(type,obj){
+	return {'show':function(type,obj,url){
 			switch(type)
 			{
+				case 'confirm':
+				cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>操作确认</h5></div><div class=\"modal-body\"><p class=\"alert alert-error\">您确定要删除吗？</p></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" onclick=\"javascript:submitAjax({'url':'"+url+"'});\">确定</button><button class=\"btn\" onclick=\"javascript:$.zoombox.hide();\">取消</button></div";
+				break;
+
 				case 'ajax':
 				cnt = "<div class=\"modal-header\" style=\"height:2em;overflow:hidden;\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button><h5>出现错误</h5></div><div class=\"modal-body\"><p class=\"alert alert-error\">"+obj.message+"</p></div>";
 				break;
@@ -573,12 +580,25 @@ function xvars(x){
 		var needle = x.attr('needle');
 		if( x.attr('type')!='password' && x.val())x.val(x.val().replace(/^\s+/i,'').replace(/\s+$/i,''));
 		if(x.get(0).tagName.toUpperCase() == "SELECT"){
-			if(needle && $(x).val() == ""){
+			if(needle && x.val() == ""){
 				return {result:false,message:x.attr('msg')};
 			}
 		}
+
+		if(x.attr('maxvalue'))
+		{
+			var maxv = parseInt(x.attr('maxvalue'));
+			if(parseInt(x.val()) > maxv)return {result:false,message:"最大值不能超过"+x.attr('maxvalue')};
+		}
+
+		if(x.attr('minvalue'))
+		{
+			var minv = parseInt(x.attr('minvalue'));
+			if(parseInt(x.val()) < minv)return {result:false,message:"最小值不能低于"+x.attr('minvalue')};
+		}
+
 		if(x.attr('type')=='checkbox'){
-			if(needle && !$(x).attr('checked')){
+			if(needle && !x.attr('checked')){
 				return {result:false,message:x.attr('msg')};
 			}
 		}
@@ -657,6 +677,11 @@ function submitAjax(parms){
 								{
 									if(data.forwardUrl == 'reload')
 									window.location.reload();
+									else if(data.forwardUrl == 'back')
+									{
+										window.history.back();
+										window.location.reload();
+									}
 									else
 									window.location.href = data.forwardUrl;
 								}
@@ -694,6 +719,7 @@ function submitAjax(parms){
 						$(":checkbox.checkall",dom).on("change",checkAll);
 						$('.datepicker',dom).datepicker();
 						$(".selfmodal",dom).on("click",modalAjax);
+						$("a.confirm",dom).each(confirmDialog);
 					}
 				}
 				return data.statusCode;
@@ -804,13 +830,14 @@ function autocombox(){
 	eval($(_this).attr("callback"))($(_this));
 }
 
-function htmlajax(){
+function htmlajax(obj){
 	var _this = this;
 	var target = $(_this).attr('target');
 	var callback = $(_this).attr('callback');
 	$(_this).attr('target','_self');
 	var href = $(_this).attr('href');
 	$(_this).attr('href','javascript:;');
+	$(_this).attr('data',href);
 	$(_this).click(function(){
 		var status = submitAjax({"url":href,"target":target});
 		return false;
@@ -883,6 +910,7 @@ function modalAjax(){
 		c.find('.datepicker').datepicker();
 		c.find(".selfmodal").on("click",modalAjax);
 		c.find(".jckeditor").each(initEditor);
+		c.find("a.confirm").each(confirmDialog);
 		m.modal();
 	})
 }
@@ -905,6 +933,78 @@ function initEditor(){
 	CKEDITOR.replace(_this);
 }
 
+countdown = function(userOptions)
+{
+	var h,m,s,t;
+	var init = function()
+	{
+		userOptions.time = userOptions.time*60 - userOptions.lefttime;
+		s = userOptions.time%60;
+		m = parseInt(userOptions.time%3600/60);
+		h = parseInt(userOptions.time/3600);
+	}
+
+	var setval = function()
+	{
+		if(s >= 10)
+		userOptions.sbox.html(s);
+		else
+		userOptions.sbox.html('0'+s.toString());
+		if(m >= 10)
+		userOptions.mbox.html(m);
+		else
+		userOptions.mbox.html('0'+ m);
+		if(h >= 10)
+		userOptions.hbox.html(h);
+		else
+		userOptions.hbox.html('0'+ h);
+	}
+
+	var step = function()
+	{
+		if(s > 0)
+		{
+			s--;
+		}
+		else
+		{
+			if(m > 0)
+			{
+				m--;
+				s = 60;
+				s--;
+			}
+			else
+			{
+				if(h > 0)
+				{
+					h--;
+					m = 60;
+					m--;
+					s = 60;
+					s--;
+				}
+				else
+				{
+					clearInterval(interval);
+					userOptions.finish();
+					return ;
+				}
+			}
+		}
+		setval();
+	}
+	init();
+	interval = setInterval(step, 1000);
+};
+
+function confirmDialog(){
+	var _this = this;
+	var href = $(_this).attr('href');
+	$(_this).attr('href','javascript:;')
+	$(_this).on('click',function(){$.zoombox.show('confirm',null,href);});
+}
+
 $(function(){
 	$(".uploadbutton").each(flashupload);
 	$(".jckeditor").each(initEditor);
@@ -923,4 +1023,67 @@ $(function(){
 	$("select.autocombox").on("change",autocombox);
 	$(":checkbox.checkall").on("change",checkAll);
 	$(".selfmodal").on("click",modalAjax);
+	$("a.catool").each(function(){openmenu(this);});
+	$("a.confirm").each(confirmDialog);
 });
+
+function openmenu(_this){
+	if($(_this).attr("data") != '1')
+	{
+		if($(_this).attr("app"))
+		var app = $(_this).attr("app");
+		else
+		var app = 'content';
+		var o = $(_this).parents("tr");
+		var t = '';
+		$.getJSON('index.php?'+app+'-master-category-ajax-getchilddata&'+Math.random(),{'catid':$(_this).attr('rel')},function(data){
+			for(x in data){
+				var s = $('<tr>'+o.html()+'<tr />');
+				s.children("td").eq(0).children("input").eq(0).attr('name','ids['+data[x].catid+']');
+				s.children("td").eq(0).children("input").eq(0).attr('value',data[x].catlite);
+				s.children("td").eq(1).html(data[x].catid);
+				s.children("td").eq(2).children('img').eq(0).attr('src',data[x].catimg == ''?'app/core/styles/images/noupload.gif':data[x].catimg);
+				s.children("td").eq(3).children('a').eq(0).attr('rel',data[x].catid);
+				s.children("td").eq(3).children('span').eq(0).html(data[x].catname);
+				s.children("td").eq(3).html('<em class="span1"></em>'+s.children("td").eq(3).html());
+				s.children("td").eq(4).html(s.children("td").eq(4).html().replaceAll('catid='+$(_this).attr('rel'),'catid='+data[x].catid).replaceAll('parent='+$(_this).attr('rel'),'parent='+data[x].catid));
+				s.children("td").eq(4).find("a.ajax").each(function(){
+					var _this = this;
+					var d = $(_this).attr('data');
+					$(_this).attr('href',d);
+					$(_this).attr('data',null);
+				});
+				t = t+'<tr class="submenu'+$(_this).attr('rel')+'">'+s.html()+'<tr />';
+			}
+			o.after($(t));
+			$('.submenu'+$(_this).attr('rel')).find("a.ajax").each(htmlajax);
+			$(_this).attr("data","1");
+			$(_this).attr("class","icon-minus-sign catool");
+			$(_this).attr("onclick","javascript:closemenu(this);");
+		});
+	}
+	else
+	{
+		$('.submenu'+$(_this).attr('rel')).show();
+		$(_this).attr("class","icon-minus-sign catool");
+		$(_this).attr("onclick","javascript:closemenu(this);");
+	}
+}
+
+function closemenu(_this){
+	if($(_this).attr('rel') && $(_this).attr('rel') != '')
+	{
+		var p = $('.submenu'+$(_this).attr('rel'));
+		if(p)
+		{
+			p.each(function(){
+				var x = $('.submenu'+$(this).children("td").eq(3).children("a").eq(0).attr('rel')).eq(0);
+				if(x.attr('class'))
+				closemenu($(this).children("td").eq(3).children("a").eq(0).get(0));
+				$('.submenu'+$(_this).attr('rel')).hide();
+			});
+		}
+		$(_this).attr("class","icon-plus-sign catool");
+		$(_this).attr("onclick","javascript:openmenu(this);");
+	}
+}

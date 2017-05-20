@@ -1,87 +1,86 @@
-{x2;include:head}
+{x2;include:header}
 <body>
-<!--导航-->
 {x2;include:nav}
-<div id="main">
-	<!--主体左侧-->
-	{x2;include:left}
-	<!--主体左侧 结束-->
-	<!--主体右侧 -->
-	<div id="right_760" class="right_760">
-    	{x2;include:bread}
-    	<div class="bor_top"></div>
-    	<div class="bor_mid">
-            <div id="hide_left"><a href="javascript:pr()"></a></div>
-  	  	  <div id="answer_note">
-                <h2 class="page_title">
-       	    	  <ul id="note_type">
-                    	<li><a href="?exam-app-history"{x2;if:$ehtype == 0} class="on"{x2;endif}>强化训练</a></li>
-                    	<li><a href="?exam-app-history&ehtype=1"{x2;if:$ehtype == 1} class="on"{x2;endif}>随机考试</a></li>
-                    	<li><a href="?exam-app-history&ehtype=2"{x2;if:$ehtype == 2} class="on"{x2;endif}>模拟考试</a></li>
-                    </ul><img src="app/exam/styles/image/answer_note_tit.jpg" alt="答题记录" /></h2>
-	   			{x2;if:$ehtype == 0}
-	   			<div id="note_type_tit"><span class="font_12 float_r"><span class="red">提示：</span>答题记录中的强化训练最多记录最新20条信息。</span><b>强化训练</b></div>
+<div class="row-fluid">
+	<div class="container examcontent">
+		<div class="exambox" id="datacontent">
+			<div class="examform">
+				<ul class="breadcrumb">
+					<li>
+						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+					</li>
+					<li>
+						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
+					</li>
+					<li class="active">
+						考试记录
+					</li>
+				</ul>
+				<ul class="nav nav-tabs">
+					<li{x2;if:$ehtype == 0} class="active"{x2;endif}>
+						<a href="index.php?exam-app-history">强化训练</a>
+					</li>
+					<li{x2;if:$ehtype == 1} class="active"{x2;endif}>
+						<a href="index.php?exam-app-history&ehtype=1">模拟考试</a>
+					</li>
+					<li{x2;if:$ehtype == 2} class="active"{x2;endif}>
+						<a href="index.php?exam-app-history&ehtype=2">正式考试</a>
+					</li>
+				</ul>
+				{x2;if:$ehtype == 0}
+				<p><span class="text-warning">提示：</span>我的错题中的强化训练最多记录最新20条信息。</p>
 				{x2;elseif:$ehtype == 1}
-				<div id="note_type_tit"><span class="font_12 float_r">您一共完成了<b class="red">{x2;$exams['number']}</b>次考试， 平均分为：<b class="red">{x2;$avgscore}</b>分 继续努力吧！</span><b>随机考试</b></div>
+				<p>您一共完成了<b class="text-warning">{x2;$exams['number']}</b>次考试， 平均分为：<b class="text-warning">{x2;$avgscore}</b>分 继续努力吧！</p>
 				{x2;elseif:$ehtype == 2}
-				<div id="note_type_tit"><span class="font_12 float_r">您一共完成了<b class="red">{x2;$exams['number']}</b>次考试， 平均分为：<b class="red">{x2;$avgscore}</b>分 继续努力吧！</span><b>模拟考试</b></div>
+				<p>您一共完成了<b class="text-warning">{x2;$exams['number']}</b>次考试， 平均分为：<b class="text-warning">{x2;$avgscore}</b>分 继续努力吧！</p>
+				<p><b class="text-warning">注意：</b>正式考试的重做试卷将作为模拟考试记录！</p>
 				{x2;endif}
-				<table width="100%">
-                        <tr>
-                          <th>答题记录</th>
-                          <th>答题时间</th>
-                          <th>用时</th>
-                          <th>得分</th>
-                          <th>操作</th>
-                        </tr>
-                        {x2;tree:$exams['data'],exam,eid}
-                        <tr>
-                          <td align="left">{x2;v:exam['ehexam']}</td>
-                          <td>{x2;date:v:exam['ehstarttime'],'Y-m-d'}</td>
-                          <td>{x2;v:exam['ehtime']}分钟</td>
-                          <td><b class="red">{x2;if:!v:exam['ehstatus'] && v:exam['ehdecide']}评分中{x2;else}{x2;v:exam['ehscore']}{x2;endif}</b></td>
-                          <td class="mani_btn">
-                            {x2;if:v:exam['ehstatus']}
-                            <a href="?exam-app-history-view&ehid={x2;v:exam['ehid']}">解析</a>
-                            <a href="?exam-app-history-redo&ehid={x2;v:exam['ehid']}">重做</a>
-                            <a href="?exam-app-history-wrongs&ehid={x2;v:exam['ehid']}">错题</a>
-                            <a href="javascript:;" onclick="javascript:confdelinfo({x2;v:exam['ehid']})">删除</a>
-                            {x2;else}
-                            本试卷需教师评分，请等待
-                            {x2;endif}
-                          </td>
-                        </tr>
-                        {x2;endtree}
-                     </table>
-                     {x2;if:$exams['pages'] && $ehtype}
-                        <div class="pagination pagination-right">
-				            <ul>{x2;$exams['pages']}</ul>
-				        </div>
-                     {x2;endif}
-            </div>
-    	</div>
-    	<div class="bor_bottom"></div>
-    </div>
-	<!--主体右侧 结束-->
-	<!--尾部-->
-    {x2;include:foot}
-    <!--尾部 结束-->
+				<table class="table table-bordered table-hover">
+					<tr class="info">
+						<td>答题记录</td>
+						<td>答题时间</td>
+						<td>用时</td>
+                        <td>得分</td>
+						<td>错题数量</td>
+						<td>查看错题</td>
+						<td>试题解析</td>
+						<td>重做试卷</td>
+						<td>删除记录</td>
+					</tr>
+					{x2;tree:$exams['data'],exam,eid}
+					<tr>
+						<td>{x2;v:exam['ehexam']}</td>
+						<td>{x2;date:v:exam['ehstarttime'],'Y-m-d'}</td>
+						<td>{x2;v:exam['ehtime']}分钟</td>
+                        <td><b class="red">{x2;if:!v:exam['ehstatus'] && v:exam['ehdecide']}评分中{x2;else}{x2;v:exam['ehscore']}{x2;endif}</b></td>
+						<td><b class="red">{x2;v:exam['errornumber']}</b></td>
+						<td><a href="index.php?exam-app-record-wrongs&ehid={x2;v:exam['ehid']}">查看错题</a></td>
+						<td><a href="index.php?exam-app-history-view&ehid={x2;v:exam['ehid']}">试题解析</a></td>
+						<td><a class="ajax" href="index.php?exam-app-history-redo&ehid={x2;v:exam['ehid']}">重做试卷</a></td>
+						<td>
+							{x2;if:$ehtype != 2}
+							<a href="javascript:;" onclick="javascript:delhistory({x2;v:exam['ehid']})">删除</a>
+							{x2;else}
+							-
+							{x2;endif}
+						</td>
+					</tr>
+				{x2;endtree}
+				</table>
+	            {x2;if:$exams['pages'] && $ehtype}
+				<div class="pagination pagination-right">
+					<ul>{x2;$exams['pages']}</ul>
+				</div>
+	           {x2;endif}
+			</div>
+		</div>
+	</div>
 </div>
+{x2;include:foot}
 <script>
 var delhistory = function(ehid)
 {
- 	$.get("?exam-app-history-del&ehid="+ehid+"&rand"+Math.random(),function(data){window.location.reload();});
-}
-var confdelinfo = function(url)
-{
-	art.dialog({
-		ok: function(){delhistory(url);},
-		okval: '确定',
-		title:'删除答题记录',
-		cancel: true,
-		cancelval: '取消',
-		content: '您确定要删除这个记录吗？'
-	});
+ 	$.get("index.php?exam-app-history-del&ehid="+ehid+"&rand"+Math.random(),function(data){alert('删除成功');window.location.reload();});
 }
 </script>
 </body>

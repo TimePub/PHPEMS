@@ -1,250 +1,341 @@
-{x2;include:head}
-<body onbeforeunload="javascript:saveanswer(false);">
+{x2;include:header}
+<body>
+<script src="app/exam/styles/js/plugin.js"></script>
 {x2;include:nav}
-<div id="main">
-	<!--主体左侧-->
-	{x2;eval: $nouseleft = 1}
-	{x2;include:left}
-	<!--主体左侧 结束-->
-	<!--主体右侧 -->
-	<div id="right_760" class="right_970">
-    	{x2;include:bread}
-    	<div class="bor_top"></div>
-    	<div class="bor_mid">
-    		<div id="hide_left"><a href="javascript:pr()"></a></div>
-            <div id="exam_paper">
-            <form action="index.php?exam-app-exampaper-score" id="form1" name="form1" method="post">
-            <!-- float start-->
-            <div id="float" class="float_div1">
-            	<h2 class="page_title" style="line-height:0.5em;">
-                	<ul id="func_list">
-               	  	    <li id="show_menu" class="menu">
-               	  	      <div class="menu-hd"><span id="show-current"><a class="collapsible" href="#show_sz">显示设置</a></span></div>
-               	  	      <div id="show_sz" class="menu-bd" style="display:none;">
-               	  	        <dl>
-               	  	          <dd><a href="#show_dt" onClick="javascript:initquestion();">单题显示</a></dd>
-               	  	          <dd><a href="#show_tx" onClick="javascript:inittype();">题型显示</a></dd>
-               	  	          <dd><a href="#show_zj" onClick="javascript:initpaper();">整卷显示</a></dd>
-           	  	            </dl>
-           	  	          </div>
-       	  	      	  	</li>
-                  	</ul><img src="app/exam/styles/image/suijikaoshi_tit.jpg" alt="随机考试" />
-                    <span id="time_top">考试剩余时间：<b><span id="timer_h">00</span>：<span id="timer_m">00</span>：<span id="timer_s">00</span></b></span>
-                    <!--分数-->
-                    <div id="fenshu" style="display:none;">
-                        <div class="n6"></div>
-                        <div class="n4"></div>
-                        <div class="ndot"></div>
-                    </div>
-                    <!--分数 结束-->
-                  </h2>
+<div class="row-fluid">
+	<div class="container examcontent">
+		<div class="exambox" id="datacontent">
+			<form class="examform form-horizontal" id="form1" name="form1" action="index.php?exam-app-exampaper-score">
+				<ul class="breadcrumb">
+					<li>
+						<span class="icon-home"></span> <a href="index.php">考场选择</a> <span class="divider">/</span>
+					</li>
+					<li>
+						<a href="index.php?exam-app-basics">{x2;$data['currentbasic']['basic']}</a> <span class="divider">/</span>
+					</li>
+					<li>
+						<a href="index.php?exam-app-exampaper">模拟考试</a> <span class="divider">/</span>
+					</li>
+					<li class="active">
+						{x2;$sessionvars['examsession']}
+					</li>
+				</ul>
+				<h3 class="text-center">{x2;$sessionvars['examsession']}</h3>
+				{x2;eval: v:oid = 0}
+				{x2;tree:$questype,quest,qid}
+				{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
+				{x2;eval: v:oid++}
+				<div id="panel-type{x2;v:quest['questid']}" class="tab-pane{x2;if:(!$ctype && v:qid == 1) || ($ctype == v:quest['questid'])} active{x2;endif}">
+					<ul class="breadcrumb">
+						<li>
+							<h5>{x2;v:oid}、{x2;v:quest['questype']}</h5>
+						</li>
+					</ul>
+					{x2;eval: v:tid = 0}
+	                {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest['questid']],question,qnid}
+	                {x2;eval: v:tid++}
+	                <div id="question_{x2;v:question['questionid']}" class="paperexamcontent">
+						<div class="media well">
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<span class="badge badge-info questionindex">{x2;v:tid}</span></a>
+								</li>
+								<li class="btn-group pull-right">
+									<button class="btn" type="button" onclick="javascript:signQuestion('{x2;v:question['questionid']}',this);"><em class="{x2;if:$sessionvars['examsessionsign'][v:question['questionid']]}icon-star{x2;else}icon-star-empty{x2;endif}" title="标注"></em></button>
+									<button class="btn" type="button" onclick="javascript:favorquestion('{x2;v:question['questionid']}');"><em class="icon-heart" title="收藏"></em></button>
+								</li>
+							</ul>
+							<div class="media-body well text-warning">
+								<a name="question_{x2;v:question['questionid']}"></a>{x2;realhtml:v:question['question']}
+							</div>
+							{x2;if:!v:quest['questsort']}
+							<div class="media-body well">
+		                    	{x2;realhtml:v:question['questionselect']}
+		                    </div>
+							<div class="media-body well">
+		                    	{x2;if:v:quest['questchoice'] == 1 || v:quest['questchoice'] == 4}
+			                        {x2;tree:$selectorder,so,sid}
+			                        {x2;if:v:key == v:question['questionselectnumber']}
+			                        {x2;eval: break;}
+			                        {x2;endif}
+			                        <label class="radio inline"><input type="radio" name="question[{x2;v:question['questionid']}]" rel="{x2;v:question['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:question['questionid']]}checked{x2;endif}/>{x2;v:so} </label>
+			                        {x2;endtree}
+		                        {x2;else}
+			                        {x2;tree:$selectorder,so,sid}
+			                        {x2;if:v:key >= v:question['questionselectnumber']}
+			                        {x2;eval: break;}
+			                        {x2;endif}
+			                        <label class="checkbox inline"><input type="checkbox" name="question[{x2;v:question['questionid']}][{x2;v:key}]" rel="{x2;v:question['questionid']}" value="{x2;v:so}" {x2;if:in_array(v:so,$sessionvars['examsessionuseranswer'][v:question['questionid']])}checked{x2;endif}/>{x2;v:so} </label>
+			                        {x2;endtree}
+		                        {x2;endif}
+		                    </div>
+							{x2;else}
+							<div class="media-body well">
+								{x2;eval: $dataid = v:question['questionid']}
+								<textarea class="jckeditor" etype="simple" id="editor{x2;$dataid}" name="question[{x2;$dataid}]" rel="{x2;v:question['questionid']}">{x2;realhtml:$sessionvars['examsessionuseranswer'][$dataid]}</textarea>
+							</div>
+							{x2;endif}
+						</div>
+					</div>
+					{x2;endtree}
+					{x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest['questid']],questionrow,qrid}
+	                {x2;eval: v:tid++}
+	                <div id="questionrow_{x2;v:questionrow['qrid']}">
+						<div class="media well">
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<span class="badge badge-info questionindex">{x2;v:tid}</span>
+								</li>
+							</ul>
+							<div class="media-body well">
+								{x2;realhtml:v:questionrow['qrquestion']}
+							</div>
+							{x2;tree:v:questionrow['data'],data,did}
+							<div class="paperexamcontent">
+								<ul class="nav nav-tabs">
+									<li class="active">
+										<span class="badge questionindex">{x2;v:did}</span></a>
+									</li>
+									<li class="btn-group pull-right">
+										<button class="btn" type="button" onclick="javascript:signQuestion('{x2;v:data['questionid']}',this);"><em class="{x2;if:$sessionvars['examsessionsign'][v:data['questionid']]}icon-star{x2;else}icon-star-empty{x2;endif}" title="标注"></em></button>
+										<button class="btn" type="button" onclick="javascript:favorquestion('{x2;v:data['questionid']}');"><em class="icon-heart" title="收藏"></em></button>
+									</li>
+								</ul>
+								<div class="media-body well text-warning">
+									<a name="question_{x2;v:data['questionid']}"></a>{x2;realhtml:v:data['question']}
+								</div>
+								{x2;if:!v:quest['questsort']}
+								<div class="media-body well">
+			                    	{x2;realhtml:v:data['questionselect']}
+			                    </div>
+								<div class="media-body well">
+			                    	{x2;if:v:quest['questchoice'] == 1 || v:quest['questchoice'] == 4}
+				                        {x2;tree:$selectorder,so,sid}
+				                        {x2;if:v:key == v:data['questionselectnumber']}
+				                        {x2;eval: break;}
+				                        {x2;endif}
+				                        <label class="radio inline"><input type="radio" name="question[{x2;v:data['questionid']}]" rel="{x2;v:data['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:data['questionid']]}checked{x2;endif}/>{x2;v:so} </label>
+				                        {x2;endtree}
+			                        {x2;else}
+				                        {x2;tree:$selectorder,so,sid}
+				                        {x2;if:v:key >= v:data['questionselectnumber']}
+				                        {x2;eval: break;}
+				                        {x2;endif}
+				                        <label class="checkbox inline"><input type="checkbox" name="question[{x2;v:data['questionid']}][{x2;v:key}]" rel="{x2;v:data['questionid']}" value="{x2;v:so}" {x2;if:in_array(v:so,$sessionvars['examsessionuseranswer'][v:data['questionid']])}checked{x2;endif}/>{x2;v:so} </label>
+				                        {x2;endtree}
+			                        {x2;endif}
+			                    </div>
+								{x2;else}
+								<div class="media-body well">
+									{x2;eval: $dataid = v:data['questionid']}
+									<textarea class="jckeditor" etype="simple" id="editor{x2;$dataid}" name="question[{x2;$dataid}]" rel="{x2;v:data['questionid']}">{x2;realhtml:$sessionvars['examsessionuseranswer'][$dataid]}</textarea>
+								</div>
+								{x2;endif}
+							</div>
+							{x2;endtree}
+						</div>
+					</div>
+					{x2;endtree}
 				</div>
-				<!-- float end-->
-       	    	<h1 style="font-size:18px;">{x2;$sessionvars['examsession']}</h1>
-                <h5>总分：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['score']}</span>分 合格分数线：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['passscore']}</span>分 考试时间：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['examtime']}</span>分钟 来源：{x2;$sessionvars['examsessionsetting']['examsetting']['comfrom']}</h5>
-                {x2;eval: v:oid = 0}
-                {x2;tree:$questype,quest,qid}
-                {x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
-                {x2;eval: v:oid++}
-                <span class="questypearea" id="qtarea_{x2;v:quest['questid']}">
-                <h4 class="qu_type">{x2;$ols[v:oid]}、{x2;v:quest['questype']}（{x2;$sessionvars['examsessionsetting']['examsetting']['questype'][v:quest['questid']]['describe']}）</h4>
-                {x2;eval: v:tid = 0}
+				{x2;endif}
+				{x2;endtree}
+				<div aria-hidden="true" id="submodal" class="modal hide fade" role="dialog" aria-labelledby="#mySubModalLabel">
+					<div class="modal-header">
+						<button aria-hidden="true" class="close" type="button" data-dismiss="modal">×</button>
+						<h3 id="mySubModalLabel">
+							交卷
+						</h3>
+					</div>
+					<div class="modal-body" id="modal-body" style="max-height:100%;">
+						<p>共有试题 <span class="allquestionnumber">50</span> 题，已做 <span class="yesdonumber">0</span> 题。您确认要交卷吗？</p>
+					</div>
+					<div class="modal-footer">
+						 <button onclick="javascript:submitPaper();" class="btn btn-primary">确定交卷</button>
+						 <input type="hidden" name="insertscore" value="1"/>
+						 <button aria-hidden="true" class="btn" data-dismiss="modal">再检查一下</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div aria-hidden="true" id="modal" class="modal hide fade" role="dialog" aria-labelledby="#myModalLabel">
+	<div class="modal-header">
+		<button aria-hidden="true" class="close" type="button" data-dismiss="modal">×</button>
+		<h3 id="myModalLabel">
+			试题列表
+		</h3>
+	</div>
+	<div class="modal-body" id="modal-body" style="max-height:100%;">
+		{x2;eval: v:oid = 0}
+    	{x2;tree:$questype,quest,qid}
+    	{x2;if:$sessionvars['examsessionquestion']['questions'][v:quest['questid']] || $sessionvars['examsessionquestion']['questionrows'][v:quest['questid']]}
+        {x2;eval: v:oid++}
+        <dl class="clear">
+        	<dt class="float_l"><b>{x2;v:oid}、{x2;v:quest['questype']}</b></dt>
+            <dd>
+            	{x2;eval: v:tid = 0}
                 {x2;tree:$sessionvars['examsessionquestion']['questions'][v:quest['questid']],question,qnid}
                 {x2;eval: v:tid++}
-                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qtion_{x2;v:question['questionid']}">
-                	<h3><span class="float_l">{x2;v:tid}、</span>{x2;eval: echo html_entity_decode(v:question['question'])}</h3>
-                    <div>
-                    	{x2;realhtml:v:question['questionselect']}
-                    </div>
-                    <span class="examquestionform" name="formquestion_{x2;v:question['questionid']}" id="formquestion_{x2;v:question['questionid']}" rel="nodo">
-                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
-                        {x2;if:v:quest['questsort']}
-                        <span class="font_12 float_r cz">【<a href="javascript:favorquestion('{x2;v:question['questionid']}');">收藏</a>】</span>
-                              <p class=" float_l">本题答案：</p>
-                        <div id="editor" class="clear">
-                        	{x2;eval: $dataid = v:question['questionid']}
-                        	{x2;include:plugin_editor}
-                        </div>
-                        {x2;else}
-                        <span class="font_12 float_r cz">【<a href="javascript:favorquestion('{x2;v:question['questionid']}');">收藏</a>】</span>
-						<div class="option_single" id="radio">
-                        	{x2;if:v:quest['questchoice'] == 1 || v:quest['questchoice'] == 4}
-		                        {x2;tree:$selectorder,so,sid}
-		                        {x2;if:v:key == v:question['questionselectnumber']}
-		                        {x2;eval: break;}
-		                        {x2;endif}
-		                        <label class="radio inline">{x2;v:so} <input type="radio" name="question[{x2;v:question['questionid']}]" rel="{x2;v:question['questionid']}" value="{x2;v:so}" {x2;if:v:so == $sessionvars['examsessionuseranswer'][v:question['questionid']]}checked{x2;endif}/></label>&nbsp;&nbsp;
-		                        {x2;endtree}
-	                        {x2;else}
-		                        {x2;tree:$selectorder,so,sid}
-		                        {x2;if:v:key >= v:question['questionselectnumber']}
-		                        {x2;eval: break;}
-		                        {x2;endif}
-		                        <label class="checkbox inline">{x2;v:so} <input type="checkbox" name="question[{x2;v:question['questionid']}][]" rel="{x2;v:question['questionid']}" value="{x2;v:so}" {x2;if:in_array(v:so,$sessionvars['examsessionuseranswer'][v:question['questionid']])}checked{x2;endif}/></label>&nbsp;&nbsp;
-		                        {x2;endtree}
-	                        {x2;endif}
-
-                        </div>
-                        <div class="clear"></div>
-                        {x2;endif}
-                    </div>
-                    </span>
-                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
-						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
-	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
-                	</ul>
-                </div>
-                {x2;endtree}
-                {x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest['questid']],questionrow,qrid}
+            	<a id="sign_{x2;v:question['questionid']}" href="#question_{x2;v:question['questionid']}" rel="0" class="badge questionindex{x2;if:$sessionvars['examsessionsign'][v:question['questionid']]} signBorder{x2;endif}">{x2;v:tid}</a>
+            	{x2;endtree}
+            	{x2;tree:$sessionvars['examsessionquestion']['questionrows'][v:quest['questid']],questionrow,qrid}
                 {x2;eval: v:tid++}
-                <div class="qu_content" onMouseOver="this.className='qu_content_hover'" onMouseOut="this.className='qu_content'" id="qrtion_{x2;v:questionrow['qrid']}">
-                	<h3>{x2;v:tid}、{x2;eval: echo html_entity_decode(v:questionrow['qrquestion'])}</h3>
-                	{x2;tree:v:questionrow['data'],data,did}
-                	<h3>({x2;v:did}){x2;eval: echo html_entity_decode(v:data['question'])}</h3>
-                    <ul>
-                    	{x2;realhtml:v:data['questionselect']}
-                    </ul>
-                    <span class="examquestionform" name="formquestion_{x2;v:data['questionid']}" id="formquestion_{x2;v:data['questionid']}" rel="nodo">
-                    <div class="qu_option" onMouseOver="this.className='qu_option_hover'" onMouseOut="this.className='qu_option'">
-                        {x2;if:v:quest['questsort']}
-                        <span class="font_12 float_r cz">【<a href="javascript:favorquestion('{x2;v:data['questionid']}');">收藏</a>】</span>
-                        <p class=" float_l">本题答案：</p>
-                        <div id="editor" class="clear">
-                        	{x2;eval: $dataid = v:data['questionid']}
-                        	{x2;include:plugin_editor}
-                        </div>
-                        {x2;else}
-                        <span class="font_12 float_r cz">【<a href="javascript:favorquestion('{x2;v:data['questionid']}');">收藏</a>】</span>
-                        <div class="option_single" id="radio">
-                        	{x2;if:v:quest['questchoice'] == 1 || v:quest['questchoice'] == 4}
-                            {x2;tree:$selectorder,so,sid}
-                            {x2;if:v:key == v:data['questionselectnumber']}
-                            {x2;eval: break;}
-                            {x2;endif}
-                            <label class="radio inline"><input autocomplete="off" type="radio" name="question[{x2;v:data['questionid']}]" value="{x2;v:so}" />{x2;v:so}</label>
-                            {x2;endtree}
-                            {x2;else}
-                            {x2;tree:$selectorder,so,sid}
-                            {x2;if:v:key >= v:data['questionselectnumber']}
-                            {x2;eval: break;}
-                            {x2;endif}
-                            <label class="checkbox inline"><input autocomplete="off" type="checkbox" name="question[{x2;v:data['questionid']}][{x2;v:key}]" value="{x2;v:so}" />{x2;v:so}</label>
-                            {x2;endtree}
-                            {x2;endif}
-							<script type="text/javascript">{x2;if:v:quest['questchoice'] == 2 || v:quest['questchoice'] == 3}completeAnswers('question[{x2;v:data['questionid']}][]','{x2;eval: echo implode('',$sessionvars['examsessionuseranswer'][v:data['questionid']]);}');{x2;else}completeAnswers('question[{x2;v:data['questionid']}]','{x2;$sessionvars['examsessionuseranswer'][v:data['questionid']]}');{x2;endif}</script>
-                        </div>
-                        <div class="clear"></div>
-                        {x2;endif}
-                    </div>
-                    </span>
-                    {x2;endtree}
-                    <ul id="qu_type_next" class="clear" name="qbar" style="margin:10px auto;display:none">
-						<li><a href="javascript:;" onClick="javascript:prevquestion();">上一题</a></li>
-	                	<li><a href="javascript:;" onClick="javascript:nextquestion();">下一题</a></li>
-                	</ul>
-                </div>
+                {x2;tree:v:questionrow['data'],data,did}
+				<a id="sign_{x2;v:data['questionid']}" href="#question_{x2;v:data['questionid']}" rel="0" class="badge questionindex{x2;if:$sessionvars['examsessionsign'][v:data['questionid']]} signBorder{x2;endif}">{x2;v:tid}-{x2;v:did}</a>
                 {x2;endtree}
-                <ul id="qu_type_next" class="clear" name="qtbar" style="margin:10px auto;display:none">
-					<li><a href="javascript:;" onClick="javascript:prevtype();">上一题型</a></li>
-                	<li><a href="javascript:;" onClick="javascript:nexttype();">下一题型</a></li>
-                </ul>
-            	</span>
-                {x2;endif}
                 {x2;endtree}
-                <div id="amount">全卷已做 <b class="orange" id="yesdonumber">{x2;$donumber}</b> 题 / 共<b class="orange" id="allquestionnumber">0</b>题 剩余 <b class="orange" id="nodonumber">0</b> 题未作答</div>
-                <div id="btn_exam_paper"><input type="hidden" name="insertscore" value="1"/><input type="button" value="" onClick="javascript:subpaper();"/></div>
-          	</form>
-          	</div>
-    	</div>
-    	<div class="bor_bottom"></div>
-    </div>
-	<!--主体右侧 结束-->
-	<!--尾部-->
-    {x2;include:foot}
-	<!--尾部 结束-->
-    <!--返回顶部-->
-    <div id="roll">
-      <div id="roll_top"></div>
-    </div>
-    <!--返回顶部 结束-->
-    <!--自动保存提示-->
-    <div id="save_prompt">
-    	<h4>自动保存提示</h4>
-        <p>系统将每隔<b class="red">5分钟</b>自动保存试卷及答案，答题过程中请勿刷新页面。<br />【<a href="index.php?exam-app-exampaper-sign">查看试题列表</a>】<br />上次保存时间：<span id="lastsavetime">{x2;date:TIME,'H:i:s'}</span></p>
-    </div>
-    <!--自动保存提示 结束-->
+            </dd>
+        </dl>
+        {x2;endif}
+        {x2;endtree}
+	</div>
+	<div class="modal-footer">
+		 <button aria-hidden="true" class="btn" data-dismiss="modal">隐藏</button>
+	</div>
+</div>
+<div class="row-fluid">
+	<div class="container toolcontent">
+		<div class="footcontent">
+			<div class="span2">
+				<ul class="unstyled">
+					<li><h4><img src="app/core/styles/images/icons/Watches.png" style="width:1.2em;"/> <span id="timer_h">00</span>：<span id="timer_m">00</span>：<span id="timer_s">00</span></h4></li>
+				</ul>
+			</div>
+			<div class="span2">
+				<ul class="unstyled">
+					<li><h6><a href="#top"><em class="icon-circle-arrow-up"></em>回顶部</a> &nbsp; <a href="#modal" data-toggle="modal"><em class="icon-calendar"></em>试题列表</a></h6></li>
+				</ul>
+			</div>
+			<div class="span6">
+				<ul class="unstyled">
+					<li><h6>已做 <span class="yesdonumber">0</span> 题 共 <span class="allquestionnumber">50</span> 题 总分：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['score']}</span>分 合格分数线：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['passscore']}</span>分 考试时间：<span class="orange">{x2;$sessionvars['examsessionsetting']['examsetting']['examtime']}</span>分钟</h6></li>
+				</ul>
+			</div>
+			<div class="span2">
+				<ul class="unstyled">
+					<li class="text-right"><a href="#submodal" role="button" class="btn btn-primary" data-toggle="modal"> 交 卷 </a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
-		$.get('index.php?exam-app-index-ajax-lefttime&rand'+Math.random(),function(data){
-			var setting = {
-				time:{x2;$sessionvars['examsessiontime']},
-				hbox:$("#timer_h"),
-				mbox:$("#timer_m"),
-				sbox:$("#timer_s"),
-				finish:function(){$('#form1').submit();}
-			}
-			setting.lefttime = parseInt(data);
-			countdown(setting);
-		});
-		$('#roll').hide();
-		$('#allquestionnumber').html($('.examquestionform').length);
-		$('#nodonumber').html($('#allquestionnumber').html() - $('#yesdonumber').html());
-		common();
-		$(":input").bind('blur',recordanswer);
-		setInterval(saveanswer,300000);
-		$(window).scroll(function() {
-			if($(window).scrollTop() >= 100){
-				$('#roll').fadeIn(400);
-		    }
-		    else
-		    {
-		    $('#roll').fadeOut(200);
-		    }
-		 });
-		 $('#roll_top').click(function(){$('html,body').animate({scrollTop: '0px'}, 800);});
-		 recordanswer();
+	$.get('index.php?exam-app-index-ajax-lefttime&rand'+Math.random(),function(data){
+		var setting = {
+			time:{x2;$sessionvars['examsessiontime']},
+			hbox:$("#timer_h"),
+			mbox:$("#timer_m"),
+			sbox:$("#timer_s"),
+			finish:function(){submitPaper();}
+		}
+		setting.lefttime = parseInt(data);
+		countdown(setting);
 	});
-function recordanswer(){
-	var yesdonumber = 0;
-    $(".qu_option").each(function(){
-    	var _i = $("input",this);
-    	for(i=0;i< _i.length;i++)
-    	{
-    		if($(_i.get(i)).attr('checked'))
-    		{
-    			yesdonumber++;
-    			return ;
-    		}
-    	}
-    	var _m = $("textarea",this);
-    	if(_m.length == 1)
-    	{
-    		if(_m.val() && _m.val() != '')yesdonumber++;
-    	}
-    	else
-    	{
-    		_m.each(function(){if($(this).val() && $(this).val() != '')yesdonumber++;})
-    	}
-    });
-    $('#yesdonumber').html(yesdonumber);
-    $('#nodonumber').html(parseInt($('#allquestionnumber').html()) - parseInt($('#yesdonumber').html()));
-}
-var subpaper = function()
-{
-	art.dialog({lock:true,resize:false,width:320,height:150,title:'交卷提醒',ok:function(){$('#form1').submit();},okval:'交卷',cancel:true,cancelval:'取消',content:'您确认要交卷吗？'});
-}
-function saveanswer(){
-	var params = $(':input').serialize();
-     $.ajax({
-       url:'?exam-app-exampaper-ajax-saveUserAnswer',
-       async:false,
-       type:'post',
-       dataType:'json',
-       data:params
-     });
-}
+	setInterval(refreshRecord,5000);
+	setInterval(saveanswer,300000);
+
+	$('.allquestionnumber').html($('.paperexamcontent').length);
+	$('.yesdonumber').html($('#modal-body .badge-info').length);
+
+	initData = $.parseJSON(storage.getItem('questions'));
+	if(initData){
+		for(var p in initData){
+			if(p!='set')
+			formData[p]=initData[p];
+		}
+
+		var textarea = $('#form1 textarea');
+		$.each(textarea,function(){
+			var _this = $(this);
+			_this.val(initData[_this.attr('name')]);
+			CKEDITOR.instances[_this.attr('id')].setData(initData[_this.attr('name')]);
+			markQuestion(_this.attr('rel'),true);
+		});
+
+		var texts = $('#form1 :input[type=text]');
+		$.each(texts,function(){
+			var _this = $(this);
+			_this.val(initData[_this.attr('name')]);
+			markQuestion(_this.attr('rel'),true);
+		});
+
+		var radios = $('#form1 :input[type=radio]');
+		$.each(radios,function(){
+			var _= this, v = initData[_.name];
+			var _this = $(this);
+			if(v!=''&&v==_.value){
+				_.checked = true;
+			}else{
+				_.checked=false;
+			}
+			markQuestion(_this.attr('rel'));
+		});
+
+		var checkboxs=$('#form1 :input[type=checkbox]');
+		$.each(checkboxs,function(){
+			var _=this,v=initData[_.name];
+			var _this = $(this);
+			if(v!=''&&v==_.value){
+				_.checked=true;
+			}else{
+				_.checked=false;
+			}
+			markQuestion(_this.attr('rel'));
+		});
+	}
+
+	$('#form1 :input[type=text]').change(function(){
+		var _this=$(this);
+		var p=[];
+		p.push(_this.attr('name'));
+		p.push(_this.val());
+		set.apply(formData,p);
+		markQuestion(_this.attr('rel'));
+	});
+
+	$('#form1 :input[type=radio]').change(function(){
+		var _=this;
+		var _this=$(this);
+		var p=[];
+		p.push(_.name);
+		if(_.checked){
+			p.push(_.value);
+			set.apply(formData,p);
+		}else{
+			p.push('');
+			set.apply(formData,p);
+		}
+		markQuestion(_this.attr('rel'));
+	});
+
+	$('#form1 textarea').change(function(){
+		var _= this;
+		var _this=$(this);
+		var p=[];
+		p.push(_.name);
+		p.push(_.value);
+		set.apply(formData,p);
+		markQuestion(_this.attr('rel'));
+	});
+
+	$('#form1 :input[type=checkbox]').change(function(){
+		var _= this;
+		var _this = $(this);
+		var p=[];
+		p.push(_.name);
+		if(_.checked){
+			p.push(_.value);
+			set.apply(formData,p);
+		}else{
+			p.push('');
+			set.apply(formData,p);
+		}
+		markQuestion(_this.attr('rel'));
+	});
+});
 </script>
-<script type="text/javascript" src="app/exam/styles/js/paperview.js"></script>
+{x2;include:foot}
 </body>
 </html>

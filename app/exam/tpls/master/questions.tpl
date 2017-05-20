@@ -176,7 +176,7 @@
 								<td>
 									<div class="btn-group">
 			                    		<a class="btn" href="index.php?exam-master-questions-modifyquestion&page={x2;$page}&questionid={x2;v:question['questionid']}{x2;$u}" title="修改"><em class="icon-edit"></em></a>
-										<a class="btn ajax" href="index.php?exam-master-questions-delquestion&questionparent=0&page={x2;$page}&questionid={x2;v:question['questionid']}{x2;$u}" title="删除"><em class="icon-remove"></em></a>
+										<a class="btn confirm" href="index.php?exam-master-questions-delquestion&questionparent=0&page={x2;$page}&questionid={x2;v:question['questionid']}{x2;$u}" title="删除"><em class="icon-remove"></em></a>
 			                    	</div>
 								</td>
 					        </tr>

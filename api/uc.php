@@ -258,10 +258,15 @@ class uc_note {
 
 	function synlogin($get, $post) {
 		$uid = $get['uid'];
+		//$username = iconv('gbk','utf-8',$get['username']);
+		//gbk版本论坛使用上行
 		$username = $get['username'];
+		//UTF8版本使用上行
 		if(!API_SYNLOGIN) {
 			return API_RETURN_FORBIDDEN;
 		}
+		$sql = "set names utf8";
+		$this->dblink->query($sql);
 		$sql = "SELECT * FROM ".DTH."user WHERE username = '{$username}'";
 		$u = $this->dblink->fetch_first($sql);
 		$args = array();
@@ -272,7 +277,6 @@ class uc_note {
 			$email = $username."@phpems.net";
 			$pass = md5(rand(1000,9999));
 			$sql = "INSERT INTO ".DTH."user (`username`,`useremail`,`userpassword`,`usergroupid`,`userregtime`,`userregip`) VALUES ('{$username}','{$email}','{$pass}','{$grouid}','".TIME."','".$this->_getClientIp()."')";
-			$this->dblink->query("SET NAMES ".UC_DBCHARSET);
 			$this->dblink->query($sql);
 			$args = array('sessionuserid'=>$this->dblink->insert_id(),'sessionpassword'=>$pass,'sessionip'=>$this->_getClientIp(),'sessiongroupid'=>$grouid,'sessionlogintime'=>TIME,'sessionusername'=>$username);
 		}
