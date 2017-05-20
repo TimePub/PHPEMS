@@ -1,0 +1,118 @@
+{x2;include:header}
+<body>
+{x2;include:nav}
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span2">
+			{x2;include:menu}
+		</div>
+		<div class="span10" id="datacontent">
+			<ul class="breadcrumb">
+				<li><a href="index.php?{x2;$_app}-master">{x2;$apps[$_app]['appname']}</a> <span class="divider">/</span></li>
+				<li><a href="index.php?{x2;$_app}-master-category">分类管理</a> <span class="divider">/</span></li>
+				<li class="active">添加分类</li>
+			</ul>
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a href="#">添加分类</a>
+				</li>
+				<li class="pull-right">
+					<a href="index.php?{x2;$_app}-master-category&parent={x2;$parent}">分类列表</a>
+				</li>
+			</ul>
+			<form action="index.php?{x2;$_app}-master-category-add" method="post" class="form-horizontal">
+				<fieldset>
+					<div class="control-group">
+					</div>
+					<div class="control-group">
+						<label for="modulename" class="control-label">分类名称</label>
+						<div class="controls">
+							<input type="text" id="input1" name="args[catname]" value="{x2;$category['catname']}" datatype="userName" needle="needle" msg="您必须输入中英文字符的分类名称">
+							<span class="help-block">请输入分类名称</span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="modulecode" class="control-label">分类排序</label>
+						<div class="controls">
+							<input type="text" id="input2" name="args[catlite]" value="{x2;$category['catlite']}" datatype="number" msg="排序为整数">
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="moduledescribe" class="control-label">外链地址</label>
+						<div class="controls">
+							<input type="text" name="args[caturl]" value="{x2;realhtml:$category['caturl']}">
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="moduledescribe" class="control-label">使用外链地址</label>
+						<div class="controls">
+							<label class="radio inline">
+								<input type="radio"  name="args[catuseurl]" value="1"{x2;if:$category['catuseurl']} checked{x2;endif}>使用
+							</label>
+			            	<label class="radio inline">
+			            		<input type="radio"  name="args[catuseurl]" value="0"{x2;if:!$category['catuseurl']} checked{x2;endif}>不使用
+			            	</label>
+							<span class="help-block">填写外链地址后，该分类会直接转到外链地址</span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="moduledescribe" class="control-label">发布用户</label>
+						<div class="controls">
+							<input type="text" name="args[catmanager][pubusers]" value="{x2;$category['catmanager']['pubusers']}">
+							<span class="help-block">填写用户ID，用英文逗号隔开</span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="moduledescribe" class="control-label">发布角色</label>
+						<div class="controls">
+							<input type="text" name="args[catmanager][pubgroups]" value="{x2;$category['catmanager']['pubgroups']}">
+							<span class="help-block">填写角色ID，用英文逗号隔开</span>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="modulecode" class="control-label">分类模板</label>
+						<div class="controls">
+							<select name="args[cattpl]" needle="needle" msg="您必须为这个分类选择一个模板">
+				            	{x2;tree:$tpls,tpl,tid}
+				            	<option value="{x2;v:tpl}"{x2;if:$category['cattpl'] == v:tpl} selected{x2;endif}>{x2;v:tpl}</option>
+				            	{x2;endtree}
+				            </select>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="moduledescribe" class="control-label">分类图片</label>
+						<div class="controls">
+							<div class="thumbuper pull-left">
+								<div class="thumbnail">
+									<a href="javascript:;" class="second label""><em class="uploadbutton" id="catimg" exectype="thumb"></em></a>
+									<div class="first" id="catimg_percent"></div>
+									<div class="boot"><img src="app/core/styles/images/noimage.gif" id="catimg_view"/><input type="hidden" name="args[catimg]" value="" id="catimg_value"/></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="catdes" class="control-label">分类简介</label>
+						<div class="controls">
+							<textarea class="input-xxlarge ckeditor" rows="7" id="catdes" name="args[catdes]"></textarea>
+							<span class="help-block">对这个模型进行描述</span>
+						</div>
+					</div>
+					<div class="control-group">
+						<div class="controls">
+							<button class="btn btn-primary" type="submit">提交</button>
+				            <input type="hidden" name="page" value="{x2;$page}">
+				            <input type="hidden" name="addcategory" value="1">
+				            <input type="hidden" name="args[catparent]" value="{x2;$parent}">
+							{x2;tree:$search,arg,aid}
+							<input type="hidden" name="search[{x2;v:key}]" value="{x2;v:arg}"/>
+							{x2;endtree}
+						</div>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+body{
+font: 12px/20px 'Microsoft YaHei','SimSun',Arial,Sans-Serif;
+text-shadow:0 0px 0 #FFFFFF;}
+
+a{
+color:#333333;}
+
+a:hover{
+/*color:#FFBF00;*/}
+
+h3{
+font:16px/32px 'Microsoft YaHei','SimSun',Arial,Sans-Serif;
+font-weight:bold;}
+
+ul.unstyled li{
+text-indent:1em;
+line-height:2em;}
+
+.noborder{
+border:0px;}
+
+.nobg{
+background:none;}
+
+.notextshadow{
+text-shadow:0px;}
+
+.noradius{
+border-radius:0px;}
+
+.containbox{
+width:980px;
+margin:auto;}
+
+.container-fluid{
+padding:0px;}
+
+.line{
+line-height:2em;}
+
+.indent1{
+text-indent:1em;}
+
+.navbar-inner{
+font:14px/32px 'Microsoft YaHei','SimSun',Arial,Sans-Serif;
+background:none;
+border:0px;
+filter:Alpha(opacity=0);}
+
+.navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus{
+padding-top:14px;
+background-color:#333333;
+color:#FFFFFF;}
+
+.navbar .nav > li > a{
+padding-top:14px;
+color:#FFFFFF;
+text-shadow:0 0px 0 #000000;
+background:none;}
+
+.navbar .nav > li > a:hover{
+color:#FFFFFF;
+background-color: #333333;}
+
+.navbar .nav > li > a:focus, .navbar .nav > li > a:hover{
+color:#FFFFFF;}
+
+.nav-header{
+font:14px/32px 'Microsoft YaHei','SimSun',Arial,Sans-Serif;}
+
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover, .nav-tabs > .active > a:focus{
+border:0px;
+font-weight:bold;}
+
+.themetitle{
+border:0px;
+border-bottom:2px solid #A4AFC3;
+text-indent:1em;}
+
+.themetitle .active{
+font-weight:bold;
+font:14px/32px 'Microsoft YaHei','SimSun',Arial,Sans-Serif;}
+
+.media{margin-bottom:0px;}
+
+.media-object{margin-top:10px;}
+
+#header{
+padding-top:40px;
+background: url("../img/theme/bg.png") repeat-x scroll center top transparent;
+height:80px;
+display:block;}
+
+#logo,#logo a{
+margin-left:10px;
+color:#CC9E2B}
+
+#headermenu{
+margin-top:20px;
+padding-right:15px;}
+
+#keyword{
+line-height:2em;
+padding:8px 25px;}
+
+#categorymenu,#categorymenu a{
+background:none repeat scroll 0 0 #C71000;
+color:#FFFFFF;
+text-shadow: 0 0px 0 #FFFFFF;}
+
+#categorymenu .nav-header{
+color:#FFFFFF;
+text-shadow: 0 0px 0 #FFFFFF;}
+
+#categorymenuhead{
+background: url("../img/theme/title.jpg") no-repeat scroll center top transparent;
+text-shadow: 0 0px 0 #FFFFFF;
+color:#FFFFFF;}
+
+#foot{
+font:12px/20px Arial, Helvetica, sans-serif;
+background: url("../img/theme/bg.png") repeat-x scroll center top transparent;
+color:#CC9E2B;
+text-shadow: 0 0px 0 #FFFFFF;
+padding-top:20px;
+padding-bottom:10px;}
+
+#foot a{
+color:#CC9E2B;}
+
+#foot h3{
+font:14px/20px Arial, Helvetica, sans-serif;
+text-shadow: 0 0px 0 #FFFFFF;
+font-weight:bold;}
+
+IMG.media-object{width:90px;}
